@@ -26,9 +26,9 @@ export default function TransactionButton({
       fullWidth={fullWidth}
       {...props}
     >
-      {isLoading
+      {isPending
         ? "Confirm transaction..."
-        : isPending
+        : isLoading
         ? "Transaction pending..."
         : actionText}
     </Button>

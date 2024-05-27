@@ -1,8 +1,22 @@
+import TransactionButton from "@components/common/TransactionButton";
 import { Button, Divider, Input, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Asset, AssetMetadata } from "@utils/dex/types";
-import { Fragment, useState } from "react";
+import { SnackbarMessage } from "@utils/texts";
+import { useSnackbar } from "notistack";
+import { Fragment, useEffect, useState } from "react";
+import {
+  useReadInverseAppProjected1155IsApprovedForAll,
+  useWriteInverseAppProjected1155SetApprovalForAll,
+  useWriteOrderbookDexCreateBatchSellOrder,
+  useWriteOrderbookDexCreateSellOrder,
+} from "src/generated";
 import { formatEther, parseEther } from "viem";
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 
 type Props = {
   assetMetadata: AssetMetadata;
@@ -10,8 +24,49 @@ type Props = {
 };
 
 export default function SellForm({ assetMetadata, selectedAssets }: Props) {
+  const { enqueueSnackbar } = useSnackbar();
   const [price, setPrice] = useState("");
   const [priceBN, setPriceBN] = useState(0n);
+  const { chainId, address } = useAccount();
+
+  const { data: isApproved } = useReadInverseAppProjected1155IsApprovedForAll({
+    address: assetMetadata.address[chainId!],
+    args: [address!, assetMetadata.dexAddress[chainId!]],
+    query: { enabled: chainId != null && address != null },
+  });
+  const {
+    data: approvalHash,
+    writeContract: writeSetApproval,
+    isPending: isPendingWriteSetApproval,
+  } = useWriteInverseAppProjected1155SetApprovalForAll();
+  const {
+    data: createSellOrderHash,
+    writeContract: writeCreateSellOrder,
+    isPending: isPendingWriteCreateSellOrder,
+  } = useWriteOrderbookDexCreateSellOrder({
+    mutation: { onError: (e) => console.error(e) },
+  });
+  const {
+    data: createBatchSellOrderHash,
+    writeContract: writeCreateBatchSellOrder,
+    isPending: isPendingWriteCreateBatchSellOrder,
+  } = useWriteOrderbookDexCreateBatchSellOrder();
+  const { isLoading: isLoadingApproval, isSuccess: isConfirmedApproval } =
+    useWaitForTransactionReceipt({
+      hash: approvalHash,
+    });
+  const {
+    isLoading: isLoadingCreateSellOrder,
+    isSuccess: isConfirmedCreateSellOrder,
+  } = useWaitForTransactionReceipt({
+    hash: createSellOrderHash,
+  });
+  const {
+    isLoading: isLoadingCreateBatchSellOrder,
+    isSuccess: isConfirmedCreateBatchSellOrder,
+  } = useWaitForTransactionReceipt({
+    hash: createBatchSellOrderHash,
+  });
 
   const handlePriceInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -22,6 +77,72 @@ export default function SellForm({ assetMetadata, selectedAssets }: Props) {
       setPriceBN(parseEther(newValue));
     } catch (e) {}
   };
+
+  const handleCreateSellOrderButtonClick = () => {
+    if (!isApproved) {
+      approveAssetForDex();
+    } else {
+      createSellOrder();
+    }
+  };
+
+  const approveAssetForDex = () => {
+    writeSetApproval({
+      address: assetMetadata.address[chainId!],
+      args: [assetMetadata.dexAddress[chainId!], true],
+    });
+  };
+
+  const createSellOrder = () => {
+    if (selectedAssets.length === 0) return;
+    if (selectedAssets.length === 1) {
+      writeCreateSellOrder({
+        address: assetMetadata.dexAddress[chainId!],
+        args: [
+          BigInt(selectedAssets[0].tokenId),
+          BigInt(selectedAssets[0].amount),
+          priceBN,
+        ],
+      });
+    } else {
+      writeCreateBatchSellOrder({
+        address: assetMetadata.dexAddress[chainId!],
+        args: [
+          selectedAssets.map((a) => BigInt(a.tokenId)),
+          selectedAssets.map((a) => BigInt(a.amount)),
+          selectedAssets.map(() => priceBN),
+        ],
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isConfirmedApproval) {
+      enqueueSnackbar({
+        message: SnackbarMessage.Dex.ApprovalForCreateOrderSuccess,
+        variant: "success",
+      });
+      createSellOrder();
+    }
+  }, [isConfirmedApproval]);
+
+  useEffect(() => {
+    if (isConfirmedCreateSellOrder) {
+      enqueueSnackbar({
+        message: SnackbarMessage.Dex.CreateOrderSuccess,
+        variant: "success",
+      });
+    }
+  }, [isConfirmedCreateSellOrder]);
+
+  useEffect(() => {
+    if (isConfirmedCreateBatchSellOrder) {
+      enqueueSnackbar({
+        message: SnackbarMessage.Dex.CreateBatchOrderSuccess,
+        variant: "success",
+      });
+    }
+  }, [isConfirmedCreateBatchSellOrder]);
 
   const total = selectedAssets.reduce(
     (acc, asset) => acc + BigInt(asset.amount) * priceBN,
@@ -91,11 +212,27 @@ export default function SellForm({ assetMetadata, selectedAssets }: Props) {
             <Typography>Grand total</Typography>
           </Grid>
           <Grid xs={4}>
-            <Typography>{formatEther(total)}</Typography>
+            <Typography fontWeight={600}>{formatEther(total)}</Typography>
           </Grid>
         </Grid>
       </Stack>
-      <Button variant="contained">Create sell order</Button>
+      <TransactionButton
+        onClick={handleCreateSellOrderButtonClick}
+        actionText={
+          isApproved ? "Create sell order" : "Approve and create sell order"
+        }
+        isLoading={
+          isLoadingApproval ||
+          isLoadingCreateSellOrder ||
+          isLoadingCreateBatchSellOrder
+        }
+        isPending={
+          isPendingWriteSetApproval ||
+          isPendingWriteCreateSellOrder ||
+          isPendingWriteCreateBatchSellOrder
+        }
+        disabled={price === "" || priceBN === 0n || selectedAssets.length === 0}
+      />
     </Stack>
   );
 }

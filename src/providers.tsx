@@ -14,9 +14,6 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   "&.notistack-MuiContent-success": {
     backgroundColor: "#19b17b",
   },
-  "&.notistack-MuiContent-info": {
-    backgroundColor: "#121212",
-  },
 }));
 
 const queryClient = new QueryClient();

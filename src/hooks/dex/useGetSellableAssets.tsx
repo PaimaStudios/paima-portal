@@ -8,15 +8,15 @@ export default function useGetSellableAssets() {
     queryFn: async () => {
       return [
         {
-          tokenId: 3,
+          tokenId: 1,
           amount: 100,
         },
         {
-          tokenId: 5,
+          tokenId: 2,
           amount: 200,
         },
         {
-          tokenId: 9,
+          tokenId: 3,
           amount: 300,
         },
       ];
