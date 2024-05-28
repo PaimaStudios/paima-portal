@@ -1,4 +1,5 @@
 import TransactionButton from "@components/common/TransactionButton";
+import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import { Divider, Input, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,7 +14,7 @@ import {
   useWriteOrderbookDexCreateSellOrder,
 } from "src/generated";
 import { formatEther, parseEther } from "viem";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount } from "wagmi";
 
 type Props = {
   assetMetadata: AssetMetadata;

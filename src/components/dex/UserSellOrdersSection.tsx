@@ -1,12 +1,13 @@
 import { Stack, Typography } from "@mui/material";
 import SellOrdersGrid from "./SellOrdersGrid";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount } from "wagmi";
 import { AssetMetadata } from "@utils/dex/types";
 import TransactionButton from "@components/common/TransactionButton";
 import { useWriteOrderbookDexCancelBatchSellOrder } from "src/generated";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
+import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 
 type Props = {
   assetMetadata: AssetMetadata;

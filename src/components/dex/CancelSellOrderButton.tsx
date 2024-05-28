@@ -1,8 +1,9 @@
 import TransactionButton from "@components/common/TransactionButton";
+import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import { useWriteOrderbookDexCancelSellOrder } from "src/generated";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount } from "wagmi";
 
 type Props = {
   dexAddress: `0x${string}`;
