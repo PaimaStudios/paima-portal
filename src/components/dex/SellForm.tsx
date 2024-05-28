@@ -86,7 +86,6 @@ export default function SellForm({
   const { isLoading: isLoadingCreateSellOrder } = useWaitForTransactionReceipt({
     hash: createSellOrderHash,
     query: {
-      enabled: !!createSellOrderHash,
       meta: {
         successMessage: SnackbarMessage.Dex.CreateOrderSuccess,
         invalidateQueries: [
@@ -100,7 +99,6 @@ export default function SellForm({
     useWaitForTransactionReceipt({
       hash: createBatchSellOrderHash,
       query: {
-        enabled: !!createBatchSellOrderHash,
         meta: {
           successMessage: SnackbarMessage.Dex.CreateBatchOrderSuccess,
           invalidateQueries: [

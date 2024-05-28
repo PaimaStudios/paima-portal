@@ -25,7 +25,6 @@ export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
   const { isLoading } = useWaitForTransactionReceipt({
     hash,
     query: {
-      enabled: !!hash,
       meta: {
         successMessage: SnackbarMessage.Dex.CancelOrderSuccess,
         invalidateQueries: [

@@ -30,7 +30,6 @@ export default function UserSellOrdersSections({ assetMetadata }: Props) {
   const { isLoading } = useWaitForTransactionReceipt({
     hash,
     query: {
-      enabled: !!hash,
       meta: {
         successMessage: SnackbarMessage.Dex.CancelOrderSuccess,
         invalidateQueries: [
