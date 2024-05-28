@@ -25,8 +25,8 @@ export default function useGetSellableAssets() {
         contracts,
       });
       console.log("assets", assets);
-      return [0, 1, 2].map((id) => {
-        const result = assets[id].result as any;
+      return [1, 2, 3].map((id, arrayIndex) => {
+        const result = assets[arrayIndex].result as any;
         return {
           amount: Number(result),
           tokenId: id,

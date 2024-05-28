@@ -119,6 +119,7 @@ export default function SellForm({
       for (const asset of assets) {
         if (remainingAmount === 0) break;
         const amt = Math.min(remainingAmount, asset.amount);
+        if (amt === 0) continue;
         assetsToSell.push({ tokenId: asset.tokenId, amount: amt });
         remainingAmount -= amt;
       }
