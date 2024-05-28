@@ -14,5 +14,6 @@ export const SnackbarMessage = {
     CreateOrderSuccess: "Sell order created successfully!",
     CreateBatchOrderSuccess: "Batch sell order created successfully!",
     CancelOrderSuccess: "Sell order cancelled successfully!",
+    FillOrderSuccess: "Order filled successfully!",
   },
 };

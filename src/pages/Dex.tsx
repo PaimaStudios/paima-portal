@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { gamesMetadata } from "@config/dex";
 import { AssetMetadata } from "@utils/dex/types";
+import BuySection from "@components/dex/BuySection";
 
 enum TabValue {
   Buy = "Buy",
@@ -63,7 +64,9 @@ export default function Dex() {
                 label="Advanced mode"
               />
             </Stack>
-            <TabPanel value={TabValue.Buy}>Buy</TabPanel>
+            <TabPanel value={TabValue.Buy}>
+              <BuySection assetMetadata={assetMetadata} />
+            </TabPanel>
             <TabPanel value={TabValue.Sell}>
               <SellSection
                 assetMetadata={assetMetadata}
