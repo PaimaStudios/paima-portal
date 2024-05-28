@@ -4,11 +4,8 @@ import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { AssetMetadata } from "@utils/dex/types";
 import TransactionButton from "@components/common/TransactionButton";
 import { useWriteOrderbookDexCancelBatchSellOrder } from "src/generated";
-import { useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
-import { enqueueSnackbar } from "notistack";
-import { useEffect } from "react";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 
 type Props = {
@@ -17,7 +14,6 @@ type Props = {
 
 export default function UserSellOrdersSections({ assetMetadata }: Props) {
   const { address, chainId } = useAccount();
-  const queryClient = useQueryClient();
   const { data: orders } = useGetSellOrders({ user: address });
 
   const {
@@ -26,35 +22,24 @@ export default function UserSellOrdersSections({ assetMetadata }: Props) {
     data: hash,
   } = useWriteOrderbookDexCancelBatchSellOrder({
     mutation: {
-      onSuccess: () => {
-        enqueueSnackbar({
-          message: SnackbarMessage.Common.TransactionSubmitted,
-          variant: "info",
-        });
+      meta: {
+        infoMessage: SnackbarMessage.Common.TransactionSubmitted,
       },
     },
   });
-  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+  const { isLoading } = useWaitForTransactionReceipt({
     hash,
     query: {
       enabled: !!hash,
+      meta: {
+        successMessage: SnackbarMessage.Dex.CancelOrderSuccess,
+        invalidateQueries: [
+          [QueryKeys.SellOrders, address],
+          [QueryKeys.SellableAssets],
+        ],
+      },
     },
   });
-
-  useEffect(() => {
-    if (isSuccess) {
-      enqueueSnackbar({
-        message: SnackbarMessage.Dex.CancelOrderSuccess,
-        variant: "success",
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.SellOrders, address],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.SellableAssets],
-      });
-    }
-  }, [isSuccess]);
 
   if (!orders) return <Typography>Loading...</Typography>;
 

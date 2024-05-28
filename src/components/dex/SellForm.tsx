@@ -5,7 +5,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Asset, AssetMetadata } from "@utils/dex/types";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
-import { useSnackbar } from "notistack";
 import { Fragment, useEffect, useState } from "react";
 import {
   useReadInverseAppProjected1155IsApprovedForAll,
@@ -30,49 +29,87 @@ export default function SellForm({
   advancedMode,
 }: Props) {
   const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
   const [price, setPrice] = useState("");
   const [priceBN, setPriceBN] = useState(0n);
   const [amount, setAmount] = useState("");
   const [amountN, setAmountN] = useState(0);
   const { chainId, address } = useAccount();
 
-  const { data: isApproved } = useReadInverseAppProjected1155IsApprovedForAll({
-    address: assetMetadata.address[chainId!],
-    args: [address!, assetMetadata.dexAddress[chainId!]],
-    query: { enabled: chainId != null && address != null },
-  });
+  const { data: isApproved, queryKey: isApprovedQueryKey } =
+    useReadInverseAppProjected1155IsApprovedForAll({
+      address: assetMetadata.address[chainId!],
+      args: [address!, assetMetadata.dexAddress[chainId!]],
+      query: { enabled: chainId != null && address != null },
+    });
   const {
     data: approvalHash,
     writeContract: writeSetApproval,
     isPending: isPendingWriteSetApproval,
-  } = useWriteInverseAppProjected1155SetApprovalForAll();
+  } = useWriteInverseAppProjected1155SetApprovalForAll({
+    mutation: {
+      meta: {
+        infoMessage: SnackbarMessage.Common.TransactionSubmitted,
+      },
+    },
+  });
   const {
     data: createSellOrderHash,
     writeContract: writeCreateSellOrder,
     isPending: isPendingWriteCreateSellOrder,
-  } = useWriteOrderbookDexCreateSellOrder();
+  } = useWriteOrderbookDexCreateSellOrder({
+    mutation: {
+      meta: {
+        infoMessage: SnackbarMessage.Common.TransactionSubmitted,
+      },
+    },
+  });
   const {
     data: createBatchSellOrderHash,
     writeContract: writeCreateBatchSellOrder,
     isPending: isPendingWriteCreateBatchSellOrder,
-  } = useWriteOrderbookDexCreateBatchSellOrder();
+  } = useWriteOrderbookDexCreateBatchSellOrder({
+    mutation: {
+      meta: {
+        infoMessage: SnackbarMessage.Common.TransactionSubmitted,
+      },
+    },
+  });
   const { isLoading: isLoadingApproval, isSuccess: isConfirmedApproval } =
     useWaitForTransactionReceipt({
       hash: approvalHash,
+      query: {
+        meta: {
+          successMessage: SnackbarMessage.Dex.ApprovalForCreateOrderSuccess,
+        },
+      },
     });
-  const {
-    isLoading: isLoadingCreateSellOrder,
-    isSuccess: isConfirmedCreateSellOrder,
-  } = useWaitForTransactionReceipt({
+  const { isLoading: isLoadingCreateSellOrder } = useWaitForTransactionReceipt({
     hash: createSellOrderHash,
+    query: {
+      enabled: !!createSellOrderHash,
+      meta: {
+        successMessage: SnackbarMessage.Dex.CreateOrderSuccess,
+        invalidateQueries: [
+          [QueryKeys.SellOrders, address],
+          [QueryKeys.SellableAssets],
+        ],
+      },
+    },
   });
-  const {
-    isLoading: isLoadingCreateBatchSellOrder,
-    isSuccess: isConfirmedCreateBatchSellOrder,
-  } = useWaitForTransactionReceipt({
-    hash: createBatchSellOrderHash,
-  });
+  const { isLoading: isLoadingCreateBatchSellOrder } =
+    useWaitForTransactionReceipt({
+      hash: createBatchSellOrderHash,
+      query: {
+        enabled: !!createBatchSellOrderHash,
+        meta: {
+          successMessage: SnackbarMessage.Dex.CreateBatchOrderSuccess,
+          invalidateQueries: [
+            [QueryKeys.SellOrders, address],
+            [QueryKeys.SellableAssets],
+          ],
+        },
+      },
+    });
 
   const handlePriceInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -152,43 +189,10 @@ export default function SellForm({
 
   useEffect(() => {
     if (isConfirmedApproval) {
-      enqueueSnackbar({
-        message: SnackbarMessage.Dex.ApprovalForCreateOrderSuccess,
-        variant: "success",
-      });
       createSellOrder();
+      queryClient.invalidateQueries({ queryKey: isApprovedQueryKey });
     }
   }, [isConfirmedApproval]);
-
-  useEffect(() => {
-    if (isConfirmedCreateSellOrder) {
-      enqueueSnackbar({
-        message: SnackbarMessage.Dex.CreateOrderSuccess,
-        variant: "success",
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.SellOrders, address],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.SellableAssets],
-      });
-    }
-  }, [isConfirmedCreateSellOrder]);
-
-  useEffect(() => {
-    if (isConfirmedCreateBatchSellOrder) {
-      enqueueSnackbar({
-        message: SnackbarMessage.Dex.CreateBatchOrderSuccess,
-        variant: "success",
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.SellOrders, address],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.SellableAssets],
-      });
-    }
-  }, [isConfirmedCreateBatchSellOrder]);
 
   const total = selectedAssets.reduce(
     (acc, asset) => acc + BigInt(asset.amount) * priceBN,

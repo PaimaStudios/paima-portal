@@ -1,54 +1,40 @@
 import TransactionButton from "@components/common/TransactionButton";
-import { useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
-import { enqueueSnackbar } from "notistack";
-import { useEffect } from "react";
 import { useWriteOrderbookDexCancelSellOrder } from "src/generated";
-import { useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 
 type Props = {
   dexAddress: `0x${string}`;
   orderId: number;
-  user?: `0x${string}`;
 };
 
-export default function CancelSellOrderButton({
-  dexAddress,
-  orderId,
-  user,
-}: Props) {
-  const queryClient = useQueryClient();
+export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
+  const { address } = useAccount();
   const {
     writeContract,
     isPending,
     data: hash,
   } = useWriteOrderbookDexCancelSellOrder({
     mutation: {
-      onSuccess: () => {
-        enqueueSnackbar({
-          message: SnackbarMessage.Common.TransactionSubmitted,
-          variant: "info",
-        });
+      meta: {
+        infoMessage: SnackbarMessage.Common.TransactionSubmitted,
       },
     },
   });
-  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+  const { isLoading } = useWaitForTransactionReceipt({
     hash,
     query: {
       enabled: !!hash,
+      meta: {
+        successMessage: SnackbarMessage.Dex.CancelOrderSuccess,
+        invalidateQueries: [
+          [QueryKeys.SellOrders, address],
+          [QueryKeys.SellableAssets],
+        ],
+      },
     },
   });
-
-  useEffect(() => {
-    if (isSuccess) {
-      enqueueSnackbar({
-        message: SnackbarMessage.Dex.CancelOrderSuccess,
-        variant: "success",
-      });
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.SellOrders, user] });
-    }
-  }, [isSuccess]);
 
   const handleCancelSellOrderClick = () => {
     console.log(`Cancel sell order ${orderId}`);
