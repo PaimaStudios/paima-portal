@@ -14,3 +14,11 @@ export type GameMetadata = {
   name: string;
   assets: Record<string, AssetMetadata>;
 };
+
+export type SellOrder = {
+  orderid: number;
+  seller: string;
+  assettokenid: number;
+  amount: number;
+  price: string;
+};
