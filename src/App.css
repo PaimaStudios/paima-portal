@@ -1,3 +1,5 @@
 .snackbarContainer {
     margin-top: 64px;
+    max-width: 30%;
+    word-break: break-word;
 }
