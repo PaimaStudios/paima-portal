@@ -22,6 +22,20 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   },
 }));
 
+interface MyMeta extends Record<string, unknown> {
+  successMessage?: string;
+  errorMessage?: string;
+  infoMessage?: string;
+  invalidateQueries?: QueryKey[];
+}
+
+declare module "@tanstack/react-query" {
+  interface Register {
+    queryMeta: MyMeta;
+    mutationMeta: MyMeta;
+  }
+}
+
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
@@ -33,12 +47,12 @@ const queryClient = new QueryClient({
     onSuccess: (data, query) => {
       if (query.meta?.successMessage) {
         enqueueSnackbar({
-          message: query.meta.successMessage as string,
+          message: query.meta.successMessage,
           variant: "success",
         });
       }
       if (query.meta?.invalidateQueries) {
-        (query.meta.invalidateQueries as QueryKey[]).forEach((queryKey) => {
+        query.meta.invalidateQueries.forEach((queryKey) => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
@@ -54,18 +68,18 @@ const queryClient = new QueryClient({
     onSuccess: (data, variables, context, mutation) => {
       if (mutation.meta?.infoMessage) {
         enqueueSnackbar({
-          message: mutation.meta.infoMessage as string,
+          message: mutation.meta.infoMessage,
           variant: "info",
         });
       }
       if (mutation.meta?.successMessage) {
         enqueueSnackbar({
-          message: mutation.meta.successMessage as string,
+          message: mutation.meta.successMessage,
           variant: "success",
         });
       }
       if (mutation.meta?.invalidateQueries) {
-        (mutation.meta.invalidateQueries as QueryKey[]).forEach((queryKey) => {
+        mutation.meta.invalidateQueries.forEach((queryKey) => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
