@@ -1,4 +1,4 @@
-import { Container, Tab } from "@mui/material";
+import { Container, FormControlLabel, Stack, Switch, Tab } from "@mui/material";
 import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 import SellSection from "@components/dex/SellSection";
 import TabContext from "@mui/lab/TabContext";
@@ -19,6 +19,7 @@ export default function Dex() {
   let { game: gameFromUrl, asset: assetFromUrl } = useParams();
   const [tabValue, setTabValue] = useState(TabValue.Buy);
   const [assetMetadata, setAssetMetadata] = useState<AssetMetadata>();
+  const [advancedMode, setAdvancedMode] = useState(false);
 
   useEffect(() => {
     const gameInfo = gamesMetadata[gameFromUrl!];
@@ -41,13 +42,33 @@ export default function Dex() {
       <Container>
         <IsConnectedWrapper>
           <TabContext value={tabValue}>
-            <TabList onChange={handleChangeTab} centered>
-              <Tab label="Buy" value={TabValue.Buy} />
-              <Tab label="Sell" value={TabValue.Sell} />
-            </TabList>
+            <Stack
+              sx={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <TabList onChange={handleChangeTab} centered>
+                <Tab label="Buy" value={TabValue.Buy} />
+                <Tab label="Sell" value={TabValue.Sell} />
+              </TabList>
+              <FormControlLabel
+                control={
+                  <Switch
+                    value={advancedMode}
+                    onChange={() => setAdvancedMode(!advancedMode)}
+                  />
+                }
+                label="Advanced mode"
+              />
+            </Stack>
             <TabPanel value={TabValue.Buy}>Buy</TabPanel>
             <TabPanel value={TabValue.Sell}>
-              <SellSection assetMetadata={assetMetadata} />
+              <SellSection
+                assetMetadata={assetMetadata}
+                advancedMode={advancedMode}
+              />
             </TabPanel>
           </TabContext>
         </IsConnectedWrapper>
