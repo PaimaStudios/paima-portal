@@ -1,5 +1,7 @@
 export const SnackbarMessage = {
-  TransactionSubmitted: "Transaction submitted, awaiting confirmation...",
+  Common: {
+    TransactionSubmitted: "Transaction submitted, awaiting confirmation...",
+  },
   LockSuccess: "Lock operation successful!",
   UnlockSuccess: "Unlock reqest operation successful!",
   WithdrawSuccess: "Withdraw operation successful!",
@@ -11,5 +13,6 @@ export const SnackbarMessage = {
       "Approval successful, proceeding with creating sell order...",
     CreateOrderSuccess: "Sell order created successfully!",
     CreateBatchOrderSuccess: "Batch sell order created successfully!",
+    CancelOrderSuccess: "Sell order cancelled successfully!",
   },
 };

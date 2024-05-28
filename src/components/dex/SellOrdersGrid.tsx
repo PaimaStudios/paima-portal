@@ -1,15 +1,19 @@
-import TransactionButton from "@components/common/TransactionButton";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import { Divider, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
+import { AssetMetadata } from "@utils/dex/types";
 import { Fragment } from "react";
 import { formatEther } from "viem";
+import { useAccount } from "wagmi";
+import CancelSellOrderButton from "./CancelSellOrderButton";
 
 type Props = {
+  assetMetadata: AssetMetadata;
   user?: `0x${string}`;
 };
 
-export default function SellOrdersGrid({ user }: Props) {
+export default function SellOrdersGrid({ assetMetadata, user }: Props) {
+  const { chainId } = useAccount();
   const { data: orders } = useGetSellOrders({ user });
 
   if (!orders) return <Typography>Loading...</Typography>;
@@ -46,22 +50,22 @@ export default function SellOrdersGrid({ user }: Props) {
             <Typography>{order.assettokenid}</Typography>
           </Grid>
           <Grid xs={2}>
-            <Typography>{order.amount}</Typography>
+            <Typography>
+              {order.amount} {assetMetadata.symbol}
+            </Typography>
           </Grid>
           <Grid xs={2}>
-            <Typography>{formatEther(BigInt(order.price))}</Typography>
+            <Typography>{formatEther(BigInt(order.price))} ETH</Typography>
           </Grid>
           <Grid xs={2}>
             <Typography>
-              {formatEther(BigInt(order.price) * BigInt(order.amount))}
+              {formatEther(BigInt(order.price) * BigInt(order.amount))} ETH
             </Typography>
           </Grid>
           <Grid xs={3}>
-            <TransactionButton
-              actionText={"Cancel sell order"}
-              isLoading={false}
-              isPending={false}
-              sx={{ ml: 2 }}
+            <CancelSellOrderButton
+              orderId={order.orderid}
+              dexAddress={assetMetadata.dexAddress[chainId!]}
             />
           </Grid>
         </Fragment>

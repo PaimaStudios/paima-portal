@@ -1,7 +1,9 @@
 import TransactionButton from "@components/common/TransactionButton";
 import { Divider, Input, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
+import { useQueryClient } from "@tanstack/react-query";
 import { Asset, AssetMetadata } from "@utils/dex/types";
+import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import { useSnackbar } from "notistack";
 import { Fragment, useEffect, useState } from "react";
@@ -11,7 +13,7 @@ import {
   useWriteOrderbookDexCreateBatchSellOrder,
   useWriteOrderbookDexCreateSellOrder,
 } from "src/generated";
-import { formatEther, parseEther, parseUnits } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 
 type Props = {
@@ -27,6 +29,7 @@ export default function SellForm({
   assets,
   advancedMode,
 }: Props) {
+  const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const [price, setPrice] = useState("");
   const [priceBN, setPriceBN] = useState(0n);
@@ -48,9 +51,7 @@ export default function SellForm({
     data: createSellOrderHash,
     writeContract: writeCreateSellOrder,
     isPending: isPendingWriteCreateSellOrder,
-  } = useWriteOrderbookDexCreateSellOrder({
-    mutation: { onError: (e) => console.error(e) },
-  });
+  } = useWriteOrderbookDexCreateSellOrder();
   const {
     data: createBatchSellOrderHash,
     writeContract: writeCreateBatchSellOrder,
@@ -164,6 +165,12 @@ export default function SellForm({
         message: SnackbarMessage.Dex.CreateOrderSuccess,
         variant: "success",
       });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.SellOrders, address],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.SellableAssets],
+      });
     }
   }, [isConfirmedCreateSellOrder]);
 
@@ -172,6 +179,12 @@ export default function SellForm({
       enqueueSnackbar({
         message: SnackbarMessage.Dex.CreateBatchOrderSuccess,
         variant: "success",
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.SellOrders, address],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.SellableAssets],
       });
     }
   }, [isConfirmedCreateBatchSellOrder]);

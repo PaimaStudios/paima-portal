@@ -1,12 +1,6 @@
-import {
-  Paper,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
+import { ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Asset } from "@utils/dex/types";
-import { useState } from "react";
 
 type Props = {
   assets: Asset[];
