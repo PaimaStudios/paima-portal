@@ -5,10 +5,9 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { gamesMetadata } from "@config/dex";
-import { AssetMetadata } from "@utils/dex/types";
+import { useNavigate } from "react-router-dom";
 import BuySection from "@components/dex/BuySection";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 
 enum TabValue {
   Buy = "Buy",
@@ -17,26 +16,23 @@ enum TabValue {
 
 export default function Dex() {
   const navigate = useNavigate();
-  let { game: gameFromUrl, asset: assetFromUrl } = useParams();
+  const { data: assetMetadata, isLoading: assetMetadataLoading } =
+    useGetGameAssetMetadata();
   const [tabValue, setTabValue] = useState(TabValue.Buy);
-  const [assetMetadata, setAssetMetadata] = useState<AssetMetadata>();
   const [advancedMode, setAdvancedMode] = useState(false);
-
-  useEffect(() => {
-    const gameInfo = gamesMetadata[gameFromUrl!];
-    const assetInfo = assetFromUrl && gameInfo?.assets?.[assetFromUrl!];
-    if (!assetInfo) {
-      navigate("/404");
-    } else {
-      setAssetMetadata(assetInfo);
-    }
-  }, [gameFromUrl]);
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: TabValue) => {
     setTabValue(newValue);
   };
 
-  if (!assetMetadata) return null;
+  useEffect(() => {
+    if (!assetMetadataLoading && !assetMetadata) {
+      console.log(assetMetadataLoading, assetMetadata);
+      navigate("/");
+    }
+  }, [assetMetadata]);
+
+  if (assetMetadataLoading) return <div>Loading...</div>;
 
   return (
     <>
@@ -67,13 +63,10 @@ export default function Dex() {
               )}
             </Stack>
             <TabPanel value={TabValue.Buy}>
-              <BuySection assetMetadata={assetMetadata} />
+              <BuySection />
             </TabPanel>
             <TabPanel value={TabValue.Sell}>
-              <SellSection
-                assetMetadata={assetMetadata}
-                advancedMode={advancedMode}
-              />
+              <SellSection advancedMode={advancedMode} />
             </TabPanel>
           </TabContext>
         </IsConnectedWrapper>

@@ -1,5 +1,4 @@
 import { Input, Stack, Typography } from "@mui/material";
-import { AssetMetadata } from "@utils/dex/types";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import { useState } from "react";
 import { formatEther, parseEther } from "viem";
@@ -7,22 +6,21 @@ import { useAccount, useBalance } from "wagmi";
 import { formatEth } from "@utils/evm/utils";
 import { bigIntMin } from "@utils/utils";
 import FillOrderButton from "./FillOrderButton";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 
-type Props = {
-  assetMetadata: AssetMetadata;
-};
-
-export default function FillOrderForm({ assetMetadata }: Props) {
+export default function FillOrderForm() {
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
   const { data: orders, isLoading: isLoadingSellOrders } = useGetSellOrders({});
+  const { data: assetMetadata } = useGetGameAssetMetadata();
   const [amount, setAmount] = useState("");
   const [amountN, setAmountN] = useState(0);
   const [price, setPrice] = useState("");
   const [priceBN, setPriceBN] = useState(0n);
   const [useExactAsset, setUseExactAsset] = useState(true);
 
-  if (isLoadingSellOrders) return <Typography>Loading...</Typography>;
+  if (isLoadingSellOrders || !assetMetadata)
+    return <Typography>Loading...</Typography>;
 
   if (!orders) {
     return <Typography>Error fetching sell orders</Typography>;

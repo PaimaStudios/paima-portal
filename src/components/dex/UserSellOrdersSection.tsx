@@ -1,21 +1,20 @@
 import { Stack, Typography } from "@mui/material";
 import SellOrdersGrid from "./SellOrdersGrid";
 import { useAccount } from "wagmi";
-import { AssetMetadata } from "@utils/dex/types";
 import TransactionButton from "@components/common/TransactionButton";
 import { useWriteOrderbookDexCancelBatchSellOrder } from "src/generated";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 
-type Props = {
-  assetMetadata: AssetMetadata;
-};
-
-export default function UserSellOrdersSections({ assetMetadata }: Props) {
+export default function UserSellOrdersSections() {
   const { address } = useAccount();
-  const { data: orders } = useGetSellOrders({ user: address });
+  const { data: orders, isLoading: isLoadingSellOrders } = useGetSellOrders({
+    user: address,
+  });
+  const { data: assetMetadata } = useGetGameAssetMetadata();
 
   const {
     writeContract,
@@ -41,7 +40,12 @@ export default function UserSellOrdersSections({ assetMetadata }: Props) {
     },
   });
 
-  if (!orders) return <Typography>Loading...</Typography>;
+  if (isLoadingSellOrders || !assetMetadata)
+    return <Typography>Loading...</Typography>;
+
+  if (!orders) {
+    return <Typography>Error fetching sell orders</Typography>;
+  }
 
   const handleCancelAllSellOrdersClick = () => {
     console.log(

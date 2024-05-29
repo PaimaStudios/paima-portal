@@ -1,14 +1,12 @@
 import { Divider, Stack } from "@mui/material";
-import { AssetMetadata } from "@utils/dex/types";
 import CreateSellOrderSection from "./CreateSellOrderSection";
 import UserSellOrdersSections from "./UserSellOrdersSection";
 
 type Props = {
-  assetMetadata: AssetMetadata;
   advancedMode: boolean;
 };
 
-export default function SellSection({ assetMetadata, advancedMode }: Props) {
+export default function SellSection({ advancedMode }: Props) {
   return (
     <Stack
       sx={{
@@ -18,11 +16,8 @@ export default function SellSection({ assetMetadata, advancedMode }: Props) {
       }}
       divider={<Divider sx={{ width: "100%" }} />}
     >
-      <CreateSellOrderSection
-        assetMetadata={assetMetadata}
-        advancedMode={advancedMode}
-      />
-      <UserSellOrdersSections assetMetadata={assetMetadata} />
+      <CreateSellOrderSection advancedMode={advancedMode} />
+      <UserSellOrdersSections />
     </Stack>
   );
 }

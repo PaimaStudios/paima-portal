@@ -1,23 +1,26 @@
 import { Button, Stack, Typography } from "@mui/material";
 import useGetSellableAssets from "../../hooks/dex/useGetSellableAssets";
 import SellableAssetsGrid from "./SellableAssetsGrid";
-import { Asset, AssetMetadata } from "@utils/dex/types";
+import { Asset } from "@utils/dex/types";
 import { useState } from "react";
 import SellForm from "./SellForm";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 
 type Props = {
-  assetMetadata: AssetMetadata;
   advancedMode: boolean;
 };
 
-export default function CreateSellOrderSection({
-  assetMetadata,
-  advancedMode,
-}: Props) {
-  const { data: assets, isLoading, error } = useGetSellableAssets();
+export default function CreateSellOrderSection({ advancedMode }: Props) {
+  const {
+    data: assets,
+    isLoading: isLoadingSellableAssets,
+    error,
+  } = useGetSellableAssets();
+  const { data: assetMetadata } = useGetGameAssetMetadata();
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
 
-  if (isLoading) return <Typography>Loading...</Typography>;
+  if (isLoadingSellableAssets || !assetMetadata)
+    return <Typography>Loading...</Typography>;
 
   if (!assets) {
     console.log(error);

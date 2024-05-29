@@ -1,12 +1,7 @@
 import { Divider, Stack } from "@mui/material";
-import { AssetMetadata } from "@utils/dex/types";
 import FillOrderForm from "./FillOrderForm";
 
-type Props = {
-  assetMetadata: AssetMetadata;
-};
-
-export default function BuySection({ assetMetadata }: Props) {
+export default function BuySection() {
   return (
     <Stack
       sx={{
@@ -16,7 +11,7 @@ export default function BuySection({ assetMetadata }: Props) {
       }}
       divider={<Divider sx={{ width: "100%" }} />}
     >
-      <FillOrderForm assetMetadata={assetMetadata} />
+      <FillOrderForm />
       {/* todo: add graph */}
     </Stack>
   );
