@@ -54,15 +54,17 @@ export default function Dex() {
                 <Tab label="Buy" value={TabValue.Buy} />
                 <Tab label="Sell" value={TabValue.Sell} />
               </TabList>
-              <FormControlLabel
-                control={
-                  <Switch
-                    value={advancedMode}
-                    onChange={() => setAdvancedMode(!advancedMode)}
-                  />
-                }
-                label="Advanced mode"
-              />
+              {tabValue === TabValue.Sell && (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      value={advancedMode}
+                      onChange={() => setAdvancedMode(!advancedMode)}
+                    />
+                  }
+                  label="Advanced mode"
+                />
+              )}
             </Stack>
             <TabPanel value={TabValue.Buy}>
               <BuySection assetMetadata={assetMetadata} />
