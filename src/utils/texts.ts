@@ -17,3 +17,8 @@ export const SnackbarMessage = {
     FillOrderSuccess: "Order filled successfully!",
   },
 };
+
+export const InputErrorMessage = {
+  InputExceedsAvailableAmount: "Value exceeds available amount",
+  InputMustBeGreaterThanZero: "Value must be greater than 0",
+};

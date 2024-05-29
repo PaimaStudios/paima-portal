@@ -11,7 +11,7 @@ import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 export default function FillOrderForm() {
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
-  const { data: orders, isLoading: isLoadingSellOrders } = useGetSellOrders({});
+  const { data: orders, isLoading: isLoadingSellOrders } = useGetSellOrders();
   const { data: assetMetadata } = useGetGameAssetMetadata();
   const [amount, setAmount] = useState("");
   const [amountN, setAmountN] = useState(0);

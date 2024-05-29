@@ -1,11 +1,12 @@
 import TransactionButton from "@components/common/TransactionButton";
+import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
-import { Divider, Input, Stack, Typography } from "@mui/material";
+import { Divider, Stack, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useQueryClient } from "@tanstack/react-query";
 import { Asset, AssetMetadata } from "@utils/dex/types";
 import { QueryKeys } from "@utils/queryKeys";
-import { SnackbarMessage } from "@utils/texts";
+import { InputErrorMessage, SnackbarMessage } from "@utils/texts";
 import { Fragment, useEffect, useState } from "react";
 import {
   useReadInverseAppProjected1155IsApprovedForAll,
@@ -30,6 +31,7 @@ export default function SellForm({
   advancedMode,
 }: Props) {
   const queryClient = useQueryClient();
+  const { data: orders } = useGetSellOrders();
   const [price, setPrice] = useState("");
   const [priceBN, setPriceBN] = useState(0n);
   const [amount, setAmount] = useState("");
@@ -193,6 +195,16 @@ export default function SellForm({
     }
   }, [isConfirmedApproval]);
 
+  useEffect(() => {
+    if (priceBN === 0n) {
+      const floorPrice = orders?.[0]?.price;
+      if (floorPrice) {
+        setPrice(formatEther(BigInt(floorPrice)));
+        setPriceBN(BigInt(floorPrice));
+      }
+    }
+  }, [orders]);
+
   const totalAssetAvailable = assets.reduce(
     (acc, asset) => acc + BigInt(asset.amount),
     0n,
@@ -202,58 +214,88 @@ export default function SellForm({
     0n,
   );
 
+  const amountInputError =
+    amountN > totalAssetAvailable
+      ? InputErrorMessage.InputExceedsAvailableAmount
+      : amountN === 0
+      ? InputErrorMessage.InputMustBeGreaterThanZero
+      : null;
+
+  const priceInputError =
+    priceBN === 0n ? InputErrorMessage.InputMustBeGreaterThanZero : null;
+
   return (
     <Stack sx={{ gap: 3, width: "100%", alignItems: "center" }}>
-      {!advancedMode && (
-        <Stack
-          sx={{
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 2,
-            alignItems: "center",
-          }}
-        >
-          <Typography>Amount of {assetMetadata.symbol} to sell:</Typography>
-          <Input
+      <Stack sx={{ gap: 1, width: "100%", maxWidth: "500px" }}>
+        {!advancedMode && (
+          <TextField
             value={amount}
+            label={`Sell amount`}
             onChange={handleAmountInputChange}
-            endAdornment={assetMetadata.symbol}
-          ></Input>
-          <Typography variant="caption">
-            Available: {totalAssetAvailable.toString()}
-          </Typography>
-        </Stack>
-      )}
-      <Stack
-        sx={{
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: 2,
-          alignItems: "center",
-        }}
-      >
-        <Typography>Set price per 1 {assetMetadata.symbol}:</Typography>
-        <Input
+            InputProps={{
+              endAdornment: (
+                <Stack
+                  sx={{
+                    flexDirection: "row",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography>{assetMetadata.symbol}</Typography>
+                  <Divider orientation="vertical" flexItem />
+                  <Stack
+                    sx={{
+                      flexDirection: "row",
+                      gap: 1 / 2,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="caption">Available:</Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setAmount(totalAssetAvailable.toString());
+                        setAmountN(Number(totalAssetAvailable));
+                      }}
+                    >
+                      {totalAssetAvailable.toString()}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              ),
+            }}
+            error={amount !== "" && !!amountInputError}
+            helperText={amount === "" ? " " : amountInputError ?? " "}
+            sx={{ width: "100%" }}
+          ></TextField>
+        )}
+        <TextField
           value={price}
+          label={`Price per 1 ${assetMetadata.symbol}`}
           onChange={handlePriceInputChange}
-          endAdornment="ETH"
-        ></Input>
+          InputProps={{ endAdornment: "ETH" }}
+          error={!!priceInputError}
+          helperText={priceInputError ?? " "}
+          sx={{ width: "100%" }}
+        ></TextField>
+        {!advancedMode && (
+          <Stack
+            sx={{
+              flexDirection: "row",
+              justifyContent: "end",
+              gap: 2,
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Typography>Grand total:</Typography>
+            <Typography sx={{ fontWeight: 600 }}>
+              {formatEther(priceBN * BigInt(amountN))} ETH
+            </Typography>
+          </Stack>
+        )}
       </Stack>
-      {!advancedMode && (
-        <Stack
-          sx={{
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 2,
-            alignItems: "center",
-          }}
-        >
-          <Typography>Grand total:</Typography>
-          <Typography sx={{ fontWeight: 600 }}>
-            {formatEther(priceBN * BigInt(amountN))} ETH
-          </Typography>
-        </Stack>
-      )}
       {advancedMode && (
         <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
           <Typography variant="h5">Summary:</Typography>
@@ -322,8 +364,8 @@ export default function SellForm({
           isPendingWriteCreateBatchSellOrder
         }
         disabled={
-          price === "" ||
-          priceBN === 0n ||
+          !!priceInputError ||
+          !!amountInputError ||
           (advancedMode && selectedAssets.length === 0) ||
           (!advancedMode && (amount === "" || amountN === 0))
         }

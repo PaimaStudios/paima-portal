@@ -5,14 +5,14 @@ import { QueryKeys } from "@utils/queryKeys";
 import { orderbookDexAbi } from "src/generated";
 import { readContract, readContracts } from "@wagmi/core";
 
-export default function useGetSellOrders({ user }: { user?: `0x${string}` }) {
+export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
   // todo: temporary query, will be replaced with API call to game node
   const dexContract = {
     address: "0xA5ceA51eDde3c71a16fb93dEf934Ce7cDDB6f71e",
     abi: orderbookDexAbi,
   } as const;
   return useQuery<SellOrder[]>({
-    queryKey: [QueryKeys.SellOrders, user],
+    queryKey: [QueryKeys.SellOrders, params?.user],
     queryFn: async () => {
       const currentOrderId = Number(
         await readContract(config, {
