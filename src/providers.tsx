@@ -15,6 +15,7 @@ import {
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { MaterialDesignContent } from "notistack";
 import { styled } from "@mui/material";
+import { getErrorMessage } from "@utils/errors";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   "&.notistack-MuiContent-success": {
@@ -39,6 +40,7 @@ declare module "@tanstack/react-query" {
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
+      console.error(error);
       enqueueSnackbar({
         message: `Something went wrong: ${error.message}`,
         variant: "error",
@@ -60,8 +62,10 @@ const queryClient = new QueryClient({
   }),
   mutationCache: new MutationCache({
     onError: (error) => {
+      if (error.message.includes("User rejected the request")) return;
+      console.error(error);
       enqueueSnackbar({
-        message: `Something went wrong: ${error.message}`,
+        message: `Something went wrong: ${getErrorMessage(error)}`,
         variant: "error",
       });
     },
