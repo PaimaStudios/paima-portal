@@ -6,8 +6,8 @@ export type Asset = {
 export type AssetMetadata = {
   name: string;
   symbol: string;
-  address: Record<number, `0x${string}`>;
-  dexAddress: Record<number, `0x${string}`>;
+  address: `0x${string}`;
+  dexAddress: `0x${string}`;
 };
 
 export type GameMetadata = {

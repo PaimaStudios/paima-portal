@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function UserSellOrdersSections({ assetMetadata }: Props) {
-  const { address, chainId } = useAccount();
+  const { address } = useAccount();
   const { data: orders } = useGetSellOrders({ user: address });
 
   const {
@@ -50,7 +50,7 @@ export default function UserSellOrdersSections({ assetMetadata }: Props) {
       )}`,
     );
     writeContract({
-      address: assetMetadata.dexAddress[chainId!],
+      address: assetMetadata.dexAddress,
       args: [orders.map((order) => BigInt(order.orderid))],
     });
   };

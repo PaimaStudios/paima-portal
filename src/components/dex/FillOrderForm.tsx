@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function FillOrderForm({ assetMetadata }: Props) {
-  const { address, chainId } = useAccount();
+  const { address } = useAccount();
   const { data: balance } = useBalance({ address });
   const { data: orders, isLoading: isLoadingSellOrders } = useGetSellOrders({});
   const [amount, setAmount] = useState("");
@@ -132,7 +132,7 @@ export default function FillOrderForm({ assetMetadata }: Props) {
         </Typography>
       </Stack>
       <FillOrderButton
-        dexAddress={assetMetadata.dexAddress[chainId!]}
+        dexAddress={assetMetadata.dexAddress}
         useExactAsset={useExactAsset}
         assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
         ethAmount={priceBN} // todo: add slippage if useExactAsset

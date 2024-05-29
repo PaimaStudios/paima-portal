@@ -4,7 +4,6 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { AssetMetadata } from "@utils/dex/types";
 import { Fragment } from "react";
 import { formatEther } from "viem";
-import { useAccount } from "wagmi";
 import CancelSellOrderButton from "./CancelSellOrderButton";
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
 };
 
 export default function SellOrdersGrid({ assetMetadata, user }: Props) {
-  const { chainId } = useAccount();
   const { data: orders } = useGetSellOrders({ user });
 
   if (!orders) return <Typography>Loading...</Typography>;
@@ -65,7 +63,7 @@ export default function SellOrdersGrid({ assetMetadata, user }: Props) {
           <Grid xs={3}>
             <CancelSellOrderButton
               orderId={order.orderid}
-              dexAddress={assetMetadata.dexAddress[chainId!]}
+              dexAddress={assetMetadata.dexAddress}
             />
           </Grid>
         </Fragment>

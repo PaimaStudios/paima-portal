@@ -34,13 +34,13 @@ export default function SellForm({
   const [priceBN, setPriceBN] = useState(0n);
   const [amount, setAmount] = useState("");
   const [amountN, setAmountN] = useState(0);
-  const { chainId, address } = useAccount();
+  const { address } = useAccount();
 
   const { data: isApproved, queryKey: isApprovedQueryKey } =
     useReadInverseAppProjected1155IsApprovedForAll({
-      address: assetMetadata.address[chainId!],
-      args: [address!, assetMetadata.dexAddress[chainId!]],
-      query: { enabled: chainId != null && address != null },
+      address: assetMetadata.address,
+      args: [address!, assetMetadata.dexAddress],
+      query: { enabled: address != null },
     });
   const {
     data: approvalHash,
@@ -141,8 +141,8 @@ export default function SellForm({
 
   const approveAssetForDex = () => {
     writeSetApproval({
-      address: assetMetadata.address[chainId!],
-      args: [assetMetadata.dexAddress[chainId!], true],
+      address: assetMetadata.address,
+      args: [assetMetadata.dexAddress, true],
     });
   };
 
@@ -167,7 +167,7 @@ export default function SellForm({
     }
     if (assetsToSell.length === 1) {
       writeCreateSellOrder({
-        address: assetMetadata.dexAddress[chainId!],
+        address: assetMetadata.dexAddress,
         args: [
           BigInt(assetsToSell[0].tokenId),
           BigInt(assetsToSell[0].amount),
@@ -176,7 +176,7 @@ export default function SellForm({
       });
     } else {
       writeCreateBatchSellOrder({
-        address: assetMetadata.dexAddress[chainId!],
+        address: assetMetadata.dexAddress,
         args: [
           assetsToSell.map((a) => BigInt(a.tokenId)),
           assetsToSell.map((a) => BigInt(a.amount)),
