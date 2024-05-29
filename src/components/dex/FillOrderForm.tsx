@@ -107,7 +107,7 @@ export default function FillOrderForm({ assetMetadata }: Props) {
           endAdornment={assetMetadata.symbol}
         ></Input>
         <Typography variant="caption">
-          Available: {totalAssetAvailable.toLocaleString()}
+          Available: {totalAssetAvailable.toString()}
         </Typography>
       </Stack>
       <Stack

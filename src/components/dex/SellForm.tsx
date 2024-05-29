@@ -193,6 +193,10 @@ export default function SellForm({
     }
   }, [isConfirmedApproval]);
 
+  const totalAssetAvailable = assets.reduce(
+    (acc, asset) => acc + BigInt(asset.amount),
+    0n,
+  );
   const total = selectedAssets.reduce(
     (acc, asset) => acc + BigInt(asset.amount) * priceBN,
     0n,
@@ -215,6 +219,9 @@ export default function SellForm({
             onChange={handleAmountInputChange}
             endAdornment={assetMetadata.symbol}
           ></Input>
+          <Typography variant="caption">
+            Available: {totalAssetAvailable.toString()}
+          </Typography>
         </Stack>
       )}
       <Stack
