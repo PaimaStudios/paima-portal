@@ -290,21 +290,20 @@ export default function SellForm({
             sx={{
               textAlign: "end",
               width: "100%",
-              maxWidth: { xs: "100%", md: "50%" },
             }}
             spacing={1 / 2}
           >
             <Grid xs={2}>
-              <Typography>Token ID</Typography>
+              <Typography variant="body2">Token ID</Typography>
             </Grid>
             <Grid xs={3}>
-              <Typography>Amount</Typography>
+              <Typography variant="body2">Amount</Typography>
             </Grid>
             <Grid xs={3}>
-              <Typography>Price/unit</Typography>
+              <Typography variant="body2">Price/unit</Typography>
             </Grid>
             <Grid xs={4}>
-              <Typography>Total</Typography>
+              <Typography variant="body2">Total</Typography>
             </Grid>
             {selectedAssets.map((asset) => (
               <Fragment key={asset.tokenId}>

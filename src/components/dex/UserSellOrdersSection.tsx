@@ -55,7 +55,7 @@ export default function UserSellOrdersSections() {
   };
 
   return (
-    <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
+    <Stack sx={{ alignItems: "center", gap: 2, width: "100%", mt: 4 }}>
       <Stack
         sx={{
           flexDirection: "row",

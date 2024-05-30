@@ -1,23 +1,64 @@
-import { Divider, Stack } from "@mui/material";
-import CreateSellOrderSection from "./CreateSellOrderSection";
-import UserSellOrdersSections from "./UserSellOrdersSection";
+import { Button, Stack, Typography } from "@mui/material";
+import useGetSellableAssets from "../../hooks/dex/useGetSellableAssets";
+import SellableAssetsGrid from "./SellableAssetsGrid";
+import { Asset } from "@utils/dex/types";
+import { useState } from "react";
+import SellForm from "./SellForm";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 
 type Props = {
   advancedMode: boolean;
 };
 
 export default function SellSection({ advancedMode }: Props) {
+  const { data: assets, isLoading: isLoadingSellableAssets } =
+    useGetSellableAssets();
+  const { data: assetMetadata } = useGetGameAssetMetadata();
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
+
+  if (isLoadingSellableAssets || !assetMetadata)
+    return <Typography>Loading...</Typography>;
+
+  if (!assets) {
+    return <Typography>Error fetching sellable assets</Typography>;
+  }
+
+  const handleSelectAll = () => {
+    setSelectedAssets(assets);
+  };
+
   return (
-    <Stack
-      sx={{
-        alignItems: "center",
-        gap: 4,
-        width: "100%",
-      }}
-      divider={<Divider sx={{ width: "100%" }} />}
-    >
-      <CreateSellOrderSection advancedMode={advancedMode} />
-      <UserSellOrdersSections />
+    <Stack sx={{ alignItems: "center", gap: 3, width: "100%" }}>
+      <Stack
+        sx={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+          gap: 2,
+        }}
+      >
+        {advancedMode && (
+          <Typography variant="body2">
+            Select which {assetMetadata.symbol} you want to&nbsp;sell
+          </Typography>
+        )}
+        {advancedMode && (
+          <Button onClick={handleSelectAll}>Select&nbsp;all</Button>
+        )}
+      </Stack>
+      {advancedMode && (
+        <SellableAssetsGrid
+          assets={assets}
+          selectedAssets={selectedAssets}
+          setSelectedAssets={setSelectedAssets}
+        />
+      )}
+      <SellForm
+        assetMetadata={assetMetadata}
+        selectedAssets={selectedAssets}
+        assets={assets}
+        advancedMode={advancedMode}
+      />
     </Stack>
   );
 }

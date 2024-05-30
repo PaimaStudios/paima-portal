@@ -26,11 +26,11 @@ export default function SellableAssetsGrid({
       value={selectedAssets}
       onChange={handleSelectChange}
       aria-label="Assets to sell"
-      sx={{ width: "100%" }}
+      sx={{ width: "100%", justifyContent: "center" }}
     >
       <Grid container spacing={2} sx={{ width: "100%" }}>
         {assets.map((asset) => (
-          <Grid xs={6} md={4} lg={3} xl={2} key={asset.tokenId}>
+          <Grid xs={6} lg={4} key={asset.tokenId}>
             <ToggleButton
               value={asset}
               aria-label={`Token ID ${asset.tokenId}`}
@@ -38,12 +38,12 @@ export default function SellableAssetsGrid({
                 width: "100%",
               }}
             >
-              <Typography variant="h5" sx={{ padding: 2 }}>
+              <Typography variant="h5" sx={{ px: 2 }}>
                 {asset.amount}
               </Typography>
               <Typography
                 variant="caption"
-                sx={{ position: "absolute", top: 8, right: 8 }}
+                sx={{ position: "absolute", top: 2, right: 4 }}
               >
                 ID {asset.tokenId}
               </Typography>

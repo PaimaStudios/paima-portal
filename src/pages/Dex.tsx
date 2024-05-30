@@ -1,29 +1,16 @@
-import { Container, FormControlLabel, Stack, Switch, Tab } from "@mui/material";
-import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
-import SellSection from "@components/dex/SellSection";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
-import { useEffect, useState } from "react";
+import { Container, Stack, Typography } from "@mui/material";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import BuySection from "@components/dex/BuySection";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
-
-enum TabValue {
-  Buy = "Buy",
-  Sell = "Sell",
-}
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import PriceChart from "@components/dex/PriceChart";
+import BuyAndSellSection from "@components/dex/BuyAndSellSection";
+import UserSellOrdersSections from "@components/dex/UserSellOrdersSection";
 
 export default function Dex() {
   const navigate = useNavigate();
   const { data: assetMetadata, isLoading: assetMetadataLoading } =
     useGetGameAssetMetadata();
-  const [tabValue, setTabValue] = useState(TabValue.Buy);
-  const [advancedMode, setAdvancedMode] = useState(false);
-
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: TabValue) => {
-    setTabValue(newValue);
-  };
 
   useEffect(() => {
     if (!assetMetadataLoading && !assetMetadata) {
@@ -36,39 +23,22 @@ export default function Dex() {
   return (
     <>
       <Container>
-        <IsConnectedWrapper>
-          <TabContext value={tabValue}>
-            <Stack
-              sx={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <TabList onChange={handleChangeTab} centered>
-                <Tab label="Buy" value={TabValue.Buy} />
-                <Tab label="Sell" value={TabValue.Sell} />
-              </TabList>
-              {tabValue === TabValue.Sell && (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={advancedMode}
-                      onChange={() => setAdvancedMode(!advancedMode)}
-                    />
-                  }
-                  label="Advanced mode"
-                />
-              )}
-            </Stack>
-            <TabPanel value={TabValue.Buy}>
-              <BuySection />
-            </TabPanel>
-            <TabPanel value={TabValue.Sell}>
-              <SellSection advancedMode={advancedMode} />
-            </TabPanel>
-          </TabContext>
-        </IsConnectedWrapper>
+        <Stack sx={{ gap: 2, mt: 2 }}>
+          <Typography variant="h4" sx={{ textAlign: "center" }}>
+            Trade {assetMetadata?.name}
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid xs={8}>
+              <PriceChart />
+            </Grid>
+            <Grid xs={4}>
+              <BuyAndSellSection />
+            </Grid>
+            <Grid xs={12}>
+              <UserSellOrdersSections />
+            </Grid>
+          </Grid>
+        </Stack>
       </Container>
     </>
   );

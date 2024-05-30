@@ -23,7 +23,7 @@ export default function useGetAssetHistoricalData(params?: {
 
   return useQuery<AssetHistoricalData>({
     queryKey: [QueryKeys.AssetHistoricalData],
-    refetchInterval: 3000,
+    refetchInterval: 2000,
     queryFn: async () => {
       const newMockData = { ...mockData };
       newMockData.data = mockData.data.map((item, index) => {
