@@ -235,35 +235,37 @@ export default function SellForm({
 
   return (
     <Stack sx={{ gap: 3, width: "100%", alignItems: "center" }}>
-      <Stack sx={{ gap: 1, width: "100%", maxWidth: "500px" }}>
-        {!advancedMode && (
-          <InputWithClickableLimits
-            value={amount}
-            label={`Sell amount`}
-            endAdornment={assetMetadata.symbol}
-            onChange={handleAmountInputChange}
-            error={amount !== "" && !!amountInputError}
-            helperText={amount === "" ? " " : amountInputError ?? " "}
-            limits={[
-              {
-                label: "Available:",
-                value: totalAssetAvailable.toString(),
-                onClick: () => {
-                  setAmount(totalAssetAvailable.toString());
-                  setAmountN(Number(totalAssetAvailable));
+      <Stack sx={{ width: "100%", maxWidth: "500px" }}>
+        <Stack sx={{ gap: 2, width: "100%" }}>
+          {!advancedMode && (
+            <InputWithClickableLimits
+              value={amount}
+              label={`Sell amount`}
+              endAdornment={assetMetadata.symbol}
+              onChange={handleAmountInputChange}
+              error={amount !== "" && !!amountInputError}
+              helperText={amount === "" ? " " : amountInputError ?? " "}
+              limits={[
+                {
+                  label: "Available:",
+                  value: totalAssetAvailable.toString(),
+                  onClick: () => {
+                    setAmount(totalAssetAvailable.toString());
+                    setAmountN(Number(totalAssetAvailable));
+                  },
                 },
-              },
-            ]}
+              ]}
+            />
+          )}
+          <InputWithClickableLimits
+            value={price}
+            label={`Price per 1 ${assetMetadata.symbol}`}
+            endAdornment={"ETH"}
+            onChange={handlePriceInputChange}
+            error={price !== "" && !!priceInputError}
+            helperText={priceInputError ?? " "}
           />
-        )}
-        <InputWithClickableLimits
-          value={price}
-          label={`Price per 1 ${assetMetadata.symbol}`}
-          endAdornment={"ETH"}
-          onChange={handlePriceInputChange}
-          error={price !== "" && !!priceInputError}
-          helperText={priceInputError ?? " "}
-        />
+        </Stack>
         {!advancedMode && (
           <Stack
             sx={{

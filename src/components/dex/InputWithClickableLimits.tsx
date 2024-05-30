@@ -31,35 +31,40 @@ export default function InputWithClickableLimits({
       onChange={onChange}
       InputProps={{
         endAdornment: (
-          <Stack
-            sx={{
-              flexDirection: "row",
-              gap: 1,
-              alignItems: "center",
-            }}
-            divider={<Divider orientation="vertical" flexItem />}
-          >
+          <>
             <Typography>{endAdornment}</Typography>
-            {limits?.map((limit) => (
-              <Stack
-                key={limit.label}
-                sx={{
-                  flexDirection: "row",
-                  gap: 1 / 2,
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="caption">{limit.label}</Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ cursor: "pointer" }}
-                  onClick={limit.onClick}
+            <Stack
+              sx={{
+                flexDirection: "row",
+                gap: 1,
+                alignItems: "center",
+                position: "absolute",
+                top: -20,
+                right: 8,
+              }}
+              divider={<Divider orientation="vertical" flexItem />}
+            >
+              {limits?.map((limit) => (
+                <Stack
+                  key={limit.label}
+                  sx={{
+                    flexDirection: "row",
+                    gap: 1 / 2,
+                    alignItems: "center",
+                  }}
                 >
-                  {limit.value}
-                </Typography>
-              </Stack>
-            ))}
-          </Stack>
+                  <Typography variant="caption">{limit.label}</Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{ cursor: "pointer" }}
+                    onClick={limit.onClick}
+                  >
+                    {limit.value}
+                  </Typography>
+                </Stack>
+              ))}
+            </Stack>
+          </>
         ),
       }}
       error={error}

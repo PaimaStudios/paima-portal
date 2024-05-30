@@ -114,7 +114,7 @@ export default function FillOrderForm() {
 
   return (
     <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
-      <Stack sx={{ gap: 1, width: "100%", maxWidth: "500px" }}>
+      <Stack sx={{ gap: 2, width: "100%", maxWidth: "500px" }}>
         <InputWithClickableLimits
           value={amount}
           label={`Buy amount`}
@@ -170,8 +170,7 @@ export default function FillOrderForm() {
         assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
         ethAmount={priceBN} // todo: add slippage if useExactAsset
         orderIds={orders.map((order) => BigInt(order.orderid))}
-        disabled={!!priceInputError ||
-          !!amountInputError}
+        disabled={!!priceInputError || !!amountInputError}
       />
     </Stack>
   );
