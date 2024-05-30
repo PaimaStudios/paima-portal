@@ -171,7 +171,6 @@ export default function SellForm({
         remainingAmount -= amt;
       }
     }
-    console.log("assetsToSell", assetsToSell);
     if (assetsToSell.length === 0) {
       console.error("Zero selected assets");
       return;

@@ -27,7 +27,6 @@ export default function Dex() {
 
   useEffect(() => {
     if (!assetMetadataLoading && !assetMetadata) {
-      console.log(assetMetadataLoading, assetMetadata);
       navigate("/");
     }
   }, [assetMetadata]);

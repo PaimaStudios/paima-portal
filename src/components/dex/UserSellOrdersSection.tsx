@@ -48,11 +48,6 @@ export default function UserSellOrdersSections() {
   }
 
   const handleCancelAllSellOrdersClick = () => {
-    console.log(
-      `Cancel batch sell orders ${orders.map((order) =>
-        BigInt(order.orderid),
-      )}`,
-    );
     writeContract({
       address: assetMetadata.dexAddress,
       args: [orders.map((order) => BigInt(order.orderid))],

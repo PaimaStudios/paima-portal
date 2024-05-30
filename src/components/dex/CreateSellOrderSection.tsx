@@ -14,7 +14,6 @@ export default function CreateSellOrderSection({ advancedMode }: Props) {
   const {
     data: assets,
     isLoading: isLoadingSellableAssets,
-    error,
   } = useGetSellableAssets();
   const { data: assetMetadata } = useGetGameAssetMetadata();
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
@@ -23,7 +22,6 @@ export default function CreateSellOrderSection({ advancedMode }: Props) {
     return <Typography>Loading...</Typography>;
 
   if (!assets) {
-    console.log(error);
     return <Typography>Error fetching sellable assets</Typography>;
   }
 

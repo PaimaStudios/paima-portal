@@ -72,7 +72,6 @@ export default function FillOrderForm() {
   const handleAmountInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    console.log("amount changed");
     const newValue = event.target.value;
     setAmount(event.target.value);
 
@@ -86,7 +85,6 @@ export default function FillOrderForm() {
   const handlePriceInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    console.log("price changed");
     const newValue = event.target.value;
     setPrice(event.target.value);
     try {

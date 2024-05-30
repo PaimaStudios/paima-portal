@@ -24,7 +24,6 @@ export default function useGetSellableAssets() {
       const assets = await readContracts(config, {
         contracts,
       });
-      console.log("assets", assets);
       return [1, 2, 3].map((id, arrayIndex) => {
         const result = assets[arrayIndex].result as any;
         return {
