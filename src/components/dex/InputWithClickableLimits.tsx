@@ -6,11 +6,11 @@ type Props = {
   label: string;
   onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   endAdornment: string;
-  limits?: {
+  limits?: ({
     label: string;
     onClick: MouseEventHandler<HTMLSpanElement>;
     value: string;
-  }[];
+  } | null)[];
   error: boolean;
   helperText?: string;
 };
@@ -44,25 +44,27 @@ export default function InputWithClickableLimits({
               }}
               divider={<Divider orientation="vertical" flexItem />}
             >
-              {limits?.map((limit) => (
-                <Stack
-                  key={limit.label}
-                  sx={{
-                    flexDirection: "row",
-                    gap: 1 / 2,
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="caption">{limit.label}</Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{ cursor: "pointer" }}
-                    onClick={limit.onClick}
+              {limits?.map((limit) =>
+                limit == null ? null : (
+                  <Stack
+                    key={limit.label}
+                    sx={{
+                      flexDirection: "row",
+                      gap: 1 / 2,
+                      alignItems: "center",
+                    }}
                   >
-                    {limit.value}
-                  </Typography>
-                </Stack>
-              ))}
+                    <Typography variant="caption">{limit.label}</Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ cursor: "pointer" }}
+                      onClick={limit.onClick}
+                    >
+                      {limit.value}
+                    </Typography>
+                  </Stack>
+                ),
+              )}
             </Stack>
           </>
         ),

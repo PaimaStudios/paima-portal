@@ -142,16 +142,18 @@ export default function FillOrderForm() {
           error={price !== "" && !!priceInputError}
           helperText={price === "" ? " " : priceInputError ?? " "}
           limits={[
-            {
-              label: "Balance:",
-              value: balance ? formatEth(balance.value) : "",
-              onClick: () => {
-                if (balance == null) return;
-                setPrice(formatEther(balance.value));
-                setPriceBN(balance.value);
-                recalculateAmount(balance.value);
-              },
-            },
+            balance && balance.value <= totalEthPayable
+              ? {
+                  label: "Balance:",
+                  value: balance ? formatEth(balance.value) : "",
+                  onClick: () => {
+                    if (balance == null) return;
+                    setPrice(formatEther(balance.value));
+                    setPriceBN(balance.value);
+                    recalculateAmount(balance.value);
+                  },
+                }
+              : null,
             {
               label: "Available:",
               value: formatEth(totalEthPayable),
