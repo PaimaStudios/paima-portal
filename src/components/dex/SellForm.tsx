@@ -61,6 +61,10 @@ export default function SellForm({
     isPending: isPendingWriteCreateSellOrder,
   } = useWriteOrderbookDexCreateSellOrder({
     mutation: {
+      onSuccess: () => {
+        setAmount("");
+        setAmountN(0);
+      },
       meta: {
         infoMessage: SnackbarMessage.Common.TransactionSubmitted,
       },
@@ -72,6 +76,10 @@ export default function SellForm({
     isPending: isPendingWriteCreateBatchSellOrder,
   } = useWriteOrderbookDexCreateBatchSellOrder({
     mutation: {
+      onSuccess: () => {
+        setAmount("");
+        setAmountN(0);
+      },
       meta: {
         infoMessage: SnackbarMessage.Common.TransactionSubmitted,
       },
