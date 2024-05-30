@@ -1,5 +1,6 @@
 import TransactionButton from "@components/common/TransactionButton";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
+import { ButtonProps } from "@mui/material";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import {
@@ -14,7 +15,7 @@ type Props = {
   assetAmount: bigint;
   ethAmount: bigint;
   orderIds: bigint[];
-};
+} & ButtonProps;
 
 export default function FillOrderButton({
   dexAddress,
@@ -22,6 +23,7 @@ export default function FillOrderButton({
   assetAmount,
   ethAmount,
   orderIds,
+  ...props
 }: Props) {
   const { address } = useAccount();
   const {
@@ -81,6 +83,7 @@ export default function FillOrderButton({
       isLoading={isLoading}
       isPending={isPendingExactAsset || isPendingExactEth}
       sx={{ ml: 2 }}
+      {...props}
     />
   );
 }

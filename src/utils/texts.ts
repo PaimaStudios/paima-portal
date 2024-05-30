@@ -21,4 +21,5 @@ export const SnackbarMessage = {
 export const InputErrorMessage = {
   InputExceedsAvailableAmount: "Value exceeds available amount",
   InputMustBeGreaterThanZero: "Value must be greater than 0",
+  InputExceedsBalance: "Value exceeds your balance",
 };

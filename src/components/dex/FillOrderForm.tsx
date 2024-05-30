@@ -7,6 +7,8 @@ import { formatEth } from "@utils/evm/utils";
 import { bigIntMin } from "@utils/utils";
 import FillOrderButton from "./FillOrderButton";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
+import InputWithClickableLimits from "./InputWithClickableLimits";
+import { InputErrorMessage } from "@utils/texts";
 
 export default function FillOrderForm() {
   const { address } = useAccount();
@@ -35,6 +37,38 @@ export default function FillOrderForm() {
     0n,
   );
 
+  const recalculatePrice = (newAmount: number) => {
+    let newPrice = 0n;
+    let remainingAmount = newAmount;
+    orders.forEach((order) => {
+      if (remainingAmount === 0) return;
+      const fillAmount = Math.min(remainingAmount, order.amount);
+      newPrice += BigInt(fillAmount) * BigInt(order.price);
+      remainingAmount -= fillAmount;
+    });
+    setPriceBN(newPrice);
+    setPrice(formatEther(newPrice));
+    setUseExactAsset(true);
+  };
+
+  const recalculateAmount = (newPrice: bigint) => {
+    let newAmount = 0n;
+    let remainingTotalPrice = newPrice;
+    orders.forEach((order) => {
+      if (remainingTotalPrice === 0n) return;
+      const fillPrice = bigIntMin(
+        remainingTotalPrice,
+        BigInt(order.amount) * BigInt(order.price),
+      );
+      const fillAmount = fillPrice / BigInt(order.price);
+      newAmount += fillAmount;
+      remainingTotalPrice -= fillPrice;
+    });
+    setAmountN(Number(newAmount));
+    setAmount(newAmount.toString());
+    setUseExactAsset(false);
+  };
+
   const handleAmountInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -45,18 +79,7 @@ export default function FillOrderForm() {
     const newValueN = Number(newValue);
     if (newValueN % 1 === 0) {
       setAmountN(newValueN);
-
-      let newPrice = 0n;
-      let remainingAmount = newValueN;
-      orders.forEach((order) => {
-        if (remainingAmount === 0) return;
-        const fillAmount = Math.min(remainingAmount, order.amount);
-        newPrice += BigInt(fillAmount) * BigInt(order.price);
-        remainingAmount -= fillAmount;
-      });
-      setPriceBN(newPrice);
-      setPrice(formatEther(newPrice));
-      setUseExactAsset(true);
+      recalculatePrice(newValueN);
     }
   };
 
@@ -69,65 +92,77 @@ export default function FillOrderForm() {
     try {
       const newValueBN = parseEther(newValue);
       setPriceBN(newValueBN);
-
-      let newAmount = 0n;
-      let remainingTotalPrice = newValueBN;
-      orders.forEach((order) => {
-        if (remainingTotalPrice === 0n) return;
-        const fillPrice = bigIntMin(
-          remainingTotalPrice,
-          BigInt(order.amount) * BigInt(order.price),
-        );
-        const fillAmount = fillPrice / BigInt(order.price);
-        newAmount += fillAmount;
-        remainingTotalPrice -= fillPrice;
-      });
-      setAmountN(Number(newAmount));
-      setAmount(newAmount.toString());
-      setUseExactAsset(false);
+      recalculateAmount(newValueBN);
     } catch (e) {}
   };
 
+  const amountInputError =
+    amountN > totalAssetAvailable
+      ? InputErrorMessage.InputExceedsAvailableAmount
+      : amountN === 0
+      ? InputErrorMessage.InputMustBeGreaterThanZero
+      : null;
+
+  const priceInputError =
+    priceBN > totalEthPayable
+      ? InputErrorMessage.InputExceedsAvailableAmount
+      : balance != null && priceBN > balance.value
+      ? InputErrorMessage.InputExceedsBalance
+      : priceBN === 0n
+      ? InputErrorMessage.InputMustBeGreaterThanZero
+      : null;
+
   return (
     <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
-      <Stack
-        sx={{
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: 2,
-          alignItems: "center",
-        }}
-      >
-        <Typography>Amount of {assetMetadata.symbol} to buy:</Typography>
-        <Input
+      <Stack sx={{ gap: 1, width: "100%", maxWidth: "500px" }}>
+        <InputWithClickableLimits
           value={amount}
-          onChange={handleAmountInputChange}
+          label={`Buy amount`}
           endAdornment={assetMetadata.symbol}
-        ></Input>
-        <Typography variant="caption">
-          Available: {totalAssetAvailable.toString()}
-        </Typography>
-      </Stack>
-      <Stack
-        sx={{
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: 2,
-          alignItems: "center",
-        }}
-      >
-        <Typography>Total ETH to pay:</Typography>
-        <Input
+          onChange={handleAmountInputChange}
+          error={amount !== "" && !!amountInputError}
+          helperText={amount === "" ? " " : amountInputError ?? " "}
+          limits={[
+            {
+              label: "Available:",
+              value: totalAssetAvailable.toString(),
+              onClick: () => {
+                setAmount(totalAssetAvailable.toString());
+                setAmountN(Number(totalAssetAvailable));
+                recalculatePrice(Number(totalAssetAvailable));
+              },
+            },
+          ]}
+        />
+        <InputWithClickableLimits
           value={price}
-          onChange={handlePriceInputChange}
+          label={`Total ETH to pay`}
           endAdornment={"ETH"}
-        ></Input>
-        <Typography variant="caption">
-          Balance: {balance ? formatEth(balance.value) : ""}
-        </Typography>
-        <Typography variant="caption">
-          Available: {formatEth(totalEthPayable)}
-        </Typography>
+          onChange={handlePriceInputChange}
+          error={price !== "" && !!priceInputError}
+          helperText={price === "" ? " " : priceInputError ?? " "}
+          limits={[
+            {
+              label: "Balance:",
+              value: balance ? formatEth(balance.value) : "",
+              onClick: () => {
+                if (balance == null) return;
+                setPrice(formatEther(balance.value));
+                setPriceBN(balance.value);
+                recalculateAmount(balance.value);
+              },
+            },
+            {
+              label: "Available:",
+              value: formatEth(totalEthPayable),
+              onClick: () => {
+                setPrice(formatEther(totalEthPayable));
+                setPriceBN(totalEthPayable);
+                recalculateAmount(totalEthPayable);
+              },
+            },
+          ]}
+        />
       </Stack>
       <FillOrderButton
         dexAddress={assetMetadata.dexAddress}
@@ -135,6 +170,8 @@ export default function FillOrderForm() {
         assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
         ethAmount={priceBN} // todo: add slippage if useExactAsset
         orderIds={orders.map((order) => BigInt(order.orderid))}
+        disabled={!!priceInputError ||
+          !!amountInputError}
       />
     </Stack>
   );

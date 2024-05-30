@@ -16,6 +16,7 @@ import {
 } from "src/generated";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
+import InputWithClickableLimits from "./InputWithClickableLimits";
 
 type Props = {
   assetMetadata: AssetMetadata;
@@ -236,57 +237,33 @@ export default function SellForm({
     <Stack sx={{ gap: 3, width: "100%", alignItems: "center" }}>
       <Stack sx={{ gap: 1, width: "100%", maxWidth: "500px" }}>
         {!advancedMode && (
-          <TextField
+          <InputWithClickableLimits
             value={amount}
             label={`Sell amount`}
+            endAdornment={assetMetadata.symbol}
             onChange={handleAmountInputChange}
-            InputProps={{
-              endAdornment: (
-                <Stack
-                  sx={{
-                    flexDirection: "row",
-                    gap: 1,
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography>{assetMetadata.symbol}</Typography>
-                  <Divider orientation="vertical" flexItem />
-                  <Stack
-                    sx={{
-                      flexDirection: "row",
-                      gap: 1 / 2,
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="caption">Available:</Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setAmount(totalAssetAvailable.toString());
-                        setAmountN(Number(totalAssetAvailable));
-                      }}
-                    >
-                      {totalAssetAvailable.toString()}
-                    </Typography>
-                  </Stack>
-                </Stack>
-              ),
-            }}
             error={amount !== "" && !!amountInputError}
             helperText={amount === "" ? " " : amountInputError ?? " "}
-            sx={{ width: "100%" }}
-          ></TextField>
+            limits={[
+              {
+                label: "Available:",
+                value: totalAssetAvailable.toString(),
+                onClick: () => {
+                  setAmount(totalAssetAvailable.toString());
+                  setAmountN(Number(totalAssetAvailable));
+                },
+              },
+            ]}
+          />
         )}
-        <TextField
+        <InputWithClickableLimits
           value={price}
           label={`Price per 1 ${assetMetadata.symbol}`}
+          endAdornment={"ETH"}
           onChange={handlePriceInputChange}
-          InputProps={{ endAdornment: "ETH" }}
-          error={!!priceInputError}
+          error={price !== "" && !!priceInputError}
           helperText={priceInputError ?? " "}
-          sx={{ width: "100%" }}
-        ></TextField>
+        />
         {!advancedMode && (
           <Stack
             sx={{
