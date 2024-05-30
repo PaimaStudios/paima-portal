@@ -1,31 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { Asset, AssetHistoricalData } from "@utils/dex/types";
+import { mockChartData } from "@utils/dex/mockChartData";
+import { AssetHistoricalData } from "@utils/dex/types";
 import { QueryKeys } from "@utils/queryKeys";
 import { useParams } from "react-router-dom";
 
-function randomIntFromInterval(min: number, max: number) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
+const timeNow = new Date().getTime() / 1000;
+const timeFrom = timeNow - mockChartData.length * 3600;
 const mockData: AssetHistoricalData = {
-  timeFrom: 1716968241,
-  timeTo: 1717054641,
-  data: new Array(24).map((_, i) => {
-    const high = randomIntFromInterval(1000, 1e18);
-    const low = randomIntFromInterval(0, high);
-    const open = randomIntFromInterval(low, high);
-    const close = randomIntFromInterval(low, high);
-    return {
-      time: 1716968241 + i * 3600,
-      high,
-      low,
-      open,
-      close,
-      volumeFrom: randomIntFromInterval(1, 1e18),
-      volumeTo: randomIntFromInterval(1, 1e18),
-    };
-  }) as AssetHistoricalData["data"],
+  timeFrom,
+  timeTo: timeNow,
+  data: mockChartData,
 };
 
 export default function useGetAssetHistoricalData(params?: {
@@ -38,9 +22,20 @@ export default function useGetAssetHistoricalData(params?: {
   const asset = params?.asset || assetFromUrl;
 
   return useQuery<AssetHistoricalData>({
-    queryKey: [QueryKeys.SellableAssets],
+    queryKey: [QueryKeys.AssetHistoricalData],
+    refetchInterval: 3000,
     queryFn: async () => {
-      return mockData;
+      const newMockData = { ...mockData };
+      newMockData.data = mockData.data.map((item, index) => {
+        const newItem = { ...item };
+        if (index === mockData.data.length - 1) {
+          newItem.close =
+            newItem.low + Math.random() * (newItem.high - newItem.low);
+        }
+        return newItem;
+      });
+      newMockData.timeTo = new Date().getTime();
+      return newMockData;
     },
   });
 }

@@ -1,5 +1,6 @@
 import { Divider, Stack } from "@mui/material";
 import FillOrderForm from "./FillOrderForm";
+import PriceChart from "./PriceChart";
 
 export default function BuySection() {
   return (
@@ -12,7 +13,7 @@ export default function BuySection() {
       divider={<Divider sx={{ width: "100%" }} />}
     >
       <FillOrderForm />
-      {/* todo: add graph */}
+      <PriceChart />
     </Stack>
   );
 }
