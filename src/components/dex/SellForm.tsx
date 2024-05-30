@@ -222,12 +222,13 @@ export default function SellForm({
     0n,
   );
 
-  const amountInputError =
-    amountN > totalAssetAvailable
-      ? InputErrorMessage.InputExceedsAvailableAmount
-      : amountN === 0
-      ? InputErrorMessage.InputMustBeGreaterThanZero
-      : null;
+  const amountInputError = advancedMode
+    ? null
+    : amountN > totalAssetAvailable
+    ? InputErrorMessage.InputExceedsAvailableAmount
+    : amountN === 0
+    ? InputErrorMessage.InputMustBeGreaterThanZero
+    : null;
 
   const priceInputError =
     priceBN === 0n ? InputErrorMessage.InputMustBeGreaterThanZero : null;
