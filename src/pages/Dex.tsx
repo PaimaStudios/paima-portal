@@ -54,7 +54,7 @@ export default function Dex() {
                 <FormControlLabel
                   control={
                     <Switch
-                      value={advancedMode}
+                      checked={advancedMode}
                       onChange={() => setAdvancedMode(!advancedMode)}
                     />
                   }
