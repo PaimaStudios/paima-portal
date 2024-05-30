@@ -16,9 +16,9 @@ export type GameMetadata = {
 };
 
 export type SellOrder = {
-  orderid: number;
+  orderId: number;
   seller: string;
-  assettokenid: number;
+  tokenId: number;
   amount: number;
   price: string;
 };

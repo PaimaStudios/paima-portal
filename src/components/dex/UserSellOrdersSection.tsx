@@ -50,7 +50,7 @@ export default function UserSellOrdersSections() {
   const handleCancelAllSellOrdersClick = () => {
     writeContract({
       address: assetMetadata.dexAddress,
-      args: [orders.map((order) => BigInt(order.orderid))],
+      args: [orders.map((order) => BigInt(order.orderId))],
     });
   };
 

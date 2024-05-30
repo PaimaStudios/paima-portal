@@ -38,8 +38,8 @@ export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
           const result = orders[id].result as any;
           return {
             amount: Number(result.assetAmount),
-            assettokenid: Number(result.assetId),
-            orderid: id,
+            tokenId: Number(result.assetId),
+            orderId: id,
             price: result.pricePerAsset,
             seller: result.seller,
           };

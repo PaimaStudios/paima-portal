@@ -40,12 +40,12 @@ export default function SellOrdersGrid({ assetMetadata, user }: Props) {
       <Grid xs={3}></Grid>
       <Divider />
       {orders.map((order) => (
-        <Fragment key={order.orderid}>
+        <Fragment key={order.orderId}>
           <Grid xs={1}>
-            <Typography>{order.orderid}</Typography>
+            <Typography>{order.orderId}</Typography>
           </Grid>
           <Grid xs={2}>
-            <Typography>{order.assettokenid}</Typography>
+            <Typography>{order.tokenId}</Typography>
           </Grid>
           <Grid xs={2}>
             <Typography>
@@ -62,7 +62,7 @@ export default function SellOrdersGrid({ assetMetadata, user }: Props) {
           </Grid>
           <Grid xs={3}>
             <CancelSellOrderButton
-              orderId={order.orderid}
+              orderId={order.orderId}
               dexAddress={assetMetadata.dexAddress}
             />
           </Grid>

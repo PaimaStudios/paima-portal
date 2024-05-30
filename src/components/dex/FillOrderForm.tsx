@@ -169,7 +169,7 @@ export default function FillOrderForm() {
         useExactAsset={useExactAsset}
         assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
         ethAmount={priceBN} // todo: add slippage if useExactAsset
-        orderIds={orders.map((order) => BigInt(order.orderid))}
+        orderIds={orders.map((order) => BigInt(order.orderId))}
         disabled={!!priceInputError || !!amountInputError}
       />
     </Stack>
