@@ -23,18 +23,15 @@ export default function SellOrdersGrid({ assetMetadata, user }: Props) {
       sx={{ width: "100%", textAlign: "end", alignItems: "center" }}
     >
       <Grid xs={1}>
-        <Typography>Order ID</Typography>
-      </Grid>
-      <Grid xs={2}>
-        <Typography>Asset Token ID</Typography>
+        <Typography>Token ID</Typography>
       </Grid>
       <Grid xs={2}>
         <Typography>Amount</Typography>
       </Grid>
-      <Grid xs={2}>
+      <Grid xs={3}>
         <Typography>Price/unit</Typography>
       </Grid>
-      <Grid xs={2}>
+      <Grid xs={3}>
         <Typography>Total</Typography>
       </Grid>
       <Grid xs={3}></Grid>
@@ -42,23 +39,23 @@ export default function SellOrdersGrid({ assetMetadata, user }: Props) {
       {orders.map((order) => (
         <Fragment key={order.orderId}>
           <Grid xs={1}>
-            <Typography>{order.orderId}</Typography>
-          </Grid>
-          <Grid xs={2}>
             <Typography>{order.tokenId}</Typography>
           </Grid>
           <Grid xs={2}>
-            <Typography>
-              {order.amount} {assetMetadata.symbol}
-            </Typography>
+            <Typography component={"span"}>{order.amount}</Typography>
+            <Typography variant="caption"> {assetMetadata.symbol}</Typography>
           </Grid>
-          <Grid xs={2}>
-            <Typography>{formatEther(BigInt(order.price))} ETH</Typography>
-          </Grid>
-          <Grid xs={2}>
-            <Typography>
-              {formatEther(BigInt(order.price) * BigInt(order.amount))} ETH
+          <Grid xs={3}>
+            <Typography component={"span"}>
+              {formatEther(BigInt(order.price))}
             </Typography>
+            <Typography variant="caption"> ETH</Typography>
+          </Grid>
+          <Grid xs={3}>
+            <Typography component={"span"}>
+              {formatEther(BigInt(order.price) * BigInt(order.amount))}
+            </Typography>
+            <Typography variant="caption"> ETH</Typography>
           </Grid>
           <Grid xs={3}>
             <CancelSellOrderButton

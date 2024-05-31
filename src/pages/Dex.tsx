@@ -27,11 +27,11 @@ export default function Dex() {
           <Typography variant="h4" sx={{ textAlign: "center" }}>
             Trade {assetMetadata?.name}
           </Typography>
-          <Grid container spacing={2}>
-            <Grid xs={12} md={8}>
+          <Grid container spacing={2} sx={{ width: "100%" }}>
+            <Grid xs={12} md={6} lg={8}>
               <PriceChart />
             </Grid>
-            <Grid xs={12} md={4}>
+            <Grid xs={12} md={6} lg={4}>
               <BuyAndSellSection />
             </Grid>
             <Grid xs={12}>

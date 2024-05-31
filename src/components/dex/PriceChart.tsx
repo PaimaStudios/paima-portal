@@ -13,7 +13,6 @@ export default function PriceChart() {
     useState<ReturnType<IChartApi["addCandlestickSeries"]>>();
   const { width = 0, height = 0 } = useResizeObserver({
     ref: chartContainerRef,
-    box: "border-box",
   });
 
   useEffect(() => {

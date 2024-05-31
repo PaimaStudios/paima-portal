@@ -1,5 +1,6 @@
 import TransactionButton from "@components/common/TransactionButton";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
+import { useMediaQuery, useTheme } from "@mui/material";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import { useWriteOrderbookDexCancelSellOrder } from "src/generated";
@@ -12,6 +13,8 @@ type Props = {
 
 export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
   const { address } = useAccount();
+  const theme = useTheme();
+  const displayLongText = useMediaQuery(theme.breakpoints.up("lg"));
   const {
     writeContract,
     isPending,
@@ -48,7 +51,7 @@ export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
       onClick={() => {
         handleCancelSellOrderClick();
       }}
-      actionText={"Cancel sell order"}
+      actionText={displayLongText ? "Cancel sell order" : "Cancel"}
       isLoading={isLoading}
       isPending={isPending}
       sx={{ ml: 2 }}
