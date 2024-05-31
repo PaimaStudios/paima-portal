@@ -23,7 +23,7 @@ export default function SellOrdersGrid({ assetMetadata, user }: Props) {
       sx={{ width: "100%", textAlign: "end", alignItems: "center" }}
     >
       <Grid xs={1}>
-        <Typography>Token ID</Typography>
+        <Typography>Token&nbsp;ID</Typography>
       </Grid>
       <Grid xs={2}>
         <Typography>Amount</Typography>

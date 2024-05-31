@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import { PropsWithChildren } from "react";
 import { useAccount } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import ConnectWallet from "./ConnectWallet";
 
 export default function IsConnectedWrapper({ children }: PropsWithChildren) {
   const { chain } = useAccount();
@@ -10,9 +10,9 @@ export default function IsConnectedWrapper({ children }: PropsWithChildren) {
     return (
       <Stack sx={{ my: 4, gap: 2, alignItems: "center" }}>
         <Typography>
-          Connect your wallet to get started with using the Paima Asset Portal
+          Connect your wallet to interact with this section
         </Typography>
-        <ConnectButton />
+        <ConnectWallet />
       </Stack>
     );
   }

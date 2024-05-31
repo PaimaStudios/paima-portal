@@ -6,6 +6,8 @@ import HomePage from "./pages/HomePage";
 import { Container, Stack } from "@mui/material";
 import "./App.css";
 import Dex from "./pages/Dex";
+import Sidebar from "@components/common/Sidebar";
+import Topbar from "@components/common/Topbar";
 
 export default function App() {
   return (
@@ -29,8 +31,14 @@ function Layout() {
   return (
     <MuiSetup>
       <Providers>
-        <Navbar />
-        <Outlet />
+        <Stack direction="row">
+          <Sidebar />
+          <Stack sx={{ width: "100%" }}>
+            <Navbar />
+            <Topbar />
+            <Outlet />
+          </Stack>
+        </Stack>
       </Providers>
     </MuiSetup>
   );
