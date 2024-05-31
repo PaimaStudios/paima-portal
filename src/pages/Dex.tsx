@@ -28,10 +28,10 @@ export default function Dex() {
             Trade {assetMetadata?.name}
           </Typography>
           <Grid container spacing={2}>
-            <Grid xs={8}>
+            <Grid xs={12} md={8}>
               <PriceChart />
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={12} md={4}>
               <BuyAndSellSection />
             </Grid>
             <Grid xs={12}>

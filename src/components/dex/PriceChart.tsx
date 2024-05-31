@@ -1,13 +1,20 @@
 import useGetAssetHistoricalData from "@hooks/dex/useGetAssetHistoricalData";
 import { Stack, useTheme } from "@mui/material";
 import { IChartApi, LineStyle, createChart } from "lightweight-charts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useResizeObserver } from "usehooks-ts";
 
 export default function PriceChart() {
   const theme = useTheme();
   const { data } = useGetAssetHistoricalData();
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [chart, setChart] = useState<IChartApi>();
   const [chartSeries, setChartSeries] =
     useState<ReturnType<IChartApi["addCandlestickSeries"]>>();
+  const { width = 0, height = 0 } = useResizeObserver({
+    ref: chartContainerRef,
+    box: "border-box",
+  });
 
   useEffect(() => {
     const chartContainer = document.getElementById("chartContainer");
@@ -29,13 +36,9 @@ export default function PriceChart() {
         borderColor: "transparent",
       },
     });
+    setChart(chart);
     const candleSeries = chart.addCandlestickSeries({
       priceFormat: { minMove: 0.000001 },
-      //   upColor: theme.palette.primary.main,
-      //   downColor: "#ff6666",
-      //   wickUpColor: theme.palette.primary.main,
-      //   wickDownColor: "#ff6666",
-      //   borderVisible: false,
     });
     setChartSeries(candleSeries);
   }, []);
@@ -53,7 +56,17 @@ export default function PriceChart() {
       chartSeries.update(formattedData);
     }
   }, [data, chartSeries]);
+
+  useEffect(() => {
+    if (!chart) return;
+    chart.resize(width, height);
+  }, [width, height]);
+
   return (
-    <Stack id="chartContainer" sx={{ width: "100%", minHeight: 400 }}></Stack>
+    <Stack
+      ref={chartContainerRef}
+      id="chartContainer"
+      sx={{ width: "100%", minHeight: 400 }}
+    ></Stack>
   );
 }
