@@ -29,6 +29,7 @@ export default function InputWithClickableLimits({
       value={value}
       label={label}
       onChange={onChange}
+      autoComplete="off"
       InputProps={{
         endAdornment: (
           <>
