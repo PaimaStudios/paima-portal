@@ -28,7 +28,11 @@ export default function SellableAssetsGrid({
       aria-label="Assets to sell"
       sx={{ width: "100%", justifyContent: "center" }}
     >
-      <Grid container spacing={2} sx={{ width: "100%" }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{ width: "100%", overflowY: "auto", maxHeight: 100 }}
+      >
         {assets.map((asset) => (
           <Grid xs={6} lg={4} key={asset.tokenId}>
             <ToggleButton
