@@ -1,7 +1,9 @@
-import { AppBar, Stack, Toolbar } from "@mui/material";
+import { AppBar, Skeleton, Stack, Toolbar, Typography } from "@mui/material";
 import ConnectWallet from "./ConnectWallet";
+import useDappStore from "src/store";
 
 export default function Topbar() {
+  const navbarTitle = useDappStore((state) => state.navbarTitle);
   return (
     <AppBar
       sx={(theme) => ({
@@ -12,6 +14,9 @@ export default function Topbar() {
       position="sticky"
     >
       <Toolbar sx={{ gap: 2 }}>
+        <Typography variant="h5" component="h2">
+          {navbarTitle ? navbarTitle : <Skeleton width={200} />}
+        </Typography>
         <Stack sx={{ flexGrow: 1 }} />
         <ConnectWallet />
       </Toolbar>
