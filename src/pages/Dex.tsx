@@ -18,8 +18,6 @@ export default function Dex() {
     }
   }, [assetMetadata]);
 
-  if (assetMetadataLoading) return <div>Loading...</div>;
-
   return (
     <>
       <Container>

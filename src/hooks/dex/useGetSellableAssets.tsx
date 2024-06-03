@@ -16,6 +16,8 @@ export default function useGetSellableAssets() {
   return useQuery<Asset[]>({
     queryKey: [QueryKeys.SellableAssets],
     queryFn: async () => {
+      // await only for skeleton testing purposes
+      await new Promise((f) => setTimeout(f, 1000));
       const contracts = [1, 2, 3].map((id) => ({
         ...assetContract,
         functionName: "balanceOf",

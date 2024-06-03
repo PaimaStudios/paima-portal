@@ -14,6 +14,8 @@ export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
   return useQuery<SellOrder[]>({
     queryKey: [QueryKeys.SellOrders, params?.user],
     queryFn: async () => {
+      // await only for skeleton testing purposes
+      await new Promise((f) => setTimeout(f, 800));
       const currentOrderId = Number(
         await readContract(config, {
           ...dexContract,

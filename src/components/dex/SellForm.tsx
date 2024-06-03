@@ -1,7 +1,7 @@
 import TransactionButton from "@components/common/TransactionButton";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
-import { Divider, Stack, TextField, Typography } from "@mui/material";
+import { Divider, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useQueryClient } from "@tanstack/react-query";
 import { Asset, AssetMetadata } from "@utils/dex/types";
@@ -17,11 +17,12 @@ import {
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import InputWithClickableLimits from "./InputWithClickableLimits";
+import { ZERO_ADDRESS } from "@utils/constants";
 
 type Props = {
-  assetMetadata: AssetMetadata;
+  assetMetadata?: AssetMetadata;
   selectedAssets: Asset[];
-  assets: Asset[];
+  assets?: Asset[];
   advancedMode: boolean;
 };
 
@@ -41,9 +42,9 @@ export default function SellForm({
 
   const { data: isApproved, queryKey: isApprovedQueryKey } =
     useReadInverseAppProjected1155IsApprovedForAll({
-      address: assetMetadata.address,
-      args: [address!, assetMetadata.dexAddress],
-      query: { enabled: address != null },
+      address: assetMetadata?.address,
+      args: [address!, assetMetadata?.dexAddress ?? ZERO_ADDRESS],
+      query: { enabled: address != null && assetMetadata != null },
     });
   const {
     data: approvalHash,
@@ -151,6 +152,7 @@ export default function SellForm({
   };
 
   const approveAssetForDex = () => {
+    if (!assetMetadata) return;
     writeSetApproval({
       address: assetMetadata.address,
       args: [assetMetadata.dexAddress, true],
@@ -158,6 +160,7 @@ export default function SellForm({
   };
 
   const createSellOrder = () => {
+    if (!assetMetadata || !assets) return;
     let assetsToSell = selectedAssets;
     if (!advancedMode) {
       assetsToSell = [];
@@ -213,7 +216,7 @@ export default function SellForm({
     }
   }, [orders]);
 
-  const totalAssetAvailable = assets.reduce(
+  const totalAssetAvailable = assets?.reduce(
     (acc, asset) => acc + BigInt(asset.amount),
     0n,
   );
@@ -224,7 +227,7 @@ export default function SellForm({
 
   const amountInputError = advancedMode
     ? null
-    : amountN > totalAssetAvailable
+    : totalAssetAvailable != null && amountN > totalAssetAvailable
     ? InputErrorMessage.InputExceedsAvailableAmount
     : amountN === 0
     ? InputErrorMessage.InputMustBeGreaterThanZero
@@ -233,55 +236,69 @@ export default function SellForm({
   const priceInputError =
     priceBN === 0n ? InputErrorMessage.InputMustBeGreaterThanZero : null;
 
+  const showSkeletons = !(assetMetadata && totalAssetAvailable != null);
+
   return (
     <Stack sx={{ gap: 3, width: "100%", alignItems: "center" }}>
       <Stack sx={{ width: "100%", maxWidth: "500px" }}>
         <Stack sx={{ gap: 2, width: "100%" }}>
-          {!advancedMode && (
-            <InputWithClickableLimits
-              value={amount}
-              label={`Sell amount`}
-              endAdornment={assetMetadata.symbol}
-              onChange={handleAmountInputChange}
-              error={amount !== "" && !!amountInputError}
-              helperText={amount === "" ? " " : amountInputError ?? " "}
-              limits={[
-                {
-                  label: "Available:",
-                  value: totalAssetAvailable.toString(),
-                  onClick: () => {
-                    setAmount(totalAssetAvailable.toString());
-                    setAmountN(Number(totalAssetAvailable));
+          {!advancedMode &&
+            (!showSkeletons ? (
+              <InputWithClickableLimits
+                value={amount}
+                label={`Sell amount`}
+                endAdornment={assetMetadata.symbol}
+                onChange={handleAmountInputChange}
+                error={amount !== "" && !!amountInputError}
+                helperText={amount === "" ? " " : amountInputError ?? " "}
+                limits={[
+                  {
+                    label: "Available:",
+                    value: totalAssetAvailable.toString(),
+                    onClick: () => {
+                      setAmount(totalAssetAvailable.toString());
+                      setAmountN(Number(totalAssetAvailable));
+                    },
                   },
-                },
-              ]}
+                ]}
+              />
+            ) : (
+              <Skeleton variant="rounded" height={56} />
+            ))}
+          {!showSkeletons ? (
+            <InputWithClickableLimits
+              value={price}
+              label={`Price per 1 ${assetMetadata.symbol}`}
+              endAdornment={"ETH"}
+              onChange={handlePriceInputChange}
+              error={price !== "" && !!priceInputError}
+              helperText={priceInputError ?? " "}
             />
+          ) : (
+            <Skeleton variant="rounded" height={56} sx={{ my: 3 }} />
           )}
-          <InputWithClickableLimits
-            value={price}
-            label={`Price per 1 ${assetMetadata.symbol}`}
-            endAdornment={"ETH"}
-            onChange={handlePriceInputChange}
-            error={price !== "" && !!priceInputError}
-            helperText={priceInputError ?? " "}
-          />
         </Stack>
-        {!advancedMode && (
-          <Stack
-            sx={{
-              flexDirection: "row",
-              justifyContent: "end",
-              gap: 2,
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Typography>Grand total:</Typography>
-            <Typography sx={{ fontWeight: 600 }}>
-              {formatEther(priceBN * BigInt(amountN))} ETH
+        {!advancedMode &&
+          (!showSkeletons ? (
+            <Stack
+              sx={{
+                flexDirection: "row",
+                justifyContent: "end",
+                gap: 2,
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Typography>Grand total:</Typography>
+              <Typography sx={{ fontWeight: 600 }}>
+                {formatEther(priceBN * BigInt(amountN))} ETH
+              </Typography>
+            </Stack>
+          ) : (
+            <Typography>
+              <Skeleton />
             </Typography>
-          </Stack>
-        )}
+          ))}
       </Stack>
       {advancedMode && (
         <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
@@ -295,7 +312,7 @@ export default function SellForm({
             spacing={1 / 2}
           >
             <Grid xs={2}>
-              <Typography variant="body2">Token ID</Typography>
+              <Typography variant="body2">Token</Typography>
             </Grid>
             <Grid xs={3}>
               <Typography variant="body2">Amount</Typography>
@@ -334,28 +351,34 @@ export default function SellForm({
           </Grid>
         </Stack>
       )}
-      <TransactionButton
-        onClick={handleCreateSellOrderButtonClick}
-        actionText={
-          isApproved ? "Create sell order" : "Approve and create sell order"
-        }
-        isLoading={
-          isLoadingApproval ||
-          isLoadingCreateSellOrder ||
-          isLoadingCreateBatchSellOrder
-        }
-        isPending={
-          isPendingWriteSetApproval ||
-          isPendingWriteCreateSellOrder ||
-          isPendingWriteCreateBatchSellOrder
-        }
-        disabled={
-          !!priceInputError ||
-          !!amountInputError ||
-          (advancedMode && selectedAssets.length === 0) ||
-          (!advancedMode && (amount === "" || amountN === 0))
-        }
-      />
+      {!showSkeletons ? (
+        <TransactionButton
+          onClick={handleCreateSellOrderButtonClick}
+          actionText={
+            isApproved ? "Create sell order" : "Approve and create sell order"
+          }
+          isLoading={
+            isLoadingApproval ||
+            isLoadingCreateSellOrder ||
+            isLoadingCreateBatchSellOrder
+          }
+          isPending={
+            isPendingWriteSetApproval ||
+            isPendingWriteCreateSellOrder ||
+            isPendingWriteCreateBatchSellOrder
+          }
+          disabled={
+            !!priceInputError ||
+            !!amountInputError ||
+            (advancedMode && selectedAssets.length === 0) ||
+            (!advancedMode && (amount === "" || amountN === 0))
+          }
+        />
+      ) : (
+        <Skeleton variant="rounded">
+          <TransactionButton actionText={"Create sell order"} />
+        </Skeleton>
+      )}
     </Stack>
   );
 }

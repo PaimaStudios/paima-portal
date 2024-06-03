@@ -1,4 +1,4 @@
-import { TextField, Stack, Typography, Divider } from "@mui/material";
+import { TextField, Stack, Typography, Divider, Skeleton } from "@mui/material";
 import { ChangeEventHandler, MouseEventHandler } from "react";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
   limits?: ({
     label: string;
     onClick: MouseEventHandler<HTMLSpanElement>;
-    value: string;
+    value?: string;
   } | null)[];
   error: boolean;
   helperText?: string;
@@ -57,10 +57,16 @@ export default function InputWithClickableLimits({
                     <Typography variant="caption">{limit.label}</Typography>
                     <Typography
                       variant="caption"
-                      sx={{ cursor: "pointer" }}
+                      sx={{
+                        cursor: limit.value != null ? "pointer" : "default",
+                      }}
                       onClick={limit.onClick}
                     >
-                      {limit.value}
+                      {limit.value != null ? (
+                        limit.value
+                      ) : (
+                        <Skeleton width={32} />
+                      )}
                     </Typography>
                   </Stack>
                 ),

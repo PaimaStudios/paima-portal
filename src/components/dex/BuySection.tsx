@@ -1,4 +1,4 @@
-import { Input, Stack, Typography } from "@mui/material";
+import { Skeleton, Stack } from "@mui/material";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import { useState } from "react";
 import { formatEther, parseEther } from "viem";
@@ -9,11 +9,12 @@ import FillOrderButton from "./FillOrderButton";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import InputWithClickableLimits from "./InputWithClickableLimits";
 import { InputErrorMessage } from "@utils/texts";
+import TransactionButton from "@components/common/TransactionButton";
 
 export default function BuySection() {
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
-  const { data: orders, isLoading: isLoadingSellOrders } = useGetSellOrders();
+  const { data: orders } = useGetSellOrders();
   const { data: assetMetadata } = useGetGameAssetMetadata();
   const [amount, setAmount] = useState("");
   const [amountN, setAmountN] = useState(0);
@@ -21,23 +22,17 @@ export default function BuySection() {
   const [priceBN, setPriceBN] = useState(0n);
   const [useExactAsset, setUseExactAsset] = useState(true);
 
-  if (isLoadingSellOrders || !assetMetadata)
-    return <Typography>Loading...</Typography>;
-
-  if (!orders) {
-    return <Typography>Error fetching sell orders</Typography>;
-  }
-
-  const totalAssetAvailable = orders.reduce(
+  const totalAssetAvailable = orders?.reduce(
     (acc, order) => acc + BigInt(order.amount),
     0n,
   );
-  const totalEthPayable = orders.reduce(
+  const totalEthPayable = orders?.reduce(
     (acc, order) => acc + BigInt(order.amount) * BigInt(order.price),
     0n,
   );
 
   const recalculatePrice = (newAmount: number) => {
+    if (!orders) return;
     let newPrice = 0n;
     let remainingAmount = newAmount;
     orders.forEach((order) => {
@@ -52,6 +47,7 @@ export default function BuySection() {
   };
 
   const recalculateAmount = (newPrice: bigint) => {
+    if (!orders) return;
     let newAmount = 0n;
     let remainingTotalPrice = newPrice;
     orders.forEach((order) => {
@@ -95,14 +91,14 @@ export default function BuySection() {
   };
 
   const amountInputError =
-    amountN > totalAssetAvailable
+    totalAssetAvailable != null && amountN > totalAssetAvailable
       ? InputErrorMessage.InputExceedsAvailableAmount
       : amountN === 0
       ? InputErrorMessage.InputMustBeGreaterThanZero
       : null;
 
   const priceInputError =
-    priceBN > totalEthPayable
+    totalEthPayable != null && priceBN > totalEthPayable
       ? InputErrorMessage.InputExceedsAvailableAmount
       : balance != null && priceBN > balance.value
       ? InputErrorMessage.InputExceedsBalance
@@ -110,68 +106,91 @@ export default function BuySection() {
       ? InputErrorMessage.InputMustBeGreaterThanZero
       : null;
 
+  const showSkeletons = !(assetMetadata && orders);
+
   return (
     <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
       <Stack sx={{ gap: 2, width: "100%", maxWidth: "500px" }}>
-        <InputWithClickableLimits
-          value={amount}
-          label={`Buy amount`}
-          endAdornment={assetMetadata.symbol}
-          onChange={handleAmountInputChange}
-          error={amount !== "" && !!amountInputError}
-          helperText={amount === "" ? " " : amountInputError ?? " "}
-          limits={[
-            {
-              label: "Available:",
-              value: totalAssetAvailable.toString(),
-              onClick: () => {
-                setAmount(totalAssetAvailable.toString());
-                setAmountN(Number(totalAssetAvailable));
-                recalculatePrice(Number(totalAssetAvailable));
+        {!showSkeletons ? (
+          <InputWithClickableLimits
+            value={amount}
+            label={`Buy amount`}
+            endAdornment={assetMetadata.symbol}
+            onChange={handleAmountInputChange}
+            error={amount !== "" && !!amountInputError}
+            helperText={amount === "" ? " " : amountInputError ?? " "}
+            limits={[
+              {
+                label: "Available:",
+                value: totalAssetAvailable?.toString(),
+                onClick: () => {
+                  if (totalAssetAvailable == null) return;
+                  setAmount(totalAssetAvailable.toString());
+                  setAmountN(Number(totalAssetAvailable));
+                  recalculatePrice(Number(totalAssetAvailable));
+                },
               },
-            },
-          ]}
-        />
-        <InputWithClickableLimits
-          value={price}
-          label={`Total ETH to pay`}
-          endAdornment={"ETH"}
-          onChange={handlePriceInputChange}
-          error={price !== "" && !!priceInputError}
-          helperText={price === "" ? " " : priceInputError ?? " "}
-          limits={[
-            balance && balance.value <= totalEthPayable
-              ? {
-                  label: "Balance:",
-                  value: balance ? formatEth(balance.value) : "",
-                  onClick: () => {
-                    if (balance == null) return;
-                    setPrice(formatEther(balance.value));
-                    setPriceBN(balance.value);
-                    recalculateAmount(balance.value);
-                  },
-                }
-              : null,
-            {
-              label: "Available:",
-              value: formatEth(totalEthPayable),
-              onClick: () => {
-                setPrice(formatEther(totalEthPayable));
-                setPriceBN(totalEthPayable);
-                recalculateAmount(totalEthPayable);
+            ]}
+          />
+        ) : (
+          <Skeleton variant="rounded" height={56} />
+        )}
+        {!showSkeletons ? (
+          <InputWithClickableLimits
+            value={price}
+            label={`Total ETH to pay`}
+            endAdornment={"ETH"}
+            onChange={handlePriceInputChange}
+            error={price !== "" && !!priceInputError}
+            helperText={price === "" ? " " : priceInputError ?? " "}
+            limits={[
+              balance &&
+              totalEthPayable != null &&
+              balance.value <= totalEthPayable
+                ? {
+                    label: "Balance:",
+                    value: balance ? formatEth(balance.value) : "",
+                    onClick: () => {
+                      if (balance == null) return;
+                      setPrice(formatEther(balance.value));
+                      setPriceBN(balance.value);
+                      recalculateAmount(balance.value);
+                    },
+                  }
+                : null,
+              {
+                label: "Available:",
+                value:
+                  totalEthPayable != null
+                    ? formatEth(totalEthPayable)
+                    : totalEthPayable,
+                onClick: () => {
+                  if (totalEthPayable == null) return;
+                  setPrice(formatEther(totalEthPayable));
+                  setPriceBN(totalEthPayable);
+                  recalculateAmount(totalEthPayable);
+                },
               },
-            },
-          ]}
-        />
+            ]}
+          />
+        ) : (
+          <Skeleton variant="rounded" height={56} sx={{ my: 3 }} />
+        )}
       </Stack>
-      <FillOrderButton
-        dexAddress={assetMetadata.dexAddress}
-        useExactAsset={useExactAsset}
-        assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
-        ethAmount={priceBN} // todo: add slippage if useExactAsset
-        orderIds={orders.map((order) => BigInt(order.orderId))}
-        disabled={!!priceInputError || !!amountInputError}
-      />
+      {!showSkeletons ? (
+        <FillOrderButton
+          dexAddress={assetMetadata?.dexAddress}
+          useExactAsset={useExactAsset}
+          assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
+          ethAmount={priceBN} // todo: add slippage if useExactAsset
+          orderIds={orders?.map((order) => BigInt(order.orderId))}
+          disabled={!!priceInputError || !!amountInputError}
+        />
+      ) : (
+        <Skeleton variant="rounded">
+          <TransactionButton actionText="Buy" />
+        </Skeleton>
+      )}
     </Stack>
   );
 }

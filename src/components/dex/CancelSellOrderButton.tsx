@@ -54,7 +54,6 @@ export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
       actionText={displayLongText ? "Cancel sell order" : "Cancel"}
       isLoading={isLoading}
       isPending={isPending}
-      sx={{ ml: 2 }}
     />
   );
 }

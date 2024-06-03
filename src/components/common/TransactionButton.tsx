@@ -1,8 +1,8 @@
 import Button, { ButtonProps } from "@mui/material/Button";
 
 type Props = {
-  isLoading: boolean;
-  isPending: boolean;
+  isLoading?: boolean;
+  isPending?: boolean;
   actionText: string | JSX.Element;
   disabled?: boolean;
   fullWidth?: boolean;

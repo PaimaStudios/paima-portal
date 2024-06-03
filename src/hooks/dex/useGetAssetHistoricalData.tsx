@@ -25,6 +25,8 @@ export default function useGetAssetHistoricalData(params?: {
     queryKey: [QueryKeys.AssetHistoricalData],
     refetchInterval: 2000,
     queryFn: async () => {
+      // await only for skeleton testing purposes
+      await new Promise((f) => setTimeout(f, 1000));
       const newMockData = { ...mockData };
       newMockData.data = mockData.data.map((item, index) => {
         const newItem = { ...item };

@@ -15,6 +15,8 @@ export default function useGetGameAssetMetadata(params?: {
   return useQuery({
     queryKey: [QueryKeys.GameMetadata, game, asset],
     queryFn: async () => {
+      // await only for skeleton testing purposes
+      await new Promise((f) => setTimeout(f, 300));
       return gamesMetadata[game ?? ""]?.assets[asset ?? ""] ?? null;
     },
   });

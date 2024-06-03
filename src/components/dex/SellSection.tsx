@@ -11,41 +11,38 @@ type Props = {
 };
 
 export default function SellSection({ advancedMode }: Props) {
-  const { data: assets, isLoading: isLoadingSellableAssets } =
-    useGetSellableAssets();
+  const { data: assets } = useGetSellableAssets();
   const { data: assetMetadata } = useGetGameAssetMetadata();
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
 
-  if (isLoadingSellableAssets || !assetMetadata)
-    return <Typography>Loading...</Typography>;
-
-  if (!assets) {
-    return <Typography>Error fetching sellable assets</Typography>;
-  }
-
   const handleSelectAll = () => {
+    if (!assets) return;
     setSelectedAssets(assets);
   };
 
   return (
     <Stack sx={{ alignItems: "center", gap: 3, width: "100%" }}>
-      <Stack
-        sx={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "100%",
-          gap: 2,
-        }}
-      >
-        {advancedMode && (
+      {advancedMode &&
+        assets &&
+        (assets.length > 0 ? (
+          <Stack
+            sx={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+              gap: 2,
+            }}
+          >
+            <Typography variant="body2">
+              Select which {assetMetadata?.symbol} you want to&nbsp;sell
+            </Typography>
+            <Button onClick={handleSelectAll}>Select&nbsp;all</Button>
+          </Stack>
+        ) : (
           <Typography variant="body2">
-            Select which {assetMetadata.symbol} you want to&nbsp;sell
+            You have no {assetMetadata?.symbol} to sell
           </Typography>
-        )}
-        {advancedMode && (
-          <Button onClick={handleSelectAll}>Select&nbsp;all</Button>
-        )}
-      </Stack>
+        ))}
       {advancedMode && (
         <SellableAssetsGrid
           assets={assets}

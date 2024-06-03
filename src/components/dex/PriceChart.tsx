@@ -1,5 +1,5 @@
 import useGetAssetHistoricalData from "@hooks/dex/useGetAssetHistoricalData";
-import { Stack, useTheme } from "@mui/material";
+import { Skeleton, Stack, useTheme } from "@mui/material";
 import { IChartApi, LineStyle, createChart } from "lightweight-charts";
 import { useEffect, useRef, useState } from "react";
 import { useResizeObserver } from "usehooks-ts";
@@ -17,7 +17,8 @@ export default function PriceChart() {
 
   useEffect(() => {
     const chartContainer = document.getElementById("chartContainer");
-    if (!chartContainer || chartContainer.children.length !== 0) return;
+    if (!data || !chartContainer || chartContainer.children.length !== 0)
+      return;
 
     const chart = createChart(document.getElementById("chartContainer")!, {
       layout: {
@@ -40,7 +41,7 @@ export default function PriceChart() {
       priceFormat: { minMove: 0.000001 },
     });
     setChartSeries(candleSeries);
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     if (!data || !chartSeries) return;
@@ -62,10 +63,13 @@ export default function PriceChart() {
   }, [width, height]);
 
   return (
-    <Stack
-      ref={chartContainerRef}
-      id="chartContainer"
-      sx={{ width: "100%", minHeight: 400 }}
-    ></Stack>
+    <>
+      {!data && <Skeleton variant="rectangular" height="100%" />}
+      <Stack
+        ref={chartContainerRef}
+        id="chartContainer"
+        sx={{ width: "100%", minHeight: 400 }}
+      ></Stack>
+    </>
   );
 }

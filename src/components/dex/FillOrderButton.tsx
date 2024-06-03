@@ -82,7 +82,6 @@ export default function FillOrderButton({
       actionText={"Buy"}
       isLoading={isLoading}
       isPending={isPendingExactAsset || isPendingExactEth}
-      sx={{ ml: 2 }}
       {...props}
     />
   );
