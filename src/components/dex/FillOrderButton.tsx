@@ -3,6 +3,7 @@ import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceip
 import { ButtonProps } from "@mui/material";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
+import { useEffect } from "react";
 import {
   useWriteOrderbookDexFillOrdersExactAsset,
   useWriteOrderbookDexFillOrdersExactEth,
@@ -15,6 +16,7 @@ type Props = {
   assetAmount: bigint;
   ethAmount: bigint;
   orderIds: bigint[];
+  onSuccess: () => void;
 } & ButtonProps;
 
 export default function FillOrderButton({
@@ -23,6 +25,7 @@ export default function FillOrderButton({
   assetAmount,
   ethAmount,
   orderIds,
+  onSuccess,
   ...props
 }: Props) {
   const { address } = useAccount();
@@ -48,7 +51,7 @@ export default function FillOrderButton({
       },
     },
   });
-  const { isLoading } = useWaitForTransactionReceipt({
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
     hash: hashExactAsset || hashExactEth,
     query: {
       meta: {
@@ -73,6 +76,12 @@ export default function FillOrderButton({
       });
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      onSuccess();
+    }
+  }, [isSuccess]);
 
   return (
     <TransactionButton

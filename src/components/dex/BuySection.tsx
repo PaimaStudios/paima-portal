@@ -185,6 +185,12 @@ export default function BuySection() {
           ethAmount={priceBN} // todo: add slippage if useExactAsset
           orderIds={orders?.map((order) => BigInt(order.orderId))}
           disabled={!!priceInputError || !!amountInputError}
+          onSuccess={() => {
+            setAmount("");
+            setPrice("");
+            setAmountN(0);
+            setPriceBN(0n);
+          }}
         />
       ) : (
         <Skeleton variant="rounded">
