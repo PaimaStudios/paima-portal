@@ -31,10 +31,14 @@ export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
       const orders = await readContracts(config, {
         contracts,
       });
+      const user = params?.user?.toLowerCase();
       return oneToCurrentOrderId
         .filter((id) => {
           const result = orders[id].result as any;
-          return result.assetAmount !== 0n;
+          return (
+            result.assetAmount !== 0n &&
+            (!user || result.seller.toLowerCase() === user)
+          );
         })
         .map((id) => {
           const result = orders[id].result as any;
