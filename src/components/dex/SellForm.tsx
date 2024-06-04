@@ -18,22 +18,22 @@ import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import InputWithClickableLimits from "./InputWithClickableLimits";
 import { ZERO_ADDRESS } from "@utils/constants";
+import useGetSellableAssets from "@hooks/dex/useGetSellableAssets";
 
 type Props = {
   assetMetadata?: AssetMetadata;
   selectedAssets: Asset[];
-  assets?: Asset[];
   advancedMode: boolean;
 };
 
 export default function SellForm({
   assetMetadata,
   selectedAssets,
-  assets,
   advancedMode,
 }: Props) {
   const queryClient = useQueryClient();
   const { data: orders } = useGetSellOrders();
+  const { data: assets } = useGetSellableAssets();
   const [price, setPrice] = useState("");
   const [priceBN, setPriceBN] = useState(0n);
   const [amount, setAmount] = useState("");
@@ -42,8 +42,8 @@ export default function SellForm({
 
   const { data: isApproved, queryKey: isApprovedQueryKey } =
     useReadInverseAppProjected1155IsApprovedForAll({
-      address: assetMetadata?.address,
-      args: [address!, assetMetadata?.dexAddress ?? ZERO_ADDRESS],
+      address: assetMetadata?.contractAsset,
+      args: [address!, assetMetadata?.contractDex ?? ZERO_ADDRESS],
       query: { enabled: address != null && assetMetadata != null },
     });
   const {
@@ -154,8 +154,8 @@ export default function SellForm({
   const approveAssetForDex = () => {
     if (!assetMetadata) return;
     writeSetApproval({
-      address: assetMetadata.address,
-      args: [assetMetadata.dexAddress, true],
+      address: assetMetadata.contractAsset,
+      args: [assetMetadata.contractDex, true],
     });
   };
 
@@ -166,7 +166,7 @@ export default function SellForm({
       assetsToSell = [];
       let remainingAmount = amountN;
       // Naive algorithm for choosing which assets to sell, does not optimize towards lowest amount of token ids
-      for (const asset of assets) {
+      for (const asset of assets.stats) {
         if (remainingAmount === 0) break;
         const amt = Math.min(remainingAmount, asset.amount);
         if (amt === 0) continue;
@@ -180,7 +180,7 @@ export default function SellForm({
     }
     if (assetsToSell.length === 1) {
       writeCreateSellOrder({
-        address: assetMetadata.dexAddress,
+        address: assetMetadata.contractDex,
         args: [
           BigInt(assetsToSell[0].tokenId),
           BigInt(assetsToSell[0].amount),
@@ -189,7 +189,7 @@ export default function SellForm({
       });
     } else {
       writeCreateBatchSellOrder({
-        address: assetMetadata.dexAddress,
+        address: assetMetadata.contractDex,
         args: [
           assetsToSell.map((a) => BigInt(a.tokenId)),
           assetsToSell.map((a) => BigInt(a.amount)),
@@ -216,7 +216,7 @@ export default function SellForm({
     }
   }, [orders]);
 
-  const totalAssetAvailable = assets?.reduce(
+  const totalAssetAvailable = assets?.stats.reduce(
     (acc, asset) => acc + BigInt(asset.amount),
     0n,
   );
@@ -247,7 +247,7 @@ export default function SellForm({
               <InputWithClickableLimits
                 value={amount}
                 label={`Sell amount`}
-                endAdornment={assetMetadata.symbol}
+                endAdornment={assetMetadata.fromSym}
                 onChange={handleAmountInputChange}
                 error={amount !== "" && !!amountInputError}
                 helperText={amount === "" ? " " : amountInputError ?? " "}
@@ -268,8 +268,8 @@ export default function SellForm({
           {!showSkeletons ? (
             <InputWithClickableLimits
               value={price}
-              label={`Price per 1 ${assetMetadata.symbol}`}
-              endAdornment={"ETH"}
+              label={`Price per 1 ${assetMetadata.fromSym}`}
+              endAdornment={`${assetMetadata.toSym}`}
               onChange={handlePriceInputChange}
               error={price !== "" && !!priceInputError}
               helperText={priceInputError ?? " "}
@@ -291,7 +291,7 @@ export default function SellForm({
             >
               <Typography>Grand total:</Typography>
               <Typography sx={{ fontWeight: 600 }}>
-                {formatEther(priceBN * BigInt(amountN))} ETH
+                {formatEther(priceBN * BigInt(amountN))} {assetMetadata.toSym}
               </Typography>
             </Stack>
           ) : (

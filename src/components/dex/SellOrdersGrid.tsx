@@ -53,25 +53,31 @@ export default function SellOrdersGrid({ user }: Props) {
                 <Typography component={"span"}>{order.amount}</Typography>
                 <Typography variant="caption">
                   {" "}
-                  {assetMetadata.symbol}
+                  {assetMetadata.fromSym}
                 </Typography>
               </Grid>
               <Grid xs={3}>
                 <Typography component={"span"}>
                   {formatEther(BigInt(order.price))}
                 </Typography>
-                <Typography variant="caption"> ETH</Typography>
+                <Typography variant="caption">
+                  {" "}
+                  {assetMetadata.toSym}
+                </Typography>
               </Grid>
               <Grid xs={3}>
                 <Typography component={"span"}>
                   {formatEther(BigInt(order.price) * BigInt(order.amount))}
                 </Typography>
-                <Typography variant="caption"> ETH</Typography>
+                <Typography variant="caption">
+                  {" "}
+                  {assetMetadata.toSym}
+                </Typography>
               </Grid>
               <Grid xs={3}>
                 <CancelSellOrderButton
                   orderId={order.orderId}
-                  dexAddress={assetMetadata.dexAddress}
+                  dexAddress={assetMetadata.contractDex}
                 />
               </Grid>
             </Fragment>

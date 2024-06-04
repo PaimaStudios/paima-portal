@@ -115,7 +115,7 @@ export default function BuySection() {
           <InputWithClickableLimits
             value={amount}
             label={`Buy amount`}
-            endAdornment={assetMetadata.symbol}
+            endAdornment={assetMetadata.fromSym}
             onChange={handleAmountInputChange}
             error={amount !== "" && !!amountInputError}
             helperText={amount === "" ? " " : amountInputError ?? " "}
@@ -138,8 +138,8 @@ export default function BuySection() {
         {!showSkeletons ? (
           <InputWithClickableLimits
             value={price}
-            label={`Total ETH to pay`}
-            endAdornment={"ETH"}
+            label={`Total ${assetMetadata.toSym} to pay`}
+            endAdornment={assetMetadata.toSym}
             onChange={handlePriceInputChange}
             error={price !== "" && !!priceInputError}
             helperText={price === "" ? " " : priceInputError ?? " "}
@@ -179,7 +179,7 @@ export default function BuySection() {
       </Stack>
       {!showSkeletons ? (
         <FillOrderButton
-          dexAddress={assetMetadata?.dexAddress}
+          dexAddress={assetMetadata.contractDex}
           useExactAsset={useExactAsset}
           assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
           ethAmount={priceBN} // todo: add slippage if useExactAsset

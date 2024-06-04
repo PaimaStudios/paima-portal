@@ -17,14 +17,14 @@ export default function SellSection({ advancedMode }: Props) {
 
   const handleSelectAll = () => {
     if (!assets) return;
-    setSelectedAssets(assets);
+    setSelectedAssets(assets.stats);
   };
 
   return (
     <Stack sx={{ alignItems: "center", gap: 3, width: "100%" }}>
       {advancedMode &&
         assets &&
-        (assets.length > 0 ? (
+        (assets.total > 0 ? (
           <Stack
             sx={{
               flexDirection: "row",
@@ -34,18 +34,18 @@ export default function SellSection({ advancedMode }: Props) {
             }}
           >
             <Typography variant="body2">
-              Select which {assetMetadata?.symbol} you want to&nbsp;sell
+              Select which {assetMetadata?.fromSym} you want to&nbsp;sell
             </Typography>
             <Button onClick={handleSelectAll}>Select&nbsp;all</Button>
           </Stack>
         ) : (
           <Typography variant="body2">
-            You have no {assetMetadata?.symbol} to sell
+            You have no {assetMetadata?.fromSym} to sell
           </Typography>
         ))}
       {advancedMode && (
         <SellableAssetsGrid
-          assets={assets}
+          assets={assets?.stats}
           selectedAssets={selectedAssets}
           setSelectedAssets={setSelectedAssets}
         />
@@ -53,7 +53,6 @@ export default function SellSection({ advancedMode }: Props) {
       <SellForm
         assetMetadata={assetMetadata}
         selectedAssets={selectedAssets}
-        assets={assets}
         advancedMode={advancedMode}
       />
     </Stack>
