@@ -4,7 +4,7 @@ import NavigationItems from "./NavigationItems";
 
 export default function Sidebar() {
   return (
-    <Box sx={{ display: { xs: "none", md: "block" }, minWidth: 250 }}>
+    <Box sx={{ display: { xs: "none", md: "block" }, minWidth: 260 }}>
       <AppBar
         sx={(theme) => ({
           bgcolor: theme.palette.background.default,
