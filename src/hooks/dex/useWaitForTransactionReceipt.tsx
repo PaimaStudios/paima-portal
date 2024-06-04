@@ -10,6 +10,6 @@ export default function useWaitForTransactionReceipt(
   return useWaitForTransactionReceiptWagmi({
     ...parameters,
     query: { ...parameters?.query, staleTime: Infinity },
-    confirmations: 3,
+    confirmations: 5,
   });
 }
