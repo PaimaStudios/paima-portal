@@ -1,8 +1,10 @@
 import { Button, Container, Divider, Stack } from "@mui/material";
 import IsConnectedWrapper from "../components/common/IsConnectedWrapper";
 import { Link } from "react-router-dom";
+import useSetNavbarTitle from "@hooks/useSetNavbarTitle";
 
 export default function HomePage() {
+  useSetNavbarTitle("Paima Portal");
   return (
     <>
       <Container>
