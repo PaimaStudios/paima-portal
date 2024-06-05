@@ -19,21 +19,11 @@ export const getAlchemyApiKey = (chainId: number) => {
   return env.REACT_APP_ALCHEMY_API_KEYS[chainId];
 };
 
-export const formatTokens = (
+// Formats a wei bigint value to a string representation of ether until the first `significantDecimals` non-zero decimals.
+export const formatEth = (
   amount: bigint | undefined,
-  decimalsDisplay = 2,
-  round = false,
+  significantDecimals = 3,
 ) => {
-  const str = formatEther(amount ?? 0n);
-  if (round) {
-    return Number(Number(str).toFixed(decimalsDisplay)).toString();
-  }
-  return str.substring(
-    0,
-    str.indexOf(".") >= 0 ? str.indexOf(".") + 1 + decimalsDisplay : undefined,
-  );
-};
-
-export const formatEth = (amount: bigint | undefined, round = true) => {
-  return Number(formatTokens(amount ?? 0n, 4, round)).toString();
+  const regex = new RegExp(String.raw`^-?\d*\.?0*\d{0,${significantDecimals}}`);
+  return formatEther(amount ?? 0n).match(regex)?.[0] ?? "0";
 };
