@@ -3,7 +3,7 @@ import { DexValidMintedAssetsResponse } from "@utils/dex/types";
 import { QueryKeys } from "@utils/queryKeys";
 import { useAccount } from "wagmi";
 import useGetGameAndAssetFromUrl from "./useGetGameAndAssetFromUrl";
-import { gamesApi } from "@config/dex";
+import { gamesApi } from "@config/api";
 import axios from "axios";
 
 export default function useGetSellableAssets() {

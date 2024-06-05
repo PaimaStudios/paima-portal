@@ -1,4 +1,4 @@
-import { gamesApi } from "@config/dex";
+import { gamesApi } from "@config/api";
 import { useQuery } from "@tanstack/react-query";
 import { GameMetadata } from "@utils/dex/types";
 import { QueryKeys } from "@utils/queryKeys";
