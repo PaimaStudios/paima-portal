@@ -1,43 +1,43 @@
+import { gamesApi } from "@config/api";
 import { useQuery } from "@tanstack/react-query";
-import { mockChartData } from "@utils/dex/mockChartData";
 import { AssetHistoricalData } from "@utils/dex/types";
 import { QueryKeys } from "@utils/queryKeys";
-import { useParams } from "react-router-dom";
-
-const timeNow = new Date().getTime() / 1000;
-const timeFrom = timeNow - mockChartData.length * 3600;
-const mockData: AssetHistoricalData = {
-  timeFrom,
-  timeTo: timeNow,
-  data: mockChartData,
-};
+import axios from "axios";
+import useGetGameAndAssetFromUrl from "./useGetGameAndAssetFromUrl";
+import { formatEther } from "viem";
 
 export default function useGetAssetHistoricalData(params?: {
   game: string;
   asset: string;
 }) {
-  const { game: gameFromUrl, asset: assetFromUrl } = useParams();
+  const { game: gameFromUrl, asset: assetFromUrl } =
+    useGetGameAndAssetFromUrl();
 
   const game = params?.game || gameFromUrl;
   const asset = params?.asset || assetFromUrl;
 
-  return useQuery<AssetHistoricalData>({
+  return useQuery<AssetHistoricalData | undefined>({
     queryKey: [QueryKeys.AssetHistoricalData],
-    refetchInterval: 2000,
+    refetchInterval: 10000,
     queryFn: async () => {
-      // await only for skeleton testing purposes
-      await new Promise((f) => setTimeout(f, 1000));
-      const newMockData = { ...mockData };
-      newMockData.data = mockData.data.map((item, index) => {
-        const newItem = { ...item };
-        if (index === mockData.data.length - 1) {
-          newItem.close =
-            newItem.low + Math.random() * (newItem.high - newItem.low);
-        }
-        return newItem;
-      });
-      newMockData.timeTo = new Date().getTime();
-      return newMockData;
+      if (!game || !asset) return undefined;
+      const gameApi = gamesApi[game];
+      if (!gameApi) return undefined;
+      const response = await axios.get<AssetHistoricalData>(
+        `${gameApi}/dex/${asset}/historical_price`,
+      );
+      return {
+        ...response.data,
+        data: response.data.data.map((dat) => ({
+          close: Number(formatEther(BigInt(dat.close))),
+          high: Number(formatEther(BigInt(dat.high))),
+          low: Number(formatEther(BigInt(dat.low))),
+          open: Number(formatEther(BigInt(dat.open))),
+          volumeTo: Number(formatEther(BigInt(dat.volumeTo))),
+          volumeFrom: Number(dat.volumeFrom),
+          time: dat.time,
+        })),
+      };
     },
   });
 }
