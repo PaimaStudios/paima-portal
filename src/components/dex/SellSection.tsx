@@ -50,11 +50,7 @@ export default function SellSection({ advancedMode }: Props) {
           setSelectedAssets={setSelectedAssets}
         />
       )}
-      <SellForm
-        assetMetadata={assetMetadata}
-        selectedAssets={selectedAssets}
-        advancedMode={advancedMode}
-      />
+      <SellForm selectedAssets={selectedAssets} advancedMode={advancedMode} />
     </Stack>
   );
 }

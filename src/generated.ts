@@ -562,19 +562,17 @@ export const inverseAppProjected1155Abi = [
 export const orderbookDexAbi = [
   {
     type: "constructor",
-    inputs: [{ name: "_asset", internalType: "address", type: "address" }],
+    inputs: [
+      { name: "_owner", internalType: "address", type: "address" },
+      { name: "_defaultMakerFee", internalType: "uint256", type: "uint256" },
+      { name: "_defaultTakerFee", internalType: "uint256", type: "uint256" },
+    ],
     stateMutability: "nonpayable",
   },
   {
     type: "function",
-    inputs: [],
-    name: "asset",
-    outputs: [{ name: "", internalType: "address", type: "address" }],
-    stateMutability: "view",
-  },
-  {
-    type: "function",
     inputs: [
+      { name: "asset", internalType: "address", type: "address" },
       { name: "orderIds", internalType: "uint256[]", type: "uint256[]" },
     ],
     name: "cancelBatchSellOrder",
@@ -583,7 +581,10 @@ export const orderbookDexAbi = [
   },
   {
     type: "function",
-    inputs: [{ name: "orderId", internalType: "uint256", type: "uint256" }],
+    inputs: [
+      { name: "asset", internalType: "address", type: "address" },
+      { name: "orderId", internalType: "uint256", type: "uint256" },
+    ],
     name: "cancelSellOrder",
     outputs: [],
     stateMutability: "nonpayable",
@@ -591,6 +592,7 @@ export const orderbookDexAbi = [
   {
     type: "function",
     inputs: [
+      { name: "asset", internalType: "address", type: "address" },
       { name: "assetIds", internalType: "uint256[]", type: "uint256[]" },
       { name: "assetAmounts", internalType: "uint256[]", type: "uint256[]" },
       { name: "pricesPerAssets", internalType: "uint256[]", type: "uint256[]" },
@@ -602,6 +604,7 @@ export const orderbookDexAbi = [
   {
     type: "function",
     inputs: [
+      { name: "asset", internalType: "address", type: "address" },
       { name: "assetId", internalType: "uint256", type: "uint256" },
       { name: "assetAmount", internalType: "uint256", type: "uint256" },
       { name: "pricePerAsset", internalType: "uint256", type: "uint256" },
@@ -612,14 +615,29 @@ export const orderbookDexAbi = [
   },
   {
     type: "function",
-    inputs: [],
+    inputs: [{ name: "asset", internalType: "address", type: "address" }],
     name: "currentOrderId",
+    outputs: [{ name: "orderId", internalType: "uint256", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    inputs: [],
+    name: "defaultMakerFee",
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    inputs: [],
+    name: "defaultTakerFee",
     outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
     stateMutability: "view",
   },
   {
     type: "function",
     inputs: [
+      { name: "asset", internalType: "address", type: "address" },
       { name: "assetAmount", internalType: "uint256", type: "uint256" },
       { name: "orderIds", internalType: "uint256[]", type: "uint256[]" },
     ],
@@ -630,6 +648,7 @@ export const orderbookDexAbi = [
   {
     type: "function",
     inputs: [
+      { name: "asset", internalType: "address", type: "address" },
       { name: "minimumAsset", internalType: "uint256", type: "uint256" },
       { name: "orderIds", internalType: "uint256[]", type: "uint256[]" },
     ],
@@ -639,7 +658,38 @@ export const orderbookDexAbi = [
   },
   {
     type: "function",
-    inputs: [{ name: "orderId", internalType: "uint256", type: "uint256" }],
+    inputs: [{ name: "asset", internalType: "address", type: "address" }],
+    name: "getAssetAppliedFees",
+    outputs: [
+      { name: "makerFee", internalType: "uint256", type: "uint256" },
+      { name: "takerFee", internalType: "uint256", type: "uint256" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    inputs: [{ name: "asset", internalType: "address", type: "address" }],
+    name: "getAssetFeeInfo",
+    outputs: [
+      {
+        name: "",
+        internalType: "struct IOrderbookDex.FeeInfo",
+        type: "tuple",
+        components: [
+          { name: "makerFee", internalType: "uint256", type: "uint256" },
+          { name: "takerFee", internalType: "uint256", type: "uint256" },
+          { name: "set", internalType: "bool", type: "bool" },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    inputs: [
+      { name: "asset", internalType: "address", type: "address" },
+      { name: "orderId", internalType: "uint256", type: "uint256" },
+    ],
     name: "getOrder",
     outputs: [
       {
@@ -651,9 +701,18 @@ export const orderbookDexAbi = [
           { name: "assetAmount", internalType: "uint256", type: "uint256" },
           { name: "pricePerAsset", internalType: "uint256", type: "uint256" },
           { name: "seller", internalType: "address payable", type: "address" },
+          { name: "makerFee", internalType: "uint256", type: "uint256" },
+          { name: "takerFee", internalType: "uint256", type: "uint256" },
         ],
       },
     ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    inputs: [],
+    name: "maxFee",
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
     stateMutability: "view",
   },
   {
@@ -684,39 +743,87 @@ export const orderbookDexAbi = [
   },
   {
     type: "function",
+    inputs: [],
+    name: "owner",
+    outputs: [{ name: "", internalType: "address", type: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    inputs: [
+      { name: "asset", internalType: "address", type: "address" },
+      { name: "makerFee", internalType: "uint256", type: "uint256" },
+      { name: "takerFee", internalType: "uint256", type: "uint256" },
+    ],
+    name: "setAssetFeeInfo",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    inputs: [
+      { name: "makerFee", internalType: "uint256", type: "uint256" },
+      { name: "takerFee", internalType: "uint256", type: "uint256" },
+    ],
+    name: "setDefaultFeeInfo",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     inputs: [{ name: "interfaceId", internalType: "bytes4", type: "bytes4" }],
     name: "supportsInterface",
     outputs: [{ name: "", internalType: "bool", type: "bool" }],
     stateMutability: "view",
   },
   {
-    type: "event",
-    anonymous: false,
-    inputs: [
-      {
-        name: "seller",
-        internalType: "address",
-        type: "address",
-        indexed: true,
-      },
-      { name: "id", internalType: "uint256", type: "uint256", indexed: true },
-    ],
-    name: "OrderCancelled",
+    type: "function",
+    inputs: [{ name: "newOwner", internalType: "address", type: "address" }],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    inputs: [],
+    name: "withdrawFees",
+    outputs: [],
+    stateMutability: "nonpayable",
   },
   {
     type: "event",
     anonymous: false,
     inputs: [
       {
-        name: "seller",
+        name: "receiver",
         internalType: "address",
         type: "address",
         indexed: true,
       },
       {
-        name: "orderId",
+        name: "amount",
         internalType: "uint256",
         type: "uint256",
+        indexed: false,
+      },
+    ],
+    name: "FeesWithdrawn",
+  },
+  {
+    type: "event",
+    anonymous: false,
+    inputs: [
+      {
+        name: "asset",
+        internalType: "address",
+        type: "address",
         indexed: true,
       },
       {
@@ -726,6 +833,43 @@ export const orderbookDexAbi = [
         indexed: true,
       },
       {
+        name: "orderId",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: true,
+      },
+    ],
+    name: "OrderCancelled",
+  },
+  {
+    type: "event",
+    anonymous: false,
+    inputs: [
+      {
+        name: "asset",
+        internalType: "address",
+        type: "address",
+        indexed: true,
+      },
+      {
+        name: "assetId",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: true,
+      },
+      {
+        name: "orderId",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: true,
+      },
+      {
+        name: "seller",
+        internalType: "address",
+        type: "address",
+        indexed: false,
+      },
+      {
         name: "assetAmount",
         internalType: "uint256",
         type: "uint256",
@@ -733,6 +877,18 @@ export const orderbookDexAbi = [
       },
       {
         name: "pricePerAsset",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+      {
+        name: "makerFee",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+      {
+        name: "takerFee",
         internalType: "uint256",
         type: "uint256",
         indexed: false,
@@ -745,9 +901,15 @@ export const orderbookDexAbi = [
     anonymous: false,
     inputs: [
       {
-        name: "seller",
+        name: "asset",
         internalType: "address",
         type: "address",
+        indexed: true,
+      },
+      {
+        name: "assetId",
+        internalType: "uint256",
+        type: "uint256",
         indexed: true,
       },
       {
@@ -757,10 +919,16 @@ export const orderbookDexAbi = [
         indexed: true,
       },
       {
+        name: "seller",
+        internalType: "address",
+        type: "address",
+        indexed: false,
+      },
+      {
         name: "buyer",
         internalType: "address",
         type: "address",
-        indexed: true,
+        indexed: false,
       },
       {
         name: "assetAmount",
@@ -774,8 +942,39 @@ export const orderbookDexAbi = [
         type: "uint256",
         indexed: false,
       },
+      {
+        name: "makerFeeCollected",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+      {
+        name: "takerFeeCollected",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
     ],
     name: "OrderFilled",
+  },
+  {
+    type: "event",
+    anonymous: false,
+    inputs: [
+      {
+        name: "previousOwner",
+        internalType: "address",
+        type: "address",
+        indexed: true,
+      },
+      {
+        name: "newOwner",
+        internalType: "address",
+        type: "address",
+        indexed: true,
+      },
+    ],
+    name: "OwnershipTransferred",
   },
   {
     type: "error",
@@ -783,6 +982,7 @@ export const orderbookDexAbi = [
     name: "AddressInsufficientBalance",
   },
   { type: "error", inputs: [], name: "FailedInnerCall" },
+  { type: "error", inputs: [], name: "FeeTooHigh" },
   {
     type: "error",
     inputs: [
@@ -791,6 +991,7 @@ export const orderbookDexAbi = [
     ],
     name: "InsufficientEndAmount",
   },
+  { type: "error", inputs: [], name: "InsufficientPayment" },
   { type: "error", inputs: [], name: "InvalidArrayLength" },
   {
     type: "error",
@@ -801,6 +1002,16 @@ export const orderbookDexAbi = [
     type: "error",
     inputs: [{ name: "orderId", internalType: "uint256", type: "uint256" }],
     name: "OrderDoesNotExist",
+  },
+  {
+    type: "error",
+    inputs: [{ name: "owner", internalType: "address", type: "address" }],
+    name: "OwnableInvalidOwner",
+  },
+  {
+    type: "error",
+    inputs: [{ name: "account", internalType: "address", type: "address" }],
+    name: "OwnableUnauthorizedAccount",
   },
   { type: "error", inputs: [], name: "ReentrancyGuardReentrantCall" },
   {
@@ -1298,14 +1509,6 @@ export const useReadOrderbookDex = /*#__PURE__*/ createUseReadContract({
 });
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"asset"`
- */
-export const useReadOrderbookDexAsset = /*#__PURE__*/ createUseReadContract({
-  abi: orderbookDexAbi,
-  functionName: "asset",
-});
-
-/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"currentOrderId"`
  */
 export const useReadOrderbookDexCurrentOrderId =
@@ -1315,11 +1518,63 @@ export const useReadOrderbookDexCurrentOrderId =
   });
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"defaultMakerFee"`
+ */
+export const useReadOrderbookDexDefaultMakerFee =
+  /*#__PURE__*/ createUseReadContract({
+    abi: orderbookDexAbi,
+    functionName: "defaultMakerFee",
+  });
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"defaultTakerFee"`
+ */
+export const useReadOrderbookDexDefaultTakerFee =
+  /*#__PURE__*/ createUseReadContract({
+    abi: orderbookDexAbi,
+    functionName: "defaultTakerFee",
+  });
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"getAssetAppliedFees"`
+ */
+export const useReadOrderbookDexGetAssetAppliedFees =
+  /*#__PURE__*/ createUseReadContract({
+    abi: orderbookDexAbi,
+    functionName: "getAssetAppliedFees",
+  });
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"getAssetFeeInfo"`
+ */
+export const useReadOrderbookDexGetAssetFeeInfo =
+  /*#__PURE__*/ createUseReadContract({
+    abi: orderbookDexAbi,
+    functionName: "getAssetFeeInfo",
+  });
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"getOrder"`
  */
 export const useReadOrderbookDexGetOrder = /*#__PURE__*/ createUseReadContract({
   abi: orderbookDexAbi,
   functionName: "getOrder",
+});
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"maxFee"`
+ */
+export const useReadOrderbookDexMaxFee = /*#__PURE__*/ createUseReadContract({
+  abi: orderbookDexAbi,
+  functionName: "maxFee",
+});
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"owner"`
+ */
+export const useReadOrderbookDexOwner = /*#__PURE__*/ createUseReadContract({
+  abi: orderbookDexAbi,
+  functionName: "owner",
 });
 
 /**
@@ -1411,6 +1666,51 @@ export const useWriteOrderbookDexOnErc1155Received =
   });
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useWriteOrderbookDexRenounceOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: orderbookDexAbi,
+    functionName: "renounceOwnership",
+  });
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"setAssetFeeInfo"`
+ */
+export const useWriteOrderbookDexSetAssetFeeInfo =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: orderbookDexAbi,
+    functionName: "setAssetFeeInfo",
+  });
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"setDefaultFeeInfo"`
+ */
+export const useWriteOrderbookDexSetDefaultFeeInfo =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: orderbookDexAbi,
+    functionName: "setDefaultFeeInfo",
+  });
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useWriteOrderbookDexTransferOwnership =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: orderbookDexAbi,
+    functionName: "transferOwnership",
+  });
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"withdrawFees"`
+ */
+export const useWriteOrderbookDexWithdrawFees =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: orderbookDexAbi,
+    functionName: "withdrawFees",
+  });
+
+/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__
  */
 export const useSimulateOrderbookDex = /*#__PURE__*/ createUseSimulateContract({
@@ -1490,10 +1790,64 @@ export const useSimulateOrderbookDexOnErc1155Received =
   });
 
 /**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"renounceOwnership"`
+ */
+export const useSimulateOrderbookDexRenounceOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: orderbookDexAbi,
+    functionName: "renounceOwnership",
+  });
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"setAssetFeeInfo"`
+ */
+export const useSimulateOrderbookDexSetAssetFeeInfo =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: orderbookDexAbi,
+    functionName: "setAssetFeeInfo",
+  });
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"setDefaultFeeInfo"`
+ */
+export const useSimulateOrderbookDexSetDefaultFeeInfo =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: orderbookDexAbi,
+    functionName: "setDefaultFeeInfo",
+  });
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"transferOwnership"`
+ */
+export const useSimulateOrderbookDexTransferOwnership =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: orderbookDexAbi,
+    functionName: "transferOwnership",
+  });
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"withdrawFees"`
+ */
+export const useSimulateOrderbookDexWithdrawFees =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: orderbookDexAbi,
+    functionName: "withdrawFees",
+  });
+
+/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__
  */
 export const useWatchOrderbookDexEvent =
   /*#__PURE__*/ createUseWatchContractEvent({ abi: orderbookDexAbi });
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"FeesWithdrawn"`
+ */
+export const useWatchOrderbookDexFeesWithdrawnEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: orderbookDexAbi,
+    eventName: "FeesWithdrawn",
+  });
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"OrderCancelled"`
@@ -1520,4 +1874,13 @@ export const useWatchOrderbookDexOrderFilledEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: orderbookDexAbi,
     eventName: "OrderFilled",
+  });
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"OwnershipTransferred"`
+ */
+export const useWatchOrderbookDexOwnershipTransferredEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: orderbookDexAbi,
+    eventName: "OwnershipTransferred",
   });

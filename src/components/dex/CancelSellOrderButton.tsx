@@ -1,4 +1,5 @@
 import TransactionButton from "@components/common/TransactionButton";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { QueryKeys } from "@utils/queryKeys";
@@ -13,6 +14,7 @@ type Props = {
 
 export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
   const { address } = useAccount();
+  const { data: assetMetadata } = useGetGameAssetMetadata();
   const theme = useTheme();
   const displayLongText = useMediaQuery(theme.breakpoints.up("lg"));
   const {
@@ -40,9 +42,11 @@ export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
   });
 
   const handleCancelSellOrderClick = () => {
+    if (!assetMetadata) return;
+    console.log("args", [assetMetadata.contractAsset, BigInt(orderId)]);
     writeContract({
       address: dexAddress,
-      args: [BigInt(orderId)],
+      args: [assetMetadata.contractAsset, BigInt(orderId)],
     });
   };
 

@@ -44,7 +44,10 @@ export default function UserSellOrdersSections() {
     if (!orders || !assetMetadata) return;
     writeContract({
       address: assetMetadata.contractDex,
-      args: [orders.map((order) => BigInt(order.orderId))],
+      args: [
+        assetMetadata.contractAsset,
+        orders.map((order) => BigInt(order.orderId)),
+      ],
     });
   };
 

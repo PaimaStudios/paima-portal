@@ -19,18 +19,14 @@ import { useAccount } from "wagmi";
 import InputWithClickableLimits from "./InputWithClickableLimits";
 import { ZERO_ADDRESS } from "@utils/constants";
 import useGetSellableAssets from "@hooks/dex/useGetSellableAssets";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 
 type Props = {
-  assetMetadata?: AssetMetadata;
   selectedAssets: Asset[];
   advancedMode: boolean;
 };
 
-export default function SellForm({
-  assetMetadata,
-  selectedAssets,
-  advancedMode,
-}: Props) {
+export default function SellForm({ selectedAssets, advancedMode }: Props) {
   const queryClient = useQueryClient();
   const { data: orders } = useGetSellOrders();
   const { data: assets } = useGetSellableAssets();
@@ -39,6 +35,7 @@ export default function SellForm({
   const [amount, setAmount] = useState("");
   const [amountN, setAmountN] = useState(0);
   const { address } = useAccount();
+  const { data: assetMetadata } = useGetGameAssetMetadata();
 
   const { data: isApproved, queryKey: isApprovedQueryKey } =
     useReadInverseAppProjected1155IsApprovedForAll({
@@ -182,6 +179,7 @@ export default function SellForm({
       writeCreateSellOrder({
         address: assetMetadata.contractDex,
         args: [
+          assetMetadata.contractAsset,
           BigInt(assetsToSell[0].tokenId),
           BigInt(assetsToSell[0].amount),
           priceBN,
@@ -191,6 +189,7 @@ export default function SellForm({
       writeCreateBatchSellOrder({
         address: assetMetadata.contractDex,
         args: [
+          assetMetadata.contractAsset,
           assetsToSell.map((a) => BigInt(a.tokenId)),
           assetsToSell.map((a) => BigInt(a.amount)),
           assetsToSell.map(() => priceBN),

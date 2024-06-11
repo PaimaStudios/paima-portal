@@ -1,4 +1,5 @@
 import TransactionButton from "@components/common/TransactionButton";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import { ButtonProps } from "@mui/material";
 import { QueryKeys } from "@utils/queryKeys";
@@ -8,7 +9,6 @@ import {
   useWriteOrderbookDexFillOrdersExactAsset,
   useWriteOrderbookDexFillOrdersExactEth,
 } from "src/generated";
-import { useAccount } from "wagmi";
 
 type Props = {
   dexAddress: `0x${string}`;
@@ -28,7 +28,7 @@ export default function FillOrderButton({
   onSuccess,
   ...props
 }: Props) {
-  const { address } = useAccount();
+  const { data: assetMetadata } = useGetGameAssetMetadata();
   const {
     writeContract: writeFillExactAsset,
     isPending: isPendingExactAsset,
@@ -62,16 +62,18 @@ export default function FillOrderButton({
   });
 
   const handleBuyButtonClick = () => {
+    if (!assetMetadata) return;
+    console.log("orderIds", orderIds);
     if (useExactAsset) {
       writeFillExactAsset({
         address: dexAddress,
-        args: [assetAmount, orderIds],
+        args: [assetMetadata.contractAsset, assetAmount, orderIds],
         value: ethAmount,
       });
     } else {
       writeFillExactEth({
         address: dexAddress,
-        args: [assetAmount, orderIds],
+        args: [assetMetadata.contractAsset, assetAmount, orderIds],
         value: ethAmount,
       });
     }

@@ -1,17 +1,20 @@
-import { Skeleton, Stack } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { formatEth } from "@utils/evm/utils";
-import { bigIntMin } from "@utils/utils";
 import FillOrderButton from "./FillOrderButton";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import InputWithClickableLimits from "./InputWithClickableLimits";
 import { InputErrorMessage } from "@utils/texts";
 import TransactionButton from "@components/common/TransactionButton";
 
-export default function BuySection() {
+type Props = {
+  slippagePercentage: number;
+};
+
+export default function BuySection({ slippagePercentage }: Props) {
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
   const { data: orders } = useGetSellOrders();
@@ -22,13 +25,19 @@ export default function BuySection() {
   const [priceBN, setPriceBN] = useState(0n);
   const [useExactAsset, setUseExactAsset] = useState(true);
 
-  const totalAssetAvailable = orders?.reduce(
-    (acc, order) => acc + BigInt(order.amount),
-    0n,
+  const totalAssetAvailable = useMemo(
+    () => orders?.reduce((acc, order) => acc + BigInt(order.amount), 0n),
+    [orders],
   );
-  const totalEthPayable = orders?.reduce(
-    (acc, order) => acc + BigInt(order.amount) * BigInt(order.price),
-    0n,
+  const totalEthPayable = useMemo(
+    () =>
+      orders?.reduce((acc, order) => {
+        const purchaseCost = BigInt(order.amount) * BigInt(order.price);
+        return (
+          acc + purchaseCost + (purchaseCost * BigInt(order.takerFee)) / 10000n
+        );
+      }, 0n),
+    [orders],
   );
 
   const recalculatePrice = (newAmount: number) => {
@@ -38,7 +47,9 @@ export default function BuySection() {
     orders.forEach((order) => {
       if (remainingAmount === 0) return;
       const fillAmount = Math.min(remainingAmount, order.amount);
-      newPrice += BigInt(fillAmount) * BigInt(order.price);
+      const purchaseCost = BigInt(fillAmount) * BigInt(order.price);
+      newPrice +=
+        purchaseCost + (purchaseCost * BigInt(order.takerFee)) / 10000n;
       remainingAmount -= fillAmount;
     });
     setPriceBN(newPrice);
@@ -52,13 +63,23 @@ export default function BuySection() {
     let remainingTotalPrice = newPrice;
     orders.forEach((order) => {
       if (remainingTotalPrice === 0n) return;
-      const fillPrice = bigIntMin(
-        remainingTotalPrice,
-        BigInt(order.amount) * BigInt(order.price),
-      );
-      const fillAmount = fillPrice / BigInt(order.price);
-      newAmount += fillAmount;
-      remainingTotalPrice -= fillPrice;
+      const numerator = remainingTotalPrice * 10000n;
+      const denominator = BigInt(order.takerFee) + 10000n;
+      let purchaseCost = numerator / denominator;
+      if (purchaseCost * denominator !== numerator) {
+        purchaseCost += 1n;
+      }
+      let assetsToBuy = purchaseCost / BigInt(order.price);
+      if (assetsToBuy === 0n) {
+        return;
+      }
+      if (assetsToBuy > BigInt(order.amount)) {
+        assetsToBuy = BigInt(order.amount);
+        purchaseCost = assetsToBuy * BigInt(order.price);
+      }
+      newAmount += assetsToBuy;
+      remainingTotalPrice -=
+        purchaseCost + (purchaseCost * BigInt(order.takerFee)) / 10000n;
     });
     setAmountN(Number(newAmount));
     setAmount(newAmount.toString());
@@ -89,6 +110,16 @@ export default function BuySection() {
       recalculateAmount(newValueBN);
     } catch (e) {}
   };
+
+  const minimumAsset = !useExactAsset
+    ? BigInt(Math.floor(amountN - (amountN * slippagePercentage) / 100))
+    : null;
+
+  const maximumPayment = useExactAsset
+    ? priceBN +
+      (priceBN * parseEther((slippagePercentage / 100).toString())) /
+        BigInt(1e18)
+    : null;
 
   const amountInputError =
     totalAssetAvailable != null && amountN > totalAssetAvailable
@@ -178,10 +209,43 @@ export default function BuySection() {
         )}
       </Stack>
       {!showSkeletons ? (
+        <Stack
+          sx={{
+            flexDirection: "row",
+            justifyContent: "end",
+            gap: 2,
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          {useExactAsset ? (
+            <>
+              <Typography variant="caption">You'll pay at most:</Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                {formatEther(maximumPayment!)} {assetMetadata.toSym}
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography variant="caption">
+                You'll receive at least:
+              </Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                {minimumAsset?.toString()} {assetMetadata.fromSym}
+              </Typography>
+            </>
+          )}
+        </Stack>
+      ) : (
+        <Typography>
+          <Skeleton />
+        </Typography>
+      )}
+      {!showSkeletons ? (
         <FillOrderButton
           dexAddress={assetMetadata.contractDex}
           useExactAsset={useExactAsset}
-          assetAmount={BigInt(amountN)} // todo: subtract slippage if not useExactAsset
+          assetAmount={useExactAsset ? BigInt(amountN) : minimumAsset!}
           ethAmount={priceBN} // todo: add slippage if useExactAsset
           orderIds={orders?.map((order) => BigInt(order.orderId))}
           disabled={!!priceInputError || !!amountInputError}

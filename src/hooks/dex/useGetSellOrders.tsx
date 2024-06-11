@@ -9,6 +9,7 @@ export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
   const { game, asset } = useGetGameAndAssetFromUrl();
   return useQuery<SellOrder[] | undefined>({
     queryKey: [QueryKeys.SellOrders, params?.user],
+    refetchInterval: 5000,
     queryFn: async () => {
       if (!game || !asset) return undefined;
       const gameApi = gamesApi[game];

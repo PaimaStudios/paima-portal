@@ -22,4 +22,5 @@ export const InputErrorMessage = {
   InputExceedsAvailableAmount: "Value exceeds available amount",
   InputMustBeGreaterThanZero: "Value must be greater than 0",
   InputExceedsBalance: "Value exceeds your balance",
+  ValueNotPercentage: "Must be between 0 and 100",
 };

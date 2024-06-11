@@ -2,21 +2,25 @@
   {
     "type": "constructor",
     "inputs": [
-      { "name": "_asset", "type": "address", "internalType": "address" }
+      { "name": "_owner", "type": "address", "internalType": "address" },
+      {
+        "name": "_defaultMakerFee",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "_defaultTakerFee",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "asset",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "cancelBatchSellOrder",
     "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
       { "name": "orderIds", "type": "uint256[]", "internalType": "uint256[]" }
     ],
     "outputs": [],
@@ -26,6 +30,7 @@
     "type": "function",
     "name": "cancelSellOrder",
     "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
       { "name": "orderId", "type": "uint256", "internalType": "uint256" }
     ],
     "outputs": [],
@@ -35,6 +40,7 @@
     "type": "function",
     "name": "createBatchSellOrder",
     "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
       { "name": "assetIds", "type": "uint256[]", "internalType": "uint256[]" },
       {
         "name": "assetAmounts",
@@ -56,6 +62,7 @@
     "type": "function",
     "name": "createSellOrder",
     "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
       { "name": "assetId", "type": "uint256", "internalType": "uint256" },
       { "name": "assetAmount", "type": "uint256", "internalType": "uint256" },
       { "name": "pricePerAsset", "type": "uint256", "internalType": "uint256" }
@@ -66,6 +73,24 @@
   {
     "type": "function",
     "name": "currentOrderId",
+    "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      { "name": "orderId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "defaultMakerFee",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "defaultTakerFee",
     "inputs": [],
     "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
     "stateMutability": "view"
@@ -74,6 +99,7 @@
     "type": "function",
     "name": "fillOrdersExactAsset",
     "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
       { "name": "assetAmount", "type": "uint256", "internalType": "uint256" },
       { "name": "orderIds", "type": "uint256[]", "internalType": "uint256[]" }
     ],
@@ -84,6 +110,7 @@
     "type": "function",
     "name": "fillOrdersExactEth",
     "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
       { "name": "minimumAsset", "type": "uint256", "internalType": "uint256" },
       { "name": "orderIds", "type": "uint256[]", "internalType": "uint256[]" }
     ],
@@ -92,8 +119,41 @@
   },
   {
     "type": "function",
+    "name": "getAssetAppliedFees",
+    "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      { "name": "makerFee", "type": "uint256", "internalType": "uint256" },
+      { "name": "takerFee", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAssetFeeInfo",
+    "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct IOrderbookDex.FeeInfo",
+        "components": [
+          { "name": "makerFee", "type": "uint256", "internalType": "uint256" },
+          { "name": "takerFee", "type": "uint256", "internalType": "uint256" },
+          { "name": "set", "type": "bool", "internalType": "bool" }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getOrder",
     "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
       { "name": "orderId", "type": "uint256", "internalType": "uint256" }
     ],
     "outputs": [
@@ -117,10 +177,19 @@
             "name": "seller",
             "type": "address",
             "internalType": "address payable"
-          }
+          },
+          { "name": "makerFee", "type": "uint256", "internalType": "uint256" },
+          { "name": "takerFee", "type": "uint256", "internalType": "uint256" }
         ]
       }
     ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "maxFee",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
     "stateMutability": "view"
   },
   {
@@ -151,6 +220,41 @@
   },
   {
     "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "renounceOwnership",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setAssetFeeInfo",
+    "inputs": [
+      { "name": "asset", "type": "address", "internalType": "address" },
+      { "name": "makerFee", "type": "uint256", "internalType": "uint256" },
+      { "name": "takerFee", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setDefaultFeeInfo",
+    "inputs": [
+      { "name": "makerFee", "type": "uint256", "internalType": "uint256" },
+      { "name": "takerFee", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "supportsInterface",
     "inputs": [
       { "name": "interfaceId", "type": "bytes4", "internalType": "bytes4" }
@@ -159,17 +263,58 @@
     "stateMutability": "view"
   },
   {
+    "type": "function",
+    "name": "transferOwnership",
+    "inputs": [
+      { "name": "newOwner", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "withdrawFees",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
     "type": "event",
-    "name": "OrderCancelled",
+    "name": "FeesWithdrawn",
     "inputs": [
       {
-        "name": "seller",
+        "name": "receiver",
         "type": "address",
         "indexed": true,
         "internalType": "address"
       },
       {
-        "name": "id",
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OrderCancelled",
+    "inputs": [
+      {
+        "name": "asset",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "assetId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "orderId",
         "type": "uint256",
         "indexed": true,
         "internalType": "uint256"
@@ -182,10 +327,16 @@
     "name": "OrderCreated",
     "inputs": [
       {
-        "name": "seller",
+        "name": "asset",
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      },
+      {
+        "name": "assetId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
       },
       {
         "name": "orderId",
@@ -194,10 +345,10 @@
         "internalType": "uint256"
       },
       {
-        "name": "assetId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
+        "name": "seller",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
       },
       {
         "name": "assetAmount",
@@ -207,6 +358,18 @@
       },
       {
         "name": "pricePerAsset",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "makerFee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "takerFee",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -219,10 +382,16 @@
     "name": "OrderFilled",
     "inputs": [
       {
-        "name": "seller",
+        "name": "asset",
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      },
+      {
+        "name": "assetId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
       },
       {
         "name": "orderId",
@@ -231,9 +400,15 @@
         "internalType": "uint256"
       },
       {
+        "name": "seller",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
         "name": "buyer",
         "type": "address",
-        "indexed": true,
+        "indexed": false,
         "internalType": "address"
       },
       {
@@ -247,6 +422,37 @@
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "makerFeeCollected",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "takerFeeCollected",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferred",
+    "inputs": [
+      {
+        "name": "previousOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       }
     ],
     "anonymous": false
@@ -259,6 +465,7 @@
     ]
   },
   { "type": "error", "name": "FailedInnerCall", "inputs": [] },
+  { "type": "error", "name": "FeeTooHigh", "inputs": [] },
   {
     "type": "error",
     "name": "InsufficientEndAmount",
@@ -271,6 +478,7 @@
       { "name": "actualAmount", "type": "uint256", "internalType": "uint256" }
     ]
   },
+  { "type": "error", "name": "InsufficientPayment", "inputs": [] },
   { "type": "error", "name": "InvalidArrayLength", "inputs": [] },
   {
     "type": "error",
@@ -284,6 +492,20 @@
     "name": "OrderDoesNotExist",
     "inputs": [
       { "name": "orderId", "type": "uint256", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OwnableInvalidOwner",
+    "inputs": [
+      { "name": "owner", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OwnableUnauthorizedAccount",
+    "inputs": [
+      { "name": "account", "type": "address", "internalType": "address" }
     ]
   },
   { "type": "error", "name": "ReentrancyGuardReentrantCall", "inputs": [] },

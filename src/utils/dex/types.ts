@@ -39,6 +39,8 @@ export type SellOrder = {
   tokenId: number;
   amount: number;
   price: string;
+  makerFee: number;
+  takerFee: number;
 };
 
 export type AssetHistoricalData = {
