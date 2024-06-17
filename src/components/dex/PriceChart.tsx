@@ -38,7 +38,7 @@ export default function PriceChart() {
     });
     setChart(chart);
     const candleSeries = chart.addCandlestickSeries({
-      priceFormat: { minMove: 0.000001 },
+      priceFormat: { minMove: 0.00000001 },
     });
     setChartSeries(candleSeries);
   }, [data]);
