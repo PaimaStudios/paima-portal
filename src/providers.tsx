@@ -12,9 +12,9 @@ import {
   QueryClientProvider,
   QueryKey,
 } from "@tanstack/react-query";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { SnackbarProvider, closeSnackbar, enqueueSnackbar } from "notistack";
 import { MaterialDesignContent } from "notistack";
-import { styled } from "@mui/material";
+import { Button, styled } from "@mui/material";
 import { getErrorMessage } from "@utils/errors";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
@@ -37,6 +37,20 @@ declare module "@tanstack/react-query" {
   }
 }
 
+const dismissSnackbar = (snackbarId: any) => (
+  <>
+    <Button
+      variant="text"
+      color="inherit"
+      onClick={() => {
+        closeSnackbar(snackbarId);
+      }}
+    >
+      Dismiss
+    </Button>
+  </>
+);
+
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
@@ -44,6 +58,8 @@ const queryClient = new QueryClient({
       enqueueSnackbar({
         message: `Something went wrong: ${error.message}`,
         variant: "error",
+        action: dismissSnackbar,
+        persist: true,
       });
     },
     onSuccess: (data, query) => {
@@ -67,6 +83,8 @@ const queryClient = new QueryClient({
       enqueueSnackbar({
         message: `Something went wrong: ${getErrorMessage(error)}`,
         variant: "error",
+        action: dismissSnackbar,
+        persist: true,
       });
     },
     onSuccess: (data, variables, context, mutation) => {
