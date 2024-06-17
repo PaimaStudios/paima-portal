@@ -63,7 +63,6 @@ export default function FillOrderButton({
 
   const handleBuyButtonClick = () => {
     if (!assetMetadata) return;
-    console.log("orderIds", orderIds);
     if (useExactAsset) {
       writeFillExactAsset({
         address: dexAddress,

@@ -43,7 +43,6 @@ export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
 
   const handleCancelSellOrderClick = () => {
     if (!assetMetadata) return;
-    console.log("args", [assetMetadata.contractAsset, BigInt(orderId)]);
     writeContract({
       address: dexAddress,
       args: [assetMetadata.contractAsset, BigInt(orderId)],
