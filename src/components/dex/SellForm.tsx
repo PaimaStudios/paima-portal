@@ -1,10 +1,10 @@
 import TransactionButton from "@components/common/TransactionButton";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
-import { Divider, Skeleton, Stack, TextField, Typography } from "@mui/material";
+import { Divider, Skeleton, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useQueryClient } from "@tanstack/react-query";
-import { Asset, AssetMetadata } from "@utils/dex/types";
+import { Asset } from "@utils/dex/types";
 import { QueryKeys } from "@utils/queryKeys";
 import { InputErrorMessage, SnackbarMessage } from "@utils/texts";
 import { Fragment, useEffect, useState } from "react";
@@ -20,6 +20,7 @@ import InputWithClickableLimits from "./InputWithClickableLimits";
 import { ZERO_ADDRESS } from "@utils/constants";
 import useGetSellableAssets from "@hooks/dex/useGetSellableAssets";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
+import useGetOrderCreationFee from "@hooks/dex/useGetOrderCreationFee";
 
 type Props = {
   selectedAssets: Asset[];
@@ -36,6 +37,7 @@ export default function SellForm({ selectedAssets, advancedMode }: Props) {
   const [amountN, setAmountN] = useState(0);
   const { address } = useAccount();
   const { data: assetMetadata } = useGetGameAssetMetadata();
+  const { data: orderCreationFee } = useGetOrderCreationFee();
 
   const { data: isApproved, queryKey: isApprovedQueryKey } =
     useReadInverseAppProjected1155IsApprovedForAll({
@@ -163,7 +165,7 @@ export default function SellForm({ selectedAssets, advancedMode }: Props) {
   };
 
   const createSellOrder = () => {
-    if (!assetMetadata || !assets) return;
+    if (!assetMetadata || !assets || !orderCreationFee) return;
     let assetsToSell = selectedAssets;
     if (!advancedMode) {
       assetsToSell = [];
@@ -190,6 +192,7 @@ export default function SellForm({ selectedAssets, advancedMode }: Props) {
           BigInt(assetsToSell[0].amount),
           priceBN,
         ],
+        value: orderCreationFee,
       });
     } else {
       writeCreateBatchSellOrder({
@@ -200,6 +203,7 @@ export default function SellForm({ selectedAssets, advancedMode }: Props) {
           assetsToSell.map((a) => BigInt(a.amount)),
           assetsToSell.map(() => priceBN),
         ],
+        value: orderCreationFee * BigInt(assetsToSell.length),
       });
     }
   };
@@ -241,7 +245,11 @@ export default function SellForm({ selectedAssets, advancedMode }: Props) {
   const priceInputError =
     priceBN === 0n ? InputErrorMessage.InputMustBeGreaterThanZero : null;
 
-  const showSkeletons = !(assetMetadata && totalAssetAvailable != null);
+  const showSkeletons = !(
+    assetMetadata &&
+    totalAssetAvailable != null &&
+    orderCreationFee != null
+  );
 
   return (
     <Stack sx={{ gap: 3, width: "100%", alignItems: "center" }}>

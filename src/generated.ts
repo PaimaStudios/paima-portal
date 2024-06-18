@@ -612,6 +612,7 @@ export const orderbookDexAbi = [
       { name: "_owner", internalType: "address", type: "address" },
       { name: "_defaultMakerFee", internalType: "uint256", type: "uint256" },
       { name: "_defaultTakerFee", internalType: "uint256", type: "uint256" },
+      { name: "_orderCreationFee", internalType: "uint256", type: "uint256" },
     ],
     stateMutability: "nonpayable",
   },
@@ -645,7 +646,7 @@ export const orderbookDexAbi = [
     ],
     name: "createBatchSellOrder",
     outputs: [{ name: "", internalType: "uint256[]", type: "uint256[]" }],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
   },
   {
     type: "function",
@@ -657,7 +658,7 @@ export const orderbookDexAbi = [
     ],
     name: "createSellOrder",
     outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
   },
   {
     type: "function",
@@ -790,6 +791,13 @@ export const orderbookDexAbi = [
   {
     type: "function",
     inputs: [],
+    name: "orderCreationFee",
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    inputs: [],
     name: "owner",
     outputs: [{ name: "", internalType: "address", type: "address" }],
     stateMutability: "view",
@@ -824,6 +832,13 @@ export const orderbookDexAbi = [
   },
   {
     type: "function",
+    inputs: [{ name: "fee", internalType: "uint256", type: "uint256" }],
+    name: "setOrderCreationFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     inputs: [{ name: "interfaceId", internalType: "bytes4", type: "bytes4" }],
     name: "supportsInterface",
     outputs: [{ name: "", internalType: "bool", type: "bool" }],
@@ -842,6 +857,31 @@ export const orderbookDexAbi = [
     name: "withdrawFees",
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+    type: "event",
+    anonymous: false,
+    inputs: [
+      {
+        name: "asset",
+        internalType: "address",
+        type: "address",
+        indexed: true,
+      },
+      {
+        name: "makerFee",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+      {
+        name: "takerFee",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+    ],
+    name: "FeeInfoChanged",
   },
   {
     type: "event",
@@ -941,6 +981,25 @@ export const orderbookDexAbi = [
       },
     ],
     name: "OrderCreated",
+  },
+  {
+    type: "event",
+    anonymous: false,
+    inputs: [
+      {
+        name: "oldFee",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+      {
+        name: "newFee",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+    ],
+    name: "OrderCreationFeeChanged",
   },
   {
     type: "event",
@@ -1616,6 +1675,15 @@ export const useReadOrderbookDexMaxFee = /*#__PURE__*/ createUseReadContract({
 });
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"orderCreationFee"`
+ */
+export const useReadOrderbookDexOrderCreationFee =
+  /*#__PURE__*/ createUseReadContract({
+    abi: orderbookDexAbi,
+    functionName: "orderCreationFee",
+  });
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"owner"`
  */
 export const useReadOrderbookDexOwner = /*#__PURE__*/ createUseReadContract({
@@ -1736,6 +1804,15 @@ export const useWriteOrderbookDexSetDefaultFeeInfo =
   /*#__PURE__*/ createUseWriteContract({
     abi: orderbookDexAbi,
     functionName: "setDefaultFeeInfo",
+  });
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"setOrderCreationFee"`
+ */
+export const useWriteOrderbookDexSetOrderCreationFee =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: orderbookDexAbi,
+    functionName: "setOrderCreationFee",
   });
 
 /**
@@ -1863,6 +1940,15 @@ export const useSimulateOrderbookDexSetDefaultFeeInfo =
   });
 
 /**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"setOrderCreationFee"`
+ */
+export const useSimulateOrderbookDexSetOrderCreationFee =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: orderbookDexAbi,
+    functionName: "setOrderCreationFee",
+  });
+
+/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"transferOwnership"`
  */
 export const useSimulateOrderbookDexTransferOwnership =
@@ -1885,6 +1971,15 @@ export const useSimulateOrderbookDexWithdrawFees =
  */
 export const useWatchOrderbookDexEvent =
   /*#__PURE__*/ createUseWatchContractEvent({ abi: orderbookDexAbi });
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"FeeInfoChanged"`
+ */
+export const useWatchOrderbookDexFeeInfoChangedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: orderbookDexAbi,
+    eventName: "FeeInfoChanged",
+  });
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"FeesWithdrawn"`
@@ -1911,6 +2006,15 @@ export const useWatchOrderbookDexOrderCreatedEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: orderbookDexAbi,
     eventName: "OrderCreated",
+  });
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"OrderCreationFeeChanged"`
+ */
+export const useWatchOrderbookDexOrderCreationFeeChangedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: orderbookDexAbi,
+    eventName: "OrderCreationFeeChanged",
   });
 
 /**
