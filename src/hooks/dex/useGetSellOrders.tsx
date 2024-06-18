@@ -7,13 +7,13 @@ import axios from "axios";
 
 export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
   const { game, asset } = useGetGameAndAssetFromUrl();
-  return useQuery<SellOrder[] | undefined>({
+  return useQuery<SellOrder[] | null>({
     queryKey: [QueryKeys.SellOrders, params?.user],
     refetchInterval: 5000,
     queryFn: async () => {
-      if (!game || !asset) return undefined;
+      if (!game || !asset) return null;
       const gameApi = gamesApi[game];
-      if (!gameApi) return undefined;
+      if (!gameApi) return null;
       let url = new URL(`${gameApi}/dex/${asset}/orders`);
       if (params?.user) {
         url.searchParams.append("seller", params.user.toLowerCase());

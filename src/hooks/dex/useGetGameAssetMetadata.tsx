@@ -15,12 +15,12 @@ export default function useGetGameAssetMetadata(params?: {
   const game = params?.game || gameFromUrl;
   const asset = params?.asset || assetFromUrl;
 
-  return useQuery<AssetMetadata | undefined>({
+  return useQuery<AssetMetadata | null>({
     queryKey: [QueryKeys.GameMetadata, game, asset],
     queryFn: async () => {
-      if (!game || !asset) return undefined;
+      if (!game || !asset) return null;
       const gameApi = gamesApi[game];
-      if (!gameApi) return undefined;
+      if (!gameApi) return null;
       const response = await axios.get<AssetMetadata>(
         `${gameApi}/dex/${asset}`,
       );

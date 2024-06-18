@@ -10,12 +10,12 @@ export default function useGetGameMetadata(params?: { game: string }) {
 
   const game = params?.game || gameFromUrl;
 
-  return useQuery<GameMetadata | undefined>({
+  return useQuery<GameMetadata | null>({
     queryKey: [QueryKeys.GameMetadata, game],
     queryFn: async () => {
-      if (!game) return undefined;
+      if (!game) return null;
       const gameApi = gamesApi[game];
-      if (!gameApi) return undefined;
+      if (!gameApi) return null;
       const response = await axios.get<GameMetadata>(`${gameApi}/dex`);
       return response.data;
     },

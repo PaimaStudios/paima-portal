@@ -16,13 +16,13 @@ export default function useGetAssetHistoricalData(params?: {
   const game = params?.game || gameFromUrl;
   const asset = params?.asset || assetFromUrl;
 
-  return useQuery<AssetHistoricalData | undefined>({
+  return useQuery<AssetHistoricalData | null>({
     queryKey: [QueryKeys.AssetHistoricalData],
     refetchInterval: 10000,
     queryFn: async () => {
-      if (!game || !asset) return undefined;
+      if (!game || !asset) return null;
       const gameApi = gamesApi[game];
-      if (!gameApi) return undefined;
+      if (!gameApi) return null;
       const response = await axios.get<AssetHistoricalData>(
         `${gameApi}/dex/${asset}/historical_price`,
       );

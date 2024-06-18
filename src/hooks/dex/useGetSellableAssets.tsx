@@ -10,12 +10,12 @@ export default function useGetSellableAssets() {
   const { game, asset } = useGetGameAndAssetFromUrl();
   const { address } = useAccount();
 
-  return useQuery<DexValidMintedAssetsResponse | undefined>({
+  return useQuery<DexValidMintedAssetsResponse | null>({
     queryKey: [QueryKeys.SellableAssets, game, asset, address],
     queryFn: async () => {
-      if (!game || !asset || !address) return undefined;
+      if (!game || !asset || !address) return null;
       const gameApi = gamesApi[game];
-      if (!gameApi) return undefined;
+      if (!gameApi) return null;
       const response = await axios.get<DexValidMintedAssetsResponse>(
         `${gameApi}/dex/${asset}/wallet/${address?.toLowerCase()}`,
       );
