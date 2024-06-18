@@ -8,6 +8,7 @@ import { SnackbarMessage } from "@utils/texts";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
+import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 
 export default function UserSellOrdersSections() {
   const { address } = useAccount();
@@ -52,35 +53,37 @@ export default function UserSellOrdersSections() {
   };
 
   return (
-    <Stack sx={{ alignItems: "center", gap: 2, width: "100%", mt: 4 }}>
-      <Stack
-        sx={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          gap: 2,
-          p: 1,
-          width: "100%",
-        }}
-      >
-        <Typography variant="h4">Your sell orders</Typography>
-        {orders && assetMetadata ? (
-          orders.length > 0 && (
-            <TransactionButton
-              onClick={() => {
-                handleCancelAllSellOrdersClick();
-              }}
-              actionText={"Cancel all"}
-              isLoading={isLoading}
-              isPending={isPending}
-            />
-          )
-        ) : (
-          <Skeleton variant="rounded">
-            <TransactionButton actionText={"Cancel all"} />
-          </Skeleton>
-        )}
+    <IsConnectedWrapper hidden>
+      <Stack sx={{ alignItems: "center", gap: 2, width: "100%", mt: 4 }}>
+        <Stack
+          sx={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: 2,
+            p: 1,
+            width: "100%",
+          }}
+        >
+          <Typography variant="h4">Your sell orders</Typography>
+          {orders && assetMetadata ? (
+            orders.length > 0 && (
+              <TransactionButton
+                onClick={() => {
+                  handleCancelAllSellOrdersClick();
+                }}
+                actionText={"Cancel all"}
+                isLoading={isLoading}
+                isPending={isPending}
+              />
+            )
+          ) : (
+            <Skeleton variant="rounded">
+              <TransactionButton actionText={"Cancel all"} />
+            </Skeleton>
+          )}
+        </Stack>
+        <SellOrdersGrid user={address} />
       </Stack>
-      <SellOrdersGrid user={address} />
-    </Stack>
+    </IsConnectedWrapper>
   );
 }
