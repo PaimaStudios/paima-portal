@@ -1,6 +1,6 @@
 import { Popover, Stack, Typography, TextField } from "@mui/material";
 import { InputErrorMessage } from "@utils/texts";
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, useState } from "react";
 
 type Props = {
   slippageInitialValue: number;

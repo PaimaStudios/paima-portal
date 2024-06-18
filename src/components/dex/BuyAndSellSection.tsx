@@ -1,11 +1,4 @@
-import {
-  FormControlLabel,
-  IconButton,
-  Stack,
-  Switch,
-  Tab,
-  Typography,
-} from "@mui/material";
+import { IconButton, Stack, Tab } from "@mui/material";
 import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 import SellSection from "@components/dex/SellSection";
 import TabContext from "@mui/lab/TabContext";
@@ -15,6 +8,7 @@ import { useState } from "react";
 import BuySection from "@components/dex/BuySection";
 import BuySettingsPopover from "./BuySettingsPopover";
 import SettingsIcon from "@mui/icons-material/Settings";
+import SellSettingsPopover from "./SellSettingsPopover";
 
 enum TabValue {
   Buy = "Buy",
@@ -25,7 +19,9 @@ export default function BuyAndSellSection() {
   const [tabValue, setTabValue] = useState(TabValue.Buy);
   const [advancedMode, setAdvancedMode] = useState(false);
   const [slippagePercentage, setSlippagePercentage] = useState(0.1);
-  const [settingsPopoverAnchorEl, setSettingsPopoverAnchorEl] =
+  const [buySettingsPopoverAnchorEl, setBuySettingsPopoverAnchorEl] =
+    useState<HTMLButtonElement | null>(null);
+  const [sellSettingsPopoverAnchorEl, setSellSettingsPopoverAnchorEl] =
     useState<HTMLButtonElement | null>(null);
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: TabValue) => {
@@ -47,36 +43,30 @@ export default function BuyAndSellSection() {
               <Tab label="Buy" value={TabValue.Buy} />
               <Tab label="Sell" value={TabValue.Sell} />
             </TabList>
-            {tabValue === TabValue.Sell && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={advancedMode}
-                    onChange={() => setAdvancedMode(!advancedMode)}
-                    size="small"
-                  />
+            <IconButton
+              aria-label="settings"
+              onClick={(event) => {
+                if (tabValue === TabValue.Buy) {
+                  setBuySettingsPopoverAnchorEl(event.currentTarget);
+                } else if (tabValue === TabValue.Sell) {
+                  setSellSettingsPopoverAnchorEl(event.currentTarget);
                 }
-                label={<Typography variant="caption">Advanced mode</Typography>}
-              />
-            )}
-            {tabValue === TabValue.Buy && (
-              <>
-                <IconButton
-                  aria-label="settings"
-                  onClick={(event) => {
-                    setSettingsPopoverAnchorEl(event.currentTarget);
-                  }}
-                >
-                  <SettingsIcon />
-                </IconButton>
-                <BuySettingsPopover
-                  setSlippagePercentage={setSlippagePercentage}
-                  anchorEl={settingsPopoverAnchorEl}
-                  handleClose={() => setSettingsPopoverAnchorEl(null)}
-                  slippageInitialValue={slippagePercentage}
-                />
-              </>
-            )}
+              }}
+            >
+              <SettingsIcon />
+            </IconButton>
+            <BuySettingsPopover
+              setSlippagePercentage={setSlippagePercentage}
+              anchorEl={buySettingsPopoverAnchorEl}
+              handleClose={() => setBuySettingsPopoverAnchorEl(null)}
+              slippageInitialValue={slippagePercentage}
+            />
+            <SellSettingsPopover
+              advancedMode={advancedMode}
+              setAdvancedMode={setAdvancedMode}
+              anchorEl={sellSettingsPopoverAnchorEl}
+              handleClose={() => setSellSettingsPopoverAnchorEl(null)}
+            />
           </Stack>
           <TabPanel value={TabValue.Buy}>
             <BuySection slippagePercentage={slippagePercentage} />
