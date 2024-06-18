@@ -561,6 +561,52 @@ export const inverseAppProjected1155Abi = [
 
 export const orderbookDexAbi = [
   {
+    type: "error",
+    inputs: [
+      { name: "sender", internalType: "address", type: "address" },
+      { name: "balance", internalType: "uint256", type: "uint256" },
+      { name: "needed", internalType: "uint256", type: "uint256" },
+      { name: "tokenId", internalType: "uint256", type: "uint256" },
+    ],
+    name: "ERC1155InsufficientBalance",
+  },
+  {
+    type: "error",
+    inputs: [{ name: "approver", internalType: "address", type: "address" }],
+    name: "ERC1155InvalidApprover",
+  },
+  {
+    type: "error",
+    inputs: [
+      { name: "idsLength", internalType: "uint256", type: "uint256" },
+      { name: "valuesLength", internalType: "uint256", type: "uint256" },
+    ],
+    name: "ERC1155InvalidArrayLength",
+  },
+  {
+    type: "error",
+    inputs: [{ name: "operator", internalType: "address", type: "address" }],
+    name: "ERC1155InvalidOperator",
+  },
+  {
+    type: "error",
+    inputs: [{ name: "receiver", internalType: "address", type: "address" }],
+    name: "ERC1155InvalidReceiver",
+  },
+  {
+    type: "error",
+    inputs: [{ name: "sender", internalType: "address", type: "address" }],
+    name: "ERC1155InvalidSender",
+  },
+  {
+    type: "error",
+    inputs: [
+      { name: "operator", internalType: "address", type: "address" },
+      { name: "owner", internalType: "address", type: "address" },
+    ],
+    name: "ERC1155MissingApprovalForAll",
+  },
+  {
     type: "constructor",
     inputs: [
       { name: "_owner", internalType: "address", type: "address" },

@@ -60,6 +60,9 @@ export default function SellForm({ selectedAssets, advancedMode }: Props) {
     isPending: isPendingWriteCreateSellOrder,
   } = useWriteOrderbookDexCreateSellOrder({
     mutation: {
+      onError: () => {
+        queryClient.invalidateQueries({ queryKey: [QueryKeys.SellableAssets] });
+      },
       onSuccess: () => {
         setAmount("");
         setAmountN(0);
@@ -75,6 +78,9 @@ export default function SellForm({ selectedAssets, advancedMode }: Props) {
     isPending: isPendingWriteCreateBatchSellOrder,
   } = useWriteOrderbookDexCreateBatchSellOrder({
     mutation: {
+      onError: () => {
+        queryClient.invalidateQueries({ queryKey: [QueryKeys.SellableAssets] });
+      },
       onSuccess: () => {
         setAmount("");
         setAmountN(0);

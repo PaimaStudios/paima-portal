@@ -5,6 +5,8 @@ const errors = {
     "Market has changed and your input payment is not enough. Refresh the data and if the issue persists, try increasing the slippage.",
   "insufficient funds":
     "Insufficient funds for the operation + gas fee. Lower the amount.",
+  ERC1155InsufficientBalance:
+    "Data about your ERC1155 balance was outdated, please try again.",
 };
 
 export const getErrorMessage = (error: Error) => {
