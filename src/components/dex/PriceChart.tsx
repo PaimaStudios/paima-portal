@@ -79,7 +79,7 @@ export default function PriceChart() {
         data.data.map((d) => ({
           ...d,
           value: d.volumeFrom,
-          color: d.close < d.open ? "#ef5350" : "#26a69a",
+          color: d.close < d.open ? "#ef535080" : "#26a69a80",
         })) as any,
       );
       chart?.timeScale().fitContent();
@@ -93,7 +93,8 @@ export default function PriceChart() {
       volumeSeries.update({
         ...formattedData,
         value: formattedData.volumeFrom,
-        color: formattedData.close < formattedData.open ? "#ef5350" : "#26a69a",
+        color:
+          formattedData.close < formattedData.open ? "#ef535080" : "#26a69a80",
       });
     }
   }, [data, chartSeries, volumeSeries]);
