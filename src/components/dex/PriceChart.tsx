@@ -1,12 +1,16 @@
 import useGetAssetHistoricalData from "@hooks/dex/useGetAssetHistoricalData";
-import { Skeleton, Stack, useTheme } from "@mui/material";
+import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
+import { Skeleton, Stack, Typography, useTheme } from "@mui/material";
+import { formatEth } from "@utils/evm/utils";
 import { IChartApi, LineStyle, createChart } from "lightweight-charts";
 import { useEffect, useRef, useState } from "react";
 import { useResizeObserver } from "usehooks-ts";
+import { parseEther } from "viem";
 
 export default function PriceChart() {
   const theme = useTheme();
   const { data } = useGetAssetHistoricalData();
+  const { data: assetMetadata } = useGetGameAssetMetadata();
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const [chart, setChart] = useState<IChartApi>();
   const [chartSeries, setChartSeries] =
@@ -22,7 +26,7 @@ export default function PriceChart() {
     if (!data || !chartContainer || chartContainer.children.length !== 0)
       return;
 
-    const chart = createChart(document.getElementById("chartContainer")!, {
+    const chart = createChart(chartContainer, {
       layout: {
         background: { color: theme.palette.background.default },
         textColor: theme.palette.text.primary,
@@ -102,11 +106,31 @@ export default function PriceChart() {
   return (
     <>
       {!data && <Skeleton variant="rectangular" height="100%" />}
-      <Stack
-        ref={chartContainerRef}
-        id="chartContainer"
-        sx={{ width: "100%", minHeight: 400 }}
-      ></Stack>
+      <Stack sx={{ width: "100%", minHeight: 400, position: "relative" }}>
+        <Stack
+          ref={chartContainerRef}
+          id="chartContainer"
+          sx={{ width: "100%", minHeight: 400 }}
+        ></Stack>
+        <Typography sx={{ position: "absolute", left: 12, top: 12, zIndex: 1 }}>
+          Market Cap:{" "}
+          {assetMetadata && data ? (
+            `${formatEth(
+              parseEther(
+                String(
+                  assetMetadata.totalSupply *
+                    data.data[data.data.length - 1].close,
+                ),
+              ),
+            )} ${assetMetadata.toSym}`
+          ) : (
+            <Skeleton
+              variant="text"
+              sx={{ display: "inline-block", width: 100 }}
+            />
+          )}
+        </Typography>
+      </Stack>
     </>
   );
 }
