@@ -8,10 +8,6 @@ type Item = {
 };
 
 const items: Item[] = [
-  { label: "Home", href: "/" },
-  { label: "Games", href: "/games" },
-  { label: "NFT marketplace", href: "/marketplace" },
-  { label: "NFT drop", href: "/drop" },
   { label: "Tarochi Gold Dex", href: "/dex/tarochi/tgold" },
 ];
 
