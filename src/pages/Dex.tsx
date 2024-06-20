@@ -1,14 +1,15 @@
-import { Container, Stack } from "@mui/material";
+import { Container, Divider, Stack } from "@mui/material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import PriceChart from "@components/dex/PriceChart";
 import BuyAndSellSection from "@components/dex/BuyAndSellSection";
-import UserSellOrdersSections from "@components/dex/UserSellOrdersSection";
+import SellOrdersSection from "@components/dex/UserSellOrdersSection";
 import useSetNavbarTitle from "@hooks/useSetNavbarTitle";
 import { dexPageSubtitle } from "@config/dex";
 import useGetGameAndAssetFromUrl from "@hooks/dex/useGetGameAndAssetFromUrl";
+import AllSellOrdersSection from "@components/dex/AllSellOrdersSection";
 
 export default function Dex() {
   const navigate = useNavigate();
@@ -39,7 +40,16 @@ export default function Dex() {
               <BuyAndSellSection />
             </Grid>
             <Grid xs={12}>
-              <UserSellOrdersSections />
+              <Divider orientation="horizontal" flexItem />
+            </Grid>
+            <Grid xs={12}>
+              <SellOrdersSection />
+            </Grid>
+            <Grid xs={12}>
+              <Divider orientation="horizontal" flexItem />
+            </Grid>
+            <Grid xs={12}>
+              <AllSellOrdersSection />
             </Grid>
           </Grid>
         </Stack>

@@ -32,16 +32,16 @@ export default function SellOrdersGrid({ user }: Props) {
       <Grid xs={1}>
         <Typography>Token</Typography>
       </Grid>
-      <Grid xs={2}>
+      <Grid xs={user ? 2 : 3}>
         <Typography>Amount</Typography>
       </Grid>
-      <Grid xs={3}>
+      <Grid xs={user ? 3 : 4}>
         <Typography>Price/unit</Typography>
       </Grid>
-      <Grid xs={3}>
+      <Grid xs={user ? 3 : 4}>
         <Typography>Total</Typography>
       </Grid>
-      <Grid xs={3}></Grid>
+      {user && <Grid xs={3}></Grid>}
       <Divider />
       {orders && assetMetadata
         ? orders.map((order) => (
@@ -49,14 +49,14 @@ export default function SellOrdersGrid({ user }: Props) {
               <Grid xs={1}>
                 <Typography>{order.tokenId}</Typography>
               </Grid>
-              <Grid xs={2}>
+              <Grid xs={user ? 2 : 3}>
                 <Typography component={"span"}>{order.amount}</Typography>
                 <Typography variant="caption">
                   {" "}
                   {assetMetadata.fromSym}
                 </Typography>
               </Grid>
-              <Grid xs={3}>
+              <Grid xs={user ? 3 : 4}>
                 <Typography component={"span"}>
                   {formatEther(BigInt(order.price))}
                 </Typography>
@@ -65,7 +65,7 @@ export default function SellOrdersGrid({ user }: Props) {
                   {assetMetadata.toSym}
                 </Typography>
               </Grid>
-              <Grid xs={3}>
+              <Grid xs={user ? 3 : 4}>
                 <Typography component={"span"}>
                   {formatEther(BigInt(order.price) * BigInt(order.amount))}
                 </Typography>
@@ -74,12 +74,14 @@ export default function SellOrdersGrid({ user }: Props) {
                   {assetMetadata.toSym}
                 </Typography>
               </Grid>
-              <Grid xs={3}>
-                <CancelSellOrderButton
-                  orderId={order.orderId}
-                  dexAddress={assetMetadata.contractDex}
-                />
-              </Grid>
+              {user && (
+                <Grid xs={3}>
+                  <CancelSellOrderButton
+                    orderId={order.orderId}
+                    dexAddress={assetMetadata.contractDex}
+                  />
+                </Grid>
+              )}
             </Fragment>
           ))
         : Array(3)
@@ -89,20 +91,22 @@ export default function SellOrdersGrid({ user }: Props) {
                 <Grid xs={1}>
                   <Skeleton variant="text" />
                 </Grid>
-                <Grid xs={2}>
+                <Grid xs={user ? 2 : 3}>
                   <Skeleton variant="text" />
                 </Grid>
-                <Grid xs={3}>
+                <Grid xs={user ? 3 : 4}>
                   <Skeleton variant="text" />
                 </Grid>
-                <Grid xs={3}>
+                <Grid xs={user ? 3 : 4}>
                   <Skeleton variant="text" />
                 </Grid>
-                <Grid xs={3} sx={{ display: "grid" }}>
-                  <Skeleton variant="rounded" sx={{ justifySelf: "end" }}>
-                    <TransactionButton actionText={"Cancel sell order"} />
-                  </Skeleton>
-                </Grid>
+                {user && (
+                  <Grid xs={3} sx={{ display: "grid" }}>
+                    <Skeleton variant="rounded" sx={{ justifySelf: "end" }}>
+                      <TransactionButton actionText={"Cancel sell order"} />
+                    </Skeleton>
+                  </Grid>
+                )}
               </Fragment>
             ))}
     </Grid>

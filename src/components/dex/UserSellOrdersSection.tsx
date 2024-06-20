@@ -14,7 +14,7 @@ import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 import ClaimBalanceButton from "./ClaimBalanceButton";
 
-export default function UserSellOrdersSections() {
+export default function UserSellOrdersSection() {
   const { address } = useAccount();
   const { data: orders } = useGetSellOrders({
     user: address,
@@ -65,7 +65,7 @@ export default function UserSellOrdersSections() {
 
   return (
     <IsConnectedWrapper hidden>
-      <Stack sx={{ alignItems: "center", gap: 2, width: "100%", mt: 4 }}>
+      <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
         <Stack
           sx={{
             flexDirection: "row",

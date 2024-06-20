@@ -14,7 +14,7 @@ export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
       if (!game || !asset) return null;
       const gameApi = gamesApi[game];
       if (!gameApi) return null;
-      let url = new URL(`${gameApi}/dex/${asset}/orders`);
+      let url = new URL(`${gameApi}/dex/${asset}/orders?limit=100`);
       if (params?.user) {
         url.searchParams.append("seller", params.user.toLowerCase());
       }
