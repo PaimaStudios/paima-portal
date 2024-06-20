@@ -24,6 +24,7 @@ export default function BuySection({ slippagePercentage }: Props) {
   const [price, setPrice] = useState("");
   const [priceBN, setPriceBN] = useState(0n);
   const [useExactAsset, setUseExactAsset] = useState(true);
+  const [ordersCount, setOrdersCount] = useState(0);
 
   const totalAssetAvailable = useMemo(
     () => orders?.reduce((acc, order) => acc + BigInt(order.amount), 0n),
@@ -44,6 +45,7 @@ export default function BuySection({ slippagePercentage }: Props) {
     if (!orders) return;
     let newPrice = 0n;
     let remainingAmount = newAmount;
+    let newOrdersCount = 0;
     orders.forEach((order) => {
       if (remainingAmount === 0) return;
       const fillAmount = Math.min(remainingAmount, order.amount);
@@ -51,7 +53,9 @@ export default function BuySection({ slippagePercentage }: Props) {
       newPrice +=
         purchaseCost + (purchaseCost * BigInt(order.takerFee)) / 10000n;
       remainingAmount -= fillAmount;
+      newOrdersCount++;
     });
+    setOrdersCount(newOrdersCount);
     setPriceBN(newPrice);
     setPrice(formatEther(newPrice));
     setUseExactAsset(true);
@@ -61,6 +65,7 @@ export default function BuySection({ slippagePercentage }: Props) {
     if (!orders) return;
     let newAmount = 0n;
     let remainingTotalPrice = newPrice;
+    let newOrdersCount = 0;
     orders.forEach((order) => {
       if (remainingTotalPrice === 0n) return;
       const numerator = remainingTotalPrice * 10000n;
@@ -80,7 +85,9 @@ export default function BuySection({ slippagePercentage }: Props) {
       newAmount += assetsToBuy;
       remainingTotalPrice -=
         purchaseCost + (purchaseCost * BigInt(order.takerFee)) / 10000n;
+      newOrdersCount++;
     });
+    setOrdersCount(newOrdersCount);
     setAmountN(Number(newAmount));
     setAmount(newAmount.toString());
     setUseExactAsset(false);
@@ -247,7 +254,10 @@ export default function BuySection({ slippagePercentage }: Props) {
           useExactAsset={useExactAsset}
           assetAmount={useExactAsset ? BigInt(amountN) : minimumAsset!}
           ethAmount={useExactAsset ? maximumPayment! : priceBN}
-          orderIds={orders?.map((order) => BigInt(order.orderId))}
+          // todo: Currently the orders are chosen from the necessary orders plus 3 next orders. This is a naive solution and could use some improvements.
+          orderIds={orders
+            ?.slice(0, ordersCount + 3)
+            .map((order) => BigInt(order.orderId))}
           disabled={!!priceInputError || !!amountInputError}
           onSuccess={() => {
             setAmount("");
