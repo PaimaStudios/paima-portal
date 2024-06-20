@@ -23,6 +23,17 @@
   },
   {
     "type": "function",
+    "name": "balances",
+    "inputs": [
+      { "name": "user", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      { "name": "value", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "cancelBatchSellOrder",
     "inputs": [
       { "name": "asset", "type": "address", "internalType": "address" },
@@ -40,6 +51,20 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "claim",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "collectedFees",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -184,7 +209,12 @@
             "internalType": "address payable"
           },
           { "name": "makerFee", "type": "uint256", "internalType": "uint256" },
-          { "name": "takerFee", "type": "uint256", "internalType": "uint256" }
+          { "name": "takerFee", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "creationFeePaid",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
         ]
       }
     ],
@@ -296,6 +326,25 @@
     "inputs": [],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "BalanceClaimed",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
   },
   {
     "type": "event",

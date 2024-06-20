@@ -618,6 +618,13 @@ export const orderbookDexAbi = [
   },
   {
     type: "function",
+    inputs: [{ name: "user", internalType: "address", type: "address" }],
+    name: "balances",
+    outputs: [{ name: "value", internalType: "uint256", type: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     inputs: [
       { name: "asset", internalType: "address", type: "address" },
       { name: "orderIds", internalType: "uint256[]", type: "uint256[]" },
@@ -635,6 +642,20 @@ export const orderbookDexAbi = [
     name: "cancelSellOrder",
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    inputs: [],
+    name: "claim",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    inputs: [],
+    name: "collectedFees",
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+    stateMutability: "view",
   },
   {
     type: "function",
@@ -750,6 +771,7 @@ export const orderbookDexAbi = [
           { name: "seller", internalType: "address payable", type: "address" },
           { name: "makerFee", internalType: "uint256", type: "uint256" },
           { name: "takerFee", internalType: "uint256", type: "uint256" },
+          { name: "creationFeePaid", internalType: "uint256", type: "uint256" },
         ],
       },
     ],
@@ -857,6 +879,20 @@ export const orderbookDexAbi = [
     name: "withdrawFees",
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+    type: "event",
+    anonymous: false,
+    inputs: [
+      { name: "user", internalType: "address", type: "address", indexed: true },
+      {
+        name: "amount",
+        internalType: "uint256",
+        type: "uint256",
+        indexed: false,
+      },
+    ],
+    name: "BalanceClaimed",
   },
   {
     type: "event",
@@ -1614,6 +1650,23 @@ export const useReadOrderbookDex = /*#__PURE__*/ createUseReadContract({
 });
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"balances"`
+ */
+export const useReadOrderbookDexBalances = /*#__PURE__*/ createUseReadContract({
+  abi: orderbookDexAbi,
+  functionName: "balances",
+});
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"collectedFees"`
+ */
+export const useReadOrderbookDexCollectedFees =
+  /*#__PURE__*/ createUseReadContract({
+    abi: orderbookDexAbi,
+    functionName: "collectedFees",
+  });
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"currentOrderId"`
  */
 export const useReadOrderbookDexCurrentOrderId =
@@ -1724,6 +1777,14 @@ export const useWriteOrderbookDexCancelSellOrder =
     abi: orderbookDexAbi,
     functionName: "cancelSellOrder",
   });
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"claim"`
+ */
+export const useWriteOrderbookDexClaim = /*#__PURE__*/ createUseWriteContract({
+  abi: orderbookDexAbi,
+  functionName: "claim",
+});
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"createBatchSellOrder"`
@@ -1859,6 +1920,15 @@ export const useSimulateOrderbookDexCancelSellOrder =
   });
 
 /**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"claim"`
+ */
+export const useSimulateOrderbookDexClaim =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: orderbookDexAbi,
+    functionName: "claim",
+  });
+
+/**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link orderbookDexAbi}__ and `functionName` set to `"createBatchSellOrder"`
  */
 export const useSimulateOrderbookDexCreateBatchSellOrder =
@@ -1971,6 +2041,15 @@ export const useSimulateOrderbookDexWithdrawFees =
  */
 export const useWatchOrderbookDexEvent =
   /*#__PURE__*/ createUseWatchContractEvent({ abi: orderbookDexAbi });
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"BalanceClaimed"`
+ */
+export const useWatchOrderbookDexBalanceClaimedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: orderbookDexAbi,
+    eventName: "BalanceClaimed",
+  });
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link orderbookDexAbi}__ and `eventName` set to `"FeeInfoChanged"`

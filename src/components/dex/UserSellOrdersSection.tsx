@@ -2,13 +2,17 @@ import { Skeleton, Stack, Typography } from "@mui/material";
 import SellOrdersGrid from "./SellOrdersGrid";
 import { useAccount } from "wagmi";
 import TransactionButton from "@components/common/TransactionButton";
-import { useWriteOrderbookDexCancelBatchSellOrder } from "src/generated";
+import {
+  useReadOrderbookDexBalances,
+  useWriteOrderbookDexCancelBatchSellOrder,
+} from "src/generated";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
+import ClaimBalanceButton from "./ClaimBalanceButton";
 
 export default function UserSellOrdersSections() {
   const { address } = useAccount();
@@ -16,6 +20,13 @@ export default function UserSellOrdersSections() {
     user: address,
   });
   const { data: assetMetadata } = useGetGameAssetMetadata();
+  const { data: balanceInDex } = useReadOrderbookDexBalances({
+    address: assetMetadata?.contractDex,
+    args: [address!],
+    query: {
+      enabled: !!address && !!assetMetadata,
+    },
+  });
 
   const {
     writeContract,
@@ -65,22 +76,36 @@ export default function UserSellOrdersSections() {
           }}
         >
           <Typography variant="h4">Your sell orders</Typography>
-          {orders && assetMetadata ? (
-            orders.length > 0 && (
-              <TransactionButton
-                onClick={() => {
-                  handleCancelAllSellOrdersClick();
-                }}
-                actionText={"Cancel all"}
-                isLoading={isLoading}
-                isPending={isPending}
-              />
-            )
-          ) : (
-            <Skeleton variant="rounded">
-              <TransactionButton actionText={"Cancel all"} />
-            </Skeleton>
-          )}
+          <Stack
+            sx={{
+              flexDirection: "row",
+              gap: 2,
+            }}
+          >
+            {balanceInDex == null ? (
+              <Skeleton variant="rounded">
+                <TransactionButton actionText={"Claim balance"} />
+              </Skeleton>
+            ) : (
+              balanceInDex !== 0n && <ClaimBalanceButton />
+            )}
+            {orders && assetMetadata ? (
+              orders.length > 0 && (
+                <TransactionButton
+                  onClick={() => {
+                    handleCancelAllSellOrdersClick();
+                  }}
+                  actionText={"Cancel all"}
+                  isLoading={isLoading}
+                  isPending={isPending}
+                />
+              )
+            ) : (
+              <Skeleton variant="rounded">
+                <TransactionButton actionText={"Cancel all"} />
+              </Skeleton>
+            )}
+          </Stack>
         </Stack>
         <SellOrdersGrid user={address} />
       </Stack>
