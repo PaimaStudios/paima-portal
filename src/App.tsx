@@ -33,7 +33,7 @@ function Layout() {
       <Providers>
         <Stack direction="row">
           <Sidebar />
-          <Stack sx={{ width: "100%" }}>
+          <Stack sx={{ width: "100%", mb: 4 }}>
             <Navbar />
             <Topbar />
             <Outlet />
