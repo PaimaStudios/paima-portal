@@ -246,7 +246,7 @@ export default function BuySection({ slippagePercentage }: Props) {
           dexAddress={assetMetadata.contractDex}
           useExactAsset={useExactAsset}
           assetAmount={useExactAsset ? BigInt(amountN) : minimumAsset!}
-          ethAmount={priceBN} // todo: add slippage if useExactAsset
+          ethAmount={useExactAsset ? maximumPayment! : priceBN}
           orderIds={orders?.map((order) => BigInt(order.orderId))}
           disabled={!!priceInputError || !!amountInputError}
           onSuccess={() => {
