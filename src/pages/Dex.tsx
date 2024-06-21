@@ -10,6 +10,7 @@ import useSetNavbarTitle from "@hooks/useSetNavbarTitle";
 import { dexPageSubtitle } from "@config/dex";
 import useGetGameAndAssetFromUrl from "@hooks/dex/useGetGameAndAssetFromUrl";
 import AllSellOrdersSection from "@components/dex/AllSellOrdersSection";
+import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 
 export default function Dex() {
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ export default function Dex() {
       navigate("/");
     }
   }, [assetMetadata]);
-
   return (
     <>
       <Container>
@@ -39,12 +39,14 @@ export default function Dex() {
             <Grid xs={12} md={6} lg={4}>
               <BuyAndSellSection />
             </Grid>
-            <Grid xs={12}>
-              <Divider orientation="horizontal" flexItem />
-            </Grid>
-            <Grid xs={12}>
-              <SellOrdersSection />
-            </Grid>
+            <IsConnectedWrapper hidden>
+              <Grid xs={12}>
+                <Divider orientation="horizontal" flexItem />
+              </Grid>
+              <Grid xs={12}>
+                <SellOrdersSection />
+              </Grid>
+            </IsConnectedWrapper>
             <Grid xs={12}>
               <Divider orientation="horizontal" flexItem />
             </Grid>

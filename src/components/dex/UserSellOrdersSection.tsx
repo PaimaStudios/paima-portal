@@ -11,7 +11,6 @@ import { SnackbarMessage } from "@utils/texts";
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
-import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 import ClaimBalanceButton from "./ClaimBalanceButton";
 
 export default function UserSellOrdersSection() {
@@ -64,7 +63,7 @@ export default function UserSellOrdersSection() {
   };
 
   return (
-    <IsConnectedWrapper hidden>
+    <>
       <Stack sx={{ alignItems: "center", gap: 2, width: "100%" }}>
         <Stack
           sx={{
@@ -109,6 +108,6 @@ export default function UserSellOrdersSection() {
         </Stack>
         <SellOrdersGrid user={address} />
       </Stack>
-    </IsConnectedWrapper>
+    </>
   );
 }
