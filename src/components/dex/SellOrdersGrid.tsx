@@ -29,10 +29,7 @@ export default function SellOrdersGrid({ user }: Props) {
       spacing={2}
       sx={{ width: "100%", textAlign: "end", alignItems: "center" }}
     >
-      <Grid xs={1}>
-        <Typography>Token</Typography>
-      </Grid>
-      <Grid xs={user ? 2 : 3}>
+      <Grid xs={user ? 3 : 4}>
         <Typography>Amount</Typography>
       </Grid>
       <Grid xs={user ? 3 : 4}>
@@ -46,10 +43,7 @@ export default function SellOrdersGrid({ user }: Props) {
       {orders && assetMetadata
         ? orders.map((order) => (
             <Fragment key={order.orderId}>
-              <Grid xs={1}>
-                <Typography>{order.tokenId}</Typography>
-              </Grid>
-              <Grid xs={user ? 2 : 3}>
+              <Grid xs={user ? 3 : 4}>
                 <Typography component={"span"}>{order.amount}</Typography>
                 <Typography variant="caption">
                   {" "}
