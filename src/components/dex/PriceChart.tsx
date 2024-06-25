@@ -2,7 +2,12 @@ import useGetAssetHistoricalData from "@hooks/dex/useGetAssetHistoricalData";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import { Skeleton, Stack, Typography, useTheme } from "@mui/material";
 import { formatEth } from "@utils/evm/utils";
-import { IChartApi, LineStyle, createChart } from "lightweight-charts";
+import {
+  CrosshairMode,
+  IChartApi,
+  LineStyle,
+  createChart,
+} from "lightweight-charts";
 import { useEffect, useRef, useState } from "react";
 import { useResizeObserver } from "usehooks-ts";
 import { parseEther } from "viem";
@@ -42,6 +47,9 @@ export default function PriceChart() {
         borderColor: "transparent",
         timeVisible: true,
         secondsVisible: false,
+      },
+      crosshair: {
+        mode: CrosshairMode.Normal,
       },
     });
     setChart(chart);
