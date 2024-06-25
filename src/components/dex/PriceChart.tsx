@@ -66,6 +66,7 @@ export default function PriceChart() {
     const histogramSeries = chart.addHistogramSeries({
       priceFormat: {
         type: "volume",
+        minMove: 0.000001,
       },
       priceScaleId: "", // set as an overlay by setting a blank priceScaleId
     });
@@ -86,7 +87,7 @@ export default function PriceChart() {
       volumeSeries.setData(
         data.data.map((d) => ({
           ...d,
-          value: d.volumeFrom,
+          value: d.volumeTo,
           color: d.close < d.open ? "#ef535080" : "#26a69a80",
         })) as any,
       );
@@ -100,7 +101,7 @@ export default function PriceChart() {
       chartSeries.update(formattedData);
       volumeSeries.update({
         ...formattedData,
-        value: formattedData.volumeFrom,
+        value: formattedData.volumeTo,
         color:
           formattedData.close < formattedData.open ? "#ef535080" : "#26a69a80",
       });
