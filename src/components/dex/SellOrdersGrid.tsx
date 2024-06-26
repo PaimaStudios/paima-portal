@@ -2,10 +2,14 @@ import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import { Divider, Skeleton, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Fragment } from "react";
-import { formatEther } from "viem";
 import CancelSellOrderButton from "./CancelSellOrderButton";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import TransactionButton from "@components/common/TransactionButton";
+import { formatNumberWithSubscriptZeros } from "@haqq/format-number-with-subscript-zeros";
+import {
+  formatEth,
+  formatUnitsWithoutStrippingTrailingZeros,
+} from "@utils/evm/utils";
 
 type Props = {
   user?: `0x${string}`;
@@ -52,7 +56,12 @@ export default function SellOrdersGrid({ user }: Props) {
               </Grid>
               <Grid xs={user ? 3 : 4}>
                 <Typography component={"span"}>
-                  {formatEther(BigInt(order.price))}
+                  {formatNumberWithSubscriptZeros(
+                    formatUnitsWithoutStrippingTrailingZeros(
+                      BigInt(order.price),
+                      18,
+                    ),
+                  )}
                 </Typography>
                 <Typography variant="caption">
                   {" "}
@@ -61,7 +70,7 @@ export default function SellOrdersGrid({ user }: Props) {
               </Grid>
               <Grid xs={user ? 3 : 4}>
                 <Typography component={"span"}>
-                  {formatEther(BigInt(order.price) * BigInt(order.amount))}
+                  {formatEth(BigInt(order.price) * BigInt(order.amount))}
                 </Typography>
                 <Typography variant="caption">
                   {" "}
