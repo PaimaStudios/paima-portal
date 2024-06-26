@@ -29,12 +29,12 @@ export default function useGetAssetHistoricalData(params?: {
       return {
         ...response.data,
         data: response.data.data.map((dat) => ({
-          close: Number(formatEther(BigInt(dat.close))),
-          high: Number(formatEther(BigInt(dat.high))),
-          low: Number(formatEther(BigInt(dat.low))),
-          open: Number(formatEther(BigInt(dat.open))),
-          volumeTo: Number(formatEther(BigInt(dat.volumeTo))),
-          volumeFrom: Number(dat.volumeFrom),
+          close: dat.close,
+          high: dat.high,
+          low: dat.low,
+          open: dat.open,
+          volumeTo: dat.volumeTo,
+          volumeFrom: dat.volumeFrom,
           time: dat.time,
         })),
       };

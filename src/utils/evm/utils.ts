@@ -27,3 +27,24 @@ export const formatEth = (
   const regex = new RegExp(String.raw`^-?\d*\.?0*\d{0,${significantDecimals}}`);
   return formatEther(amount ?? 0n).match(regex)?.[0] ?? "0";
 };
+
+export function formatUnitsWithoutStrippingTrailingZeros(
+  value: bigint,
+  decimals: number,
+) {
+  if (value === 0n) return "0";
+  let display = value.toString();
+
+  const negative = display.startsWith("-");
+  if (negative) display = display.slice(1);
+
+  display = display.padStart(decimals, "0");
+
+  let [integer, fraction] = [
+    display.slice(0, display.length - decimals),
+    display.slice(display.length - decimals),
+  ];
+  return `${negative ? "-" : ""}${integer || "0"}${
+    fraction ? `.${fraction}` : ""
+  }`;
+}

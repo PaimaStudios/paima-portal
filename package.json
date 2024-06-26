@@ -11,6 +11,7 @@
     "@dcspark/carp-client": "^3.2.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@haqq/format-number-with-subscript-zeros": "^1.0.0",
     "@mui/icons-material": "^5.14.9",
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.14.8",

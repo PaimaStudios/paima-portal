@@ -1,8 +1,12 @@
 import useGetAssetHistoricalData from "@hooks/dex/useGetAssetHistoricalData";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import { Skeleton, Stack, Typography, useTheme } from "@mui/material";
-import { formatEth } from "@utils/evm/utils";
 import {
+  formatEth,
+  formatUnitsWithoutStrippingTrailingZeros,
+} from "@utils/evm/utils";
+import {
+  BarPrice,
   CrosshairMode,
   HistogramData,
   IChartApi,
@@ -12,7 +16,8 @@ import {
 } from "lightweight-charts";
 import { useEffect, useRef, useState } from "react";
 import { useResizeObserver } from "usehooks-ts";
-import { parseEther } from "viem";
+import { formatEther } from "viem";
+import { formatNumberWithSubscriptZeros } from "@haqq/format-number-with-subscript-zeros";
 
 export default function PriceChart() {
   const theme = useTheme();
@@ -31,7 +36,12 @@ export default function PriceChart() {
 
   useEffect(() => {
     const chartContainer = document.getElementById("chartContainer");
-    if (!data || !chartContainer || chartContainer.children.length !== 0)
+    if (
+      !data ||
+      !assetMetadata ||
+      !chartContainer ||
+      chartContainer.children.length !== 0
+    )
       return;
 
     const chart = createChart(chartContainer, {
@@ -54,11 +64,19 @@ export default function PriceChart() {
       crosshair: {
         mode: CrosshairMode.Normal,
       },
+      localization: {
+        priceFormatter: (priceValue: BarPrice) => {
+          return `${formatNumberWithSubscriptZeros(
+            formatUnitsWithoutStrippingTrailingZeros(
+              BigInt(priceValue.toFixed(0)),
+              18,
+            ),
+          )} ${assetMetadata?.toSym}`;
+        },
+      },
     });
     setChart(chart);
-    const candleSeries = chart.addCandlestickSeries({
-      priceFormat: { minMove: 0.00000001 },
-    });
+    const candleSeries = chart.addCandlestickSeries({});
     candleSeries.priceScale().applyOptions({
       scaleMargins: {
         top: 0.1, // highest point of the series will be 10% away from the top
@@ -84,18 +102,23 @@ export default function PriceChart() {
 
     const volumeLabel = volumeRef.current;
     if (volumeLabel) {
-      volumeLabel.innerHTML =
-        data.data[data.data.length - 1].volumeTo.toString();
+      volumeLabel.innerHTML = formatEther(
+        BigInt(data.data[data.data.length - 1].volumeTo),
+      );
     }
     chart.subscribeCrosshairMove((param) => {
       let volumeFormatted = "";
       if (param.time) {
-        const dataPoint = param.seriesData.get(
-          histogramSeries,
-        ) as HistogramData<Time>;
-        volumeFormatted = dataPoint.value.toString();
+        const dataPoint = param.seriesData.get(histogramSeries) as
+          | HistogramData<Time>
+          | undefined;
+        if (dataPoint) {
+          volumeFormatted = formatEther(BigInt(dataPoint.value));
+        }
       } else {
-        volumeFormatted = data.data[data.data.length - 1].volumeTo.toString();
+        volumeFormatted = formatEther(
+          BigInt(data.data[data.data.length - 1].volumeTo),
+        );
       }
 
       if (volumeLabel) {
@@ -104,7 +127,7 @@ export default function PriceChart() {
       // legend is a html element which has already been created
       // legend.innerHTML = `${symbolName} <strong>${volumeFormatted}</strong>`;
     });
-  }, [data]);
+  }, [data, assetMetadata]);
 
   useEffect(() => {
     if (!data || !chartSeries || !volumeSeries) return;
@@ -151,8 +174,8 @@ export default function PriceChart() {
         <Stack
           sx={{
             position: "absolute",
-            left: 12,
-            top: 12,
+            left: 4,
+            top: 4,
             zIndex: 1,
             p: 1,
             bgcolor: "rgba(0,0,0,0.5)",
@@ -162,11 +185,9 @@ export default function PriceChart() {
             Market Cap:{" "}
             {assetMetadata && data ? (
               `${formatEth(
-                parseEther(
-                  String(
-                    assetMetadata.totalSupply *
-                      data.data[data.data.length - 1].close,
-                  ),
+                BigInt(
+                  assetMetadata.totalSupply *
+                    data.data[data.data.length - 1].close,
                 ),
               )} ${assetMetadata.toSym}`
             ) : (

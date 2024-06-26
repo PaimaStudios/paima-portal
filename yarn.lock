@@ -2139,6 +2139,11 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
   integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
 
+"@haqq/format-number-with-subscript-zeros@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@haqq/format-number-with-subscript-zeros/-/format-number-with-subscript-zeros-1.0.0.tgz#ad1918d31b11872f16c8b1fb15aefd23dc545a0f"
+  integrity sha512-y63DMseko0v8gIUFVW7xgezUnlL7bSTKOHItj8zIV71VnTK9y1VlRgrW7t1QVP7lzvfczP6MNTf+HTo9r1YjeA==
+
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.14.tgz#d78e481a039f7566ecc9660b4ea7fe6b1fec442b"
