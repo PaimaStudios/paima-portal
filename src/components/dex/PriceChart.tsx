@@ -4,8 +4,10 @@ import { Skeleton, Stack, Typography, useTheme } from "@mui/material";
 import { formatEth } from "@utils/evm/utils";
 import {
   CrosshairMode,
+  HistogramData,
   IChartApi,
   LineStyle,
+  Time,
   createChart,
 } from "lightweight-charts";
 import { useEffect, useRef, useState } from "react";
@@ -25,6 +27,7 @@ export default function PriceChart() {
   const { width = 0, height = 0 } = useResizeObserver({
     ref: chartContainerRef,
   });
+  const volumeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const chartContainer = document.getElementById("chartContainer");
@@ -78,6 +81,29 @@ export default function PriceChart() {
       },
     });
     setVolumeSeries(histogramSeries);
+
+    const volumeLabel = volumeRef.current;
+    if (volumeLabel) {
+      volumeLabel.innerHTML =
+        data.data[data.data.length - 1].volumeTo.toString();
+    }
+    chart.subscribeCrosshairMove((param) => {
+      let volumeFormatted = "";
+      if (param.time) {
+        const dataPoint = param.seriesData.get(
+          histogramSeries,
+        ) as HistogramData<Time>;
+        volumeFormatted = dataPoint.value.toString();
+      } else {
+        volumeFormatted = data.data[data.data.length - 1].volumeTo.toString();
+      }
+
+      if (volumeLabel) {
+        volumeLabel.innerHTML = volumeFormatted;
+      }
+      // legend is a html element which has already been created
+      // legend.innerHTML = `${symbolName} <strong>${volumeFormatted}</strong>`;
+    });
   }, [data]);
 
   useEffect(() => {
@@ -122,24 +148,47 @@ export default function PriceChart() {
           id="chartContainer"
           sx={{ width: "100%", minHeight: 400 }}
         ></Stack>
-        <Typography sx={{ position: "absolute", left: 12, top: 12, zIndex: 1 }}>
-          Market Cap:{" "}
-          {assetMetadata && data ? (
-            `${formatEth(
-              parseEther(
-                String(
-                  assetMetadata.totalSupply *
-                    data.data[data.data.length - 1].close,
+        <Stack
+          sx={{
+            position: "absolute",
+            left: 12,
+            top: 12,
+            zIndex: 1,
+            p: 1,
+            bgcolor: "rgba(0,0,0,0.5)",
+          }}
+        >
+          <Typography>
+            Market Cap:{" "}
+            {assetMetadata && data ? (
+              `${formatEth(
+                parseEther(
+                  String(
+                    assetMetadata.totalSupply *
+                      data.data[data.data.length - 1].close,
+                  ),
                 ),
-              ),
-            )} ${assetMetadata.toSym}`
-          ) : (
-            <Skeleton
-              variant="text"
-              sx={{ display: "inline-block", width: 100 }}
-            />
-          )}
-        </Typography>
+              )} ${assetMetadata.toSym}`
+            ) : (
+              <Skeleton
+                variant="text"
+                sx={{ display: "inline-block", width: 100 }}
+              />
+            )}
+          </Typography>
+          <Typography component="span" variant="caption">
+            Volume{" "}
+            <Typography
+              ref={volumeRef}
+              component="span"
+              variant="caption"
+            ></Typography>
+            <Typography component="span" variant="caption">
+              {" "}
+              {assetMetadata?.toSym}
+            </Typography>
+          </Typography>
+        </Stack>
       </Stack>
     </>
   );
