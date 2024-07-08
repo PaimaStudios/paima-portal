@@ -67,7 +67,7 @@ export default function Navbar() {
         <IconButton onClick={toggleDrawer(false)} sx={{ alignSelf: "end" }}>
           <CloseIcon />
         </IconButton>
-        <NavigationItems showWallet={true} onClick={toggleDrawer(false)} />
+        {/* <NavigationItems showWallet={true} onClick={toggleDrawer(false)} /> */}
       </Drawer>
     </>
   );
