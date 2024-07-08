@@ -1,27 +1,23 @@
-import { AppBar, Box } from "@mui/material";
 import { Link } from "react-router-dom";
+
 import NavigationItems from "./NavigationItems";
 
 export default function Sidebar() {
   return (
-    <Box sx={{ display: { xs: "none", md: "block" }, minWidth: 260 }}>
-      <AppBar
-        sx={(theme) => ({
-          bgcolor: theme.palette.background.default,
-          height: "100vh",
-          p: 2,
-        })}
-        position="sticky"
-      >
-        <Link to="/">
-          <img
-            src="/paima-logo.svg"
-            alt="Paima Logo"
-            style={{ width: "100%", marginBottom: "1rem" }}
-          />
-        </Link>
+    <div className="flex flex-col justify-between gap-4 px-3 laptop:px-5 pt-3 pb-12 min-h-full">
+      <Link to="/">
+        <img src="/paima-logo.svg" alt="Paima Logo" />
+      </Link>
+      <div className="grow flex flex-col">
         <NavigationItems />
-      </AppBar>
-    </Box>
+      </div>
+      <div>
+        <p className="text-bodyM text-center">
+          © 2022-2024
+          <br />
+          Paima Studios LTD.
+        </p>
+      </div>
+    </div>
   );
 }

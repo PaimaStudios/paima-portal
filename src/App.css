@@ -1,9 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .snackbarContainer {
-    margin-top: 64px;
-    max-width: 30%;
-    word-break: break-word;
+  margin-top: 64px;
+  max-width: 30%;
+  word-break: break-word;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
+}
+
+@layer base {
+  @font-face {
+    font-family: "PP Formula";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src:
+      url(../public/fonts/ppformula-extendedbold-webfont.woff2) format("woff2"),
+      url(../public/fonts/ppformula-extendedbold-webfont.woff) format("woff");
+  }
+
+  body {
+    @apply bg-gray-1100;
+    @apply font-inter;
+    @apply text-bodyL;
+  }
+
+  img {
+    @apply w-full max-w-full h-auto;
+  }
+}
+
+@layer components {
+  .achievement-background {
+    background: linear-gradient(20deg, #101010 57.44%, #181818 99.1%);
+  }
 }

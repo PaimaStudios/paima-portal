@@ -8,6 +8,7 @@ import "./App.css";
 import Dex from "./pages/Dex";
 import Sidebar from "@components/common/Sidebar";
 import Topbar from "@components/common/Topbar";
+import Achievement from "@pages/Achievement";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="dex/:game/:asset" element={<Dex />} />
+          <Route path="achievement" element={<Achievement />} />
 
           {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
@@ -31,14 +33,18 @@ function Layout() {
   return (
     <MuiSetup>
       <Providers>
-        <Stack direction="row">
-          <Sidebar />
-          <Stack sx={{ width: "100%", mb: 4 }}>
-            <Navbar />
+        <div className="flex h-screen">
+          <div className="flex-1 max-w-[180px] laptop:max-w-[268px] h-screen hidden tablet:block">
+            <Sidebar />
+          </div>
+          <div className="flex-1 flex flex-col h-screen">
+            {/* <Navbar /> */}
             <Topbar />
-            <Outlet />
-          </Stack>
-        </Stack>
+            <div className="overflow-y-auto flex-1">
+              <Outlet />
+            </div>
+          </div>
+        </div>
       </Providers>
     </MuiSetup>
   );
