@@ -7,6 +7,7 @@ import ConnectWallet from "./ConnectWallet";
 import {
   NavigationIconAchievement,
   NavigationIconDashboard,
+  NavigationIconGames,
   NavigationIconHelp,
   NavigationIconHome,
   NavigationIconLearn,
@@ -34,6 +35,11 @@ const items: NavigationItem[] = [
     label: "Achievement",
     href: "/achievement",
     icon: <NavigationIconAchievement />,
+  },
+  {
+    label: "Games",
+    href: "/games",
+    icon: <NavigationIconGames />,
   },
   {
     label: "Learn",

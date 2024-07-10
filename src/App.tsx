@@ -9,6 +9,7 @@ import Dex from "./pages/Dex";
 import Sidebar from "@components/common/Sidebar";
 import Topbar from "@components/common/Topbar";
 import Achievement from "@pages/Achievement";
+import Games from "@pages/Games";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route index element={<HomePage />} />
           <Route path="dex/:game/:asset" element={<Dex />} />
           <Route path="achievement" element={<Achievement />} />
+          <Route path="games" element={<Games />} />
 
           {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
@@ -33,11 +35,11 @@ function Layout() {
   return (
     <MuiSetup>
       <Providers>
-        <div className="flex h-screen">
+        <div className="flex flex-col tablet:flex-row h-screen">
           <div className="flex-1 max-w-[180px] laptop:max-w-[268px] h-screen hidden tablet:block">
             <Sidebar />
           </div>
-          <div className="flex-1 flex flex-col h-screen">
+          <div className="flex-1 flex flex-col h-screen tablet:w-[calc(100vw-180px)] laptop:w-[calc(100vw-268px)]">
             {/* <Navbar /> */}
             <Topbar />
             <div className="overflow-y-auto flex-1">
