@@ -1,16 +1,13 @@
-import { Container, Divider, Stack } from "@mui/material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import PriceChart from "@components/dex/PriceChart";
-import BuyAndSellSection from "@components/dex/BuyAndSellSection";
-import SellOrdersSection from "@components/dex/UserSellOrdersSection";
 import useSetNavbarTitle from "@hooks/useSetNavbarTitle";
-import { dexPageSubtitle } from "@config/dex";
 import useGetGameAndAssetFromUrl from "@hooks/dex/useGetGameAndAssetFromUrl";
-import AllSellOrdersSection from "@components/dex/AllSellOrdersSection";
-import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
+import DEXTradingInformation from "@components/DEXTradingInformation";
+import DEXPriceChart from "@components/DEXPriceChart";
+import DEXAllSellOrdersTable from "@components/DEXAllSellOrdersTable";
+import DEXUserSellOrdersTable from "@components/DEXUserSellOrdersTable";
 
 export default function Dex() {
   const navigate = useNavigate();
@@ -25,9 +22,49 @@ export default function Dex() {
       navigate("/");
     }
   }, [assetMetadata]);
+
   return (
     <>
-      <Container>
+      <div className="w-full py-6 container">
+        <div className="flex flex-col gap-12">
+          <h1 className="text-heading2 tablet:text-displayS font-formula font-bold">
+            Tarochi Gold DEX
+          </h1>
+          <div className="flex flex-col gap-20">
+            <div className="flex gap-16">
+              <div className="border rounded-xl border-gray-800 p-6 min-w-[440px]">
+                TRADING_PANEL
+              </div>
+              <DEXTradingInformation />
+            </div>
+            <div className="flex flex-col gap-10">
+              <h2 className="text-heading2 font-semibold text-gray-50">
+                Price chart
+              </h2>
+              <div>
+                <DEXPriceChart />
+              </div>
+            </div>
+            <div className="flex flex-col gap-10">
+              <h2 className="text-heading2 font-semibold text-gray-50">
+                My sell orders
+              </h2>
+              <div>
+                <DEXUserSellOrdersTable />
+              </div>
+            </div>
+            <div className="flex flex-col gap-10">
+              <h2 className="text-heading2 font-semibold text-gray-50">
+                All sell orders
+              </h2>
+              <div>
+                <DEXAllSellOrdersTable />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* <Container>
         <Stack sx={{ gap: 2, mt: 2 }}>
           {!!gameFromUrl && !!assetFromUrl
             ? dexPageSubtitle[gameFromUrl]?.[assetFromUrl] ?? null
@@ -55,7 +92,7 @@ export default function Dex() {
             </Grid>
           </Grid>
         </Stack>
-      </Container>
+      </Container> */}
     </>
   );
 }

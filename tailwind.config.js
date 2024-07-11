@@ -58,6 +58,7 @@ module.exports = {
         400: "#355A3F",
         500: "#12341C",
       },
+      error: "#F52449",
     },
     screens: {
       mobile: "375px",

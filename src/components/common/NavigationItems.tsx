@@ -1,8 +1,8 @@
-import { Button, Stack } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { ReactElement } from "react";
 import clsx from "clsx";
 
+import { Stack } from "@mui/material";
 import ConnectWallet from "./ConnectWallet";
 import {
   NavigationIconAchievement,
@@ -11,6 +11,7 @@ import {
   NavigationIconHelp,
   NavigationIconHome,
   NavigationIconLearn,
+  NavigationIconTarochiDEX,
   NavigationIconTools,
 } from "@components/icons/NavigationIcons";
 
@@ -42,6 +43,11 @@ const items: NavigationItem[] = [
     icon: <NavigationIconGames />,
   },
   {
+    label: "Tarochi Gold DEX",
+    href: "/dex/tarochi/tgold",
+    icon: <NavigationIconTarochiDEX />,
+  },
+  {
     label: "Learn",
     href: "#",
     icon: <NavigationIconLearn />,
@@ -55,11 +61,6 @@ const items: NavigationItem[] = [
     label: "Get Help",
     href: "#",
     icon: <NavigationIconHelp />,
-  },
-  {
-    label: "Tarochi Gold Dex",
-    href: "/dex/tarochi/tgold",
-    icon: <></>,
   },
 ];
 
