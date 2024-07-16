@@ -28,7 +28,7 @@ const Cell = ({
 }) => (
   <div
     className={clsx(
-      "py-3 text-white uppercase",
+      "py-1 text-white uppercase",
       centering === "left" && "text-left",
       centering === "center" && "text-center",
       centering === "right" && "text-right",
@@ -63,7 +63,7 @@ export default function DEXSellOrdersTable({ user }: DEXSellOrdersTableProps) {
 
   return (
     <div>
-      <div className={clsx("grid", user ? "grid-cols-4" : "grid-cols-3")}>
+      <div className={clsx("grid py-2", user ? "grid-cols-4" : "grid-cols-3")}>
         <Cell smallText value="Amount" centering="left" />
         <Cell smallText value="Price per unit" centering="center" />
         <Cell smallText value="Total" centering={user ? "center" : "right"} />
@@ -80,6 +80,7 @@ export default function DEXSellOrdersTable({ user }: DEXSellOrdersTableProps) {
             key={order.orderId}
           >
             <Cell value={order.amount} unit={assetMetadata.fromSym} />
+            {/* TODO: Pad values so they're more readable */}
             <Cell
               value={formatNumberWithSubscriptZeros(
                 formatUnitsWithoutStrippingTrailingZeros(

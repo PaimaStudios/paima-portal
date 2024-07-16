@@ -8,6 +8,7 @@ import DEXTradingInformation from "@components/DEXTradingInformation";
 import DEXPriceChart from "@components/DEXPriceChart";
 import DEXAllSellOrdersTable from "@components/DEXAllSellOrdersTable";
 import DEXUserSellOrdersTable from "@components/DEXUserSellOrdersTable";
+import DEXTradingPanel from "@components/DEXTradingPanel";
 
 export default function Dex() {
   const navigate = useNavigate();
@@ -32,8 +33,8 @@ export default function Dex() {
           </h1>
           <div className="flex flex-col gap-20">
             <div className="flex gap-16">
-              <div className="border rounded-xl border-gray-800 p-6 min-w-[440px]">
-                TRADING_PANEL
+              <div className="border rounded-xl border-gray-800 p-6 min-w-[440px] flex flex-col">
+                <DEXTradingPanel wrapperClassname="flex-1" />
               </div>
               <DEXTradingInformation />
             </div>
