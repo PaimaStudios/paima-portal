@@ -32,8 +32,8 @@ export default function Dex() {
             Tarochi Gold DEX
           </h1>
           <div className="flex flex-col gap-20">
-            <div className="flex gap-16">
-              <div className="border rounded-xl border-gray-800 p-6 min-w-[440px] flex flex-col">
+            <div className="flex flex-col-reverse laptop:flex-row gap-10 laptop:gap-16">
+              <div className="border rounded-xl border-gray-800 p-6 laptop:min-w-[440px] flex flex-col">
                 <DEXTradingPanel wrapperClassname="flex-1" />
               </div>
               <DEXTradingInformation />
