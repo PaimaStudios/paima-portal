@@ -272,6 +272,7 @@ const DEXTradingSellPanel = () => {
         <DEXInput
           allowOnlyWholeNumbers
           label="Sell amount"
+          placeholder="Enter amount to sell"
           errorMessage={getSellAmountErrorMessage()}
           value={amount}
           onInputValueChange={(value) => handleAmountInputChange(value)}
@@ -296,6 +297,7 @@ const DEXTradingSellPanel = () => {
         <DEXInput
           label={`Price per 1 ${assetMetadata ? assetMetadata.fromSym : "-"}`}
           errorMessage={getPriceErrorMessage()}
+          placeholder="Enter amount to receive per TGOLD"
           value={price}
           onInputValueChange={(value) => handlePriceInputChange(value)}
           currencySymbol={assetMetadata ? assetMetadata.toSym : "-"}

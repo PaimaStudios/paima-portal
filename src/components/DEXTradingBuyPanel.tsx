@@ -171,6 +171,7 @@ const DEXTradingBuyPanel = () => {
         <DEXInput
           allowOnlyWholeNumbers
           label="Buy amount"
+          placeholder="Enter amount to buy"
           errorMessage={getBuyAmountErrorMessage()}
           value={amount}
           onInputValueChange={(value) => handleAmountInputChange(value)}
@@ -197,6 +198,7 @@ const DEXTradingBuyPanel = () => {
           label={`Total ${assetMetadata ? assetMetadata.toSym : "-"} to pay`}
           errorMessage={getSellAmountErrorMessage()}
           value={price}
+          placeholder="Total ETH to be paid"
           onInputValueChange={(value) => handlePriceInputChange(value)}
           currencySymbol={assetMetadata ? assetMetadata.toSym : "-"}
           additionalSubInformation={

@@ -1,31 +1,41 @@
-import { useId } from "react";
+import { useId, useState } from "react";
 import clsx from "clsx";
 
 type DEXInputProps = {
   label?: string;
   errorMessage?: string;
   value: string;
+  placeholder?: string;
   onInputValueChange?: (value: string) => void;
   currencySymbol?: string;
   additionalSubInformation?: string;
   additionalSubComponent?: React.ReactNode;
   allowOnlyWholeNumbers?: boolean;
+  showErrorsOnlyWhenTouched?: boolean;
 };
 
 const DEXInput = ({
   label,
   errorMessage,
   value,
+  placeholder,
   onInputValueChange,
   currencySymbol,
   additionalSubInformation,
   additionalSubComponent,
   allowOnlyWholeNumbers = false,
+  showErrorsOnlyWhenTouched = true,
 }: DEXInputProps) => {
   const id = useId();
 
+  const [isTouched, setIsTouched] = useState(!showErrorsOnlyWhenTouched);
+
   // validates only the user manipulated value, doesn't validate the value from the `value` prop
   const handleInputValueChange = (value: string) => {
+    if (!isTouched) {
+      setIsTouched(true);
+    }
+
     // convert comma to decimal point
     const replacedValue = value.replace(/,/g, ".");
 
@@ -47,27 +57,32 @@ const DEXInput = ({
     onInputValueChange?.(replacedValue);
   };
 
+  const showErrorMessage = isTouched && errorMessage;
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <label className="text-bodyL text-white" htmlFor={id}>
           {label}
         </label>
-        <p className="text-error text-bodyM">{errorMessage}</p>
+        {showErrorMessage && (
+          <p className="text-error text-bodyM">{errorMessage}</p>
+        )}
       </div>
       <div
         className={clsx(
           "border rounded-xl flex items-center justify-between py-3 pr-4 pl-6",
-          errorMessage ? "border-error" : "border-gray-600",
+          showErrorMessage ? "border-error" : "border-gray-600",
         )}
       >
         <input
           id={id}
           type="text"
           value={value}
+          placeholder={placeholder}
           className={clsx(
             "bg-none w-full text-bodyL outline-none",
-            errorMessage ? "text-error" : "text-white",
+            showErrorMessage ? "text-error" : "text-white",
           )}
           onChange={(e) => handleInputValueChange(e.target.value)}
         />
