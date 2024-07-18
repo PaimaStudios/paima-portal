@@ -1,12 +1,12 @@
-import Button, { ButtonProps } from "@mui/material/Button";
+import Button from "@components/Button";
 
-type Props = {
+export type TransactionButtonProps = {
   isLoading?: boolean;
   isPending?: boolean;
-  actionText: string | JSX.Element;
+  actionText: string;
   disabled?: boolean;
-  fullWidth?: boolean;
-} & ButtonProps;
+  onClick?: () => void;
+};
 
 export default function TransactionButton({
   onClick,
@@ -14,23 +14,18 @@ export default function TransactionButton({
   isPending,
   actionText,
   disabled,
-  fullWidth,
-  ...props
-}: Props) {
+}: TransactionButtonProps) {
   return (
     <Button
-      variant={isLoading || isPending ? "outlined" : "contained"}
-      size="large"
-      onClick={onClick}
+      onButtonClick={onClick}
       disabled={isLoading || isPending || disabled}
-      fullWidth={fullWidth}
-      {...props}
-    >
-      {isPending
-        ? "Confirm transaction..."
-        : isLoading
-        ? "Transaction pending..."
-        : actionText}
-    </Button>
+      text={
+        isPending
+          ? "Confirm transaction..."
+          : isLoading
+          ? "Transaction pending..."
+          : actionText
+      }
+    />
   );
 }

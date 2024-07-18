@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import clsx from "clsx";
 
 type DEXInputProps = {
@@ -29,6 +29,7 @@ const DEXInput = ({
   const id = useId();
 
   const [isTouched, setIsTouched] = useState(!showErrorsOnlyWhenTouched);
+  const [initialValue] = useState(value);
 
   // validates only the user manipulated value, doesn't validate the value from the `value` prop
   const handleInputValueChange = (value: string) => {
@@ -58,6 +59,15 @@ const DEXInput = ({
   };
 
   const showErrorMessage = isTouched && errorMessage;
+
+  // make sure the `isTouched` variable gets updated also when the value changes from the prop, not only by user input
+  useEffect(() => {
+    if (isTouched) return;
+
+    if (value !== initialValue) {
+      setIsTouched(true);
+    }
+  }, [value, isTouched, initialValue]);
 
   return (
     <div className="flex flex-col gap-2">
