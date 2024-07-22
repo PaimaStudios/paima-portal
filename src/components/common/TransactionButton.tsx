@@ -1,4 +1,4 @@
-import Button from "@components/Button";
+import Button, { ButtonProps } from "@components/Button";
 
 export type TransactionButtonProps = {
   isLoading?: boolean;
@@ -6,7 +6,7 @@ export type TransactionButtonProps = {
   actionText: string;
   disabled?: boolean;
   onClick?: () => void;
-};
+} & Pick<ButtonProps, "smallVariant" | "outlineVariant">;
 
 export default function TransactionButton({
   onClick,
@@ -14,6 +14,7 @@ export default function TransactionButton({
   isPending,
   actionText,
   disabled,
+  ...props
 }: TransactionButtonProps) {
   return (
     <Button
@@ -26,6 +27,7 @@ export default function TransactionButton({
           ? "Transaction pending..."
           : actionText
       }
+      {...props}
     />
   );
 }

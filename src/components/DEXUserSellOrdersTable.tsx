@@ -65,27 +65,43 @@ const DEXUserSellOrdersTable = () => {
     <div className="flex flex-col gap-6">
       <div className="flex justify-end items-center gap-4">
         {balanceInDex == null ? (
-          // TODO: Proper button
-          <TransactionButton actionText={"Claim balance"} />
+          <div className="max-w-[250px]">
+            <TransactionButton
+              actionText={"Claim balance"}
+              outlineVariant
+              smallVariant
+            />
+          </div>
         ) : (
-          // TODO: Proper button
-          balanceInDex !== 0n && <ClaimBalanceButton />
+          balanceInDex !== 0n && (
+            <div className="max-w-[250px]">
+              <ClaimBalanceButton />
+            </div>
+          )
         )}
         {orders && assetMetadata ? (
           orders.length > 0 && (
-            // TODO: Proper button
-            <TransactionButton
-              onClick={() => {
-                handleCancelAllSellOrdersClick();
-              }}
-              actionText={"Cancel all"}
-              isLoading={isLoading}
-              isPending={isPending}
-            />
+            <div className="max-w-[250px]">
+              <TransactionButton
+                smallVariant
+                outlineVariant
+                onClick={() => {
+                  handleCancelAllSellOrdersClick();
+                }}
+                actionText={"Cancel all"}
+                isLoading={isLoading}
+                isPending={isPending}
+              />
+            </div>
           )
         ) : (
-          // TODO: Proper button
-          <TransactionButton actionText={"Cancel all"} />
+          <div className="max-w-[250px]">
+            <TransactionButton
+              actionText={"Cancel all"}
+              smallVariant
+              outlineVariant
+            />
+          </div>
         )}
       </div>
       <DEXSellOrdersTable user={address} />

@@ -1,13 +1,10 @@
-import { Divider, Skeleton, Typography } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
-import React, { Fragment } from "react";
+import React from "react";
 import clsx from "clsx";
 import { formatNumberWithSubscriptZeros } from "@haqq/format-number-with-subscript-zeros";
 
 import useGetSellOrders from "@hooks/dex/useGetSellOrders";
 import CancelSellOrderButton from "./dex/CancelSellOrderButton";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
-import TransactionButton from "@components/common/TransactionButton";
 import {
   formatEth,
   formatUnitsWithoutStrippingTrailingZeros,
@@ -19,27 +16,30 @@ const Cell = ({
   centering = "left",
   customComponent,
   smallText = false,
+  limitedWidth = false,
 }: {
   value?: string | number;
   unit?: string;
   centering?: "left" | "center" | "right";
   customComponent?: React.ReactNode;
   smallText?: boolean;
+  limitedWidth?: boolean;
 }) => (
   <div
     className={clsx(
-      "py-1 text-white uppercase",
-      centering === "left" && "text-left",
-      centering === "center" && "text-center",
-      centering === "right" && "text-right",
+      "py-1 text-white uppercase flex items-center",
+      centering === "left" && "justify-start",
+      centering === "center" && "justify-center",
+      centering === "right" && "justify-end",
       smallText ? "text-bodyM" : "text-bodyL",
+      limitedWidth && "max-w-[180px]",
     )}
   >
     {customComponent ? (
       customComponent
     ) : (
       <>
-        {value} <span className="text-gray-400">{unit}</span>
+        {value}&nbsp;<span className="text-gray-400">{unit}</span>
       </>
     )}
   </div>
@@ -63,11 +63,16 @@ export default function DEXSellOrdersTable({ user }: DEXSellOrdersTableProps) {
 
   return (
     <div>
-      <div className={clsx("grid py-2", user ? "grid-cols-4" : "grid-cols-3")}>
+      <div
+        className={clsx(
+          "grid py-2",
+          user ? "grid-cols-[1fr_1fr_1fr_180px]" : "grid-cols-3",
+        )}
+      >
         <Cell smallText value="Amount" centering="left" />
         <Cell smallText value="Price per unit" centering="center" />
         <Cell smallText value="Total" centering={user ? "center" : "right"} />
-        {user && <Cell smallText value="" />}
+        {user && <Cell smallText value="" limitedWidth />}
       </div>
       {orders &&
         assetMetadata &&
@@ -75,7 +80,7 @@ export default function DEXSellOrdersTable({ user }: DEXSellOrdersTableProps) {
           <div
             className={clsx(
               "grid border-b border-gray-800 has-[:hover]:border-brand",
-              user ? "grid-cols-4" : "grid-cols-3",
+              user ? "grid-cols-[1fr_1fr_1fr_180px]" : "grid-cols-3",
             )}
             key={order.orderId}
           >
@@ -98,8 +103,12 @@ export default function DEXSellOrdersTable({ user }: DEXSellOrdersTableProps) {
             />
             {user && (
               <Cell
+                limitedWidth
                 customComponent={
-                  <TransactionButton actionText={"Cancel sell order"} />
+                  <CancelSellOrderButton
+                    orderId={order.orderId}
+                    dexAddress={assetMetadata.contractDex}
+                  />
                 }
               />
             )}

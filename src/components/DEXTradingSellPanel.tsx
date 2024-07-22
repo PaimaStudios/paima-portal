@@ -24,6 +24,9 @@ import TransactionButton from "./common/TransactionButton";
 const DEXTradingSellPanel = () => {
   const selectedAssets: Asset[] = [];
 
+  // used to track how many times the user has submitted the form, used to repaint the inputs so they don't show errors
+  const [submitIndex, setSubmitIndex] = useState<number>(0);
+
   const queryClient = useQueryClient();
   const { data: orders } = useGetSellOrders();
   const { data: assets } = useGetSellableAssets();
@@ -66,6 +69,7 @@ const DEXTradingSellPanel = () => {
       onSuccess: () => {
         setAmount("");
         setAmountN(0);
+        setSubmitIndex((prev) => prev + 1);
       },
       meta: {
         infoMessage: SnackbarMessage.Common.TransactionSubmitted,
@@ -86,6 +90,7 @@ const DEXTradingSellPanel = () => {
       onSuccess: () => {
         setAmount("");
         setAmountN(0);
+        setSubmitIndex((prev) => prev + 1);
       },
       meta: {
         infoMessage: SnackbarMessage.Common.TransactionSubmitted,
@@ -270,6 +275,7 @@ const DEXTradingSellPanel = () => {
     <>
       <div className="flex flex-col gap-4">
         <DEXInput
+          key={`sell_amount_${submitIndex}`}
           allowOnlyWholeNumbers
           label="Sell amount"
           placeholder="Enter amount to sell"
@@ -295,6 +301,7 @@ const DEXTradingSellPanel = () => {
           }
         />
         <DEXInput
+          key={`sell_price_${submitIndex}`}
           label={`Price per 1 ${assetMetadata ? assetMetadata.fromSym : "-"}`}
           errorMessage={getPriceErrorMessage()}
           placeholder="Enter amount to receive per TGOLD"
@@ -304,11 +311,14 @@ const DEXTradingSellPanel = () => {
         />
       </div>
       <div className="flex flex-col gap-3 p-4 border border-brand rounded-xl">
-        <div className="flex flex-col gap-3 border-b border-gray-600 pb-3">
-          <div className="flex flex-col gap-1 text-white text-bodyM">
-            {/* TODO: Replace with real values */}
-            <p>Maker fee: 0.5%</p>
-            <p>Fees paid: 0.0000000034 ETH</p>
+        {/* TODO: Unhide and resolve todo below */}
+        <div className="hidden">
+          <div className="flex flex-col gap-3 border-b border-gray-600 pb-3">
+            <div className="flex flex-col gap-1 text-white text-bodyM">
+              {/* TODO: Replace with real values */}
+              <p>Maker fee: 0.5%</p>
+              <p>Fees paid: 0.0000000034 ETH</p>
+            </div>
           </div>
         </div>
         <p className="text-white text-bodyL font-medium">

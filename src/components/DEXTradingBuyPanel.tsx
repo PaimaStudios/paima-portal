@@ -24,6 +24,8 @@ const DEXTradingBuyPanel = () => {
   const [priceBN, setPriceBN] = useState(0n);
   const [useExactAsset, setUseExactAsset] = useState(true);
   const [ordersCount, setOrdersCount] = useState(0);
+  // used to track how many times the user has submitted the form, used to repaint the inputs so they don't show errors
+  const [submitIndex, setSubmitIndex] = useState<number>(0);
 
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
@@ -169,6 +171,7 @@ const DEXTradingBuyPanel = () => {
     <>
       <div className="flex flex-col gap-4">
         <DEXInput
+          key={`buy_amount_${submitIndex}`}
           allowOnlyWholeNumbers
           label="Buy amount"
           placeholder="Enter amount to buy"
@@ -195,6 +198,7 @@ const DEXTradingBuyPanel = () => {
           }
         />
         <DEXInput
+          key={`sell_amount_${submitIndex}`}
           label={`Total ${assetMetadata ? assetMetadata.toSym : "-"} to pay`}
           errorMessage={getSellAmountErrorMessage()}
           value={price}
@@ -212,10 +216,13 @@ const DEXTradingBuyPanel = () => {
       </div>
       <div className="flex flex-col gap-3 p-4 border border-brand rounded-xl">
         <div className="flex flex-col gap-3 border-b border-gray-600 pb-3">
-          <div className="flex flex-col gap-1 text-white text-bodyM">
-            {/* TODO: Replace with real values */}
-            <p>Taker fee: 0.5%</p>
-            <p>Fees paid: 0.0000000034 ETH</p>
+          {/* TODO: Unhide and resolve todo below */}
+          <div className="hidden">
+            <div className="flex flex-col gap-1 text-white text-bodyM">
+              {/* TODO: Replace with real values */}
+              <p>Taker fee: 0.5%</p>
+              <p>Fees paid: 0.0000000034 ETH</p>
+            </div>
           </div>
           <div className="flex gap-2 items-center">
             <p className="text-bodyM">Custom slippage</p>
@@ -273,6 +280,7 @@ const DEXTradingBuyPanel = () => {
             setPrice("");
             setAmountN(0);
             setPriceBN(0n);
+            setSubmitIndex((prev) => prev + 1);
           }}
         />
       )}
