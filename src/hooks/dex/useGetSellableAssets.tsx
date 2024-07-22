@@ -16,9 +16,21 @@ export default function useGetSellableAssets() {
       if (!game || !asset || !address) return null;
       const gameApi = gamesApi[game];
       if (!gameApi) return null;
-      const response = await axios.get<DexValidMintedAssetsResponse>(
-        `${gameApi}/dex/${asset}/wallet/${address?.toLowerCase()}`,
-      );
+      // const response = await axios.get<DexValidMintedAssetsResponse>(
+      //   `${gameApi}/dex/${asset}/wallet/${address?.toLowerCase()}`,
+      // );
+      const data: DexValidMintedAssetsResponse = {
+        total: 0,
+        stats: [
+          {
+            tokenId: 1,
+            amount: 1454,
+          },
+        ],
+      };
+      const response = {
+        data,
+      };
       return response.data;
     },
   });

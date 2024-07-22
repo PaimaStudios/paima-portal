@@ -23,9 +23,27 @@ export default function useGetAssetHistoricalData(params?: {
       if (!game || !asset) return null;
       const gameApi = gamesApi[game];
       if (!gameApi) return null;
-      const response = await axios.get<AssetHistoricalData>(
-        `${gameApi}/dex/${asset}/historical_price`,
-      );
+      // const response = await axios.get<AssetHistoricalData>(
+      //   `${gameApi}/dex/${asset}/historical_price`,
+      // );
+      const data: AssetHistoricalData = {
+        timeFrom: 10,
+        timeTo: 20,
+        data: [
+          {
+            close: 1000000000000,
+            open: 100000000000,
+            high: 1300000000000,
+            low: 90000000000,
+            time: 100,
+            volumeFrom: 1000,
+            volumeTo: 100000000000000,
+          },
+        ],
+      };
+      const response = {
+        data,
+      };
       return {
         ...response.data,
         data: response.data.data.map((dat) => ({

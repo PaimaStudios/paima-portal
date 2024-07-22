@@ -18,7 +18,23 @@ export default function useGetSellOrders(params?: { user?: `0x${string}` }) {
       if (params?.user) {
         url.searchParams.append("seller", params.user.toLowerCase());
       }
-      const response = await axios.get<DexOrdersResponse>(url.toString());
+      // const response = await axios.get<DexOrdersResponse>(url.toString());
+      const stats: SellOrder[] = [
+        {
+          orderId: 27,
+          seller: "0x1946a1DD383FE3c3cd9ae3066C638EF6ed7E35e5",
+          tokenId: 1,
+          amount: 10,
+          price: "100000000000000",
+          makerFee: 30,
+          takerFee: 70,
+        },
+      ];
+      const response = {
+        data: {
+          stats,
+        },
+      };
       return response.data.stats;
     },
   });

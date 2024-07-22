@@ -21,9 +21,21 @@ export default function useGetGameAssetMetadata(params?: {
       if (!game || !asset) return null;
       const gameApi = gamesApi[game];
       if (!gameApi) return null;
-      const response = await axios.get<AssetMetadata>(
-        `${gameApi}/dex/${asset}`,
-      );
+      // const response = await axios.get<AssetMetadata>(
+      //   `${gameApi}/dex/${asset}`,
+      // );
+      const data: AssetMetadata = {
+        asset: "tgold",
+        contractAsset: "0xA6fed8FB857e7c98afdd91f464298A3018e0c6c6",
+        contractChain: "0x", //useless
+        contractDex: "0xb6532bfc5ae1962d43207e7f409eec606fa5d71e",
+        fromSym: "TGOLD",
+        toSym: "ETH",
+        totalSupply: 100000,
+      };
+      const response = {
+        data,
+      };
       return response.data;
     },
   });
