@@ -45,10 +45,79 @@ export default function useGetAllLaunchpadsData() {
   return useQuery<LaunchpadData[] | null>({
     queryKey: [QueryKeys.LaunchpadData],
     queryFn: async () => {
-      const response = await axios.get<LaunchpadsResponse>(
-        `${env.REACT_APP_LAUNCHPAD_BACKEND_URL}/launchpads`,
-      );
-      return response.data?.stats ?? null;
+      // const response = await axios.get<LaunchpadsResponse>(
+      //   `${env.REACT_APP_LAUNCHPAD_BACKEND_URL}/launchpads`,
+      // );
+
+      return [
+        {
+          id: "0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81",
+          name: "Test Launchpad 1",
+          slug: "test-launchpad-1",
+          description: "Description of Test Launchpad 1",
+          image: "/images/game-icon-towerdefense.webp",
+          referralDiscountBps: 100,
+          items: [
+            {
+              id: "1",
+              name: "Item A",
+              description: "Description of Item A",
+              prices: {
+                "0x0000000000000000000000000000000000000000": "10000000000000",
+                "0xusdc": "34681800000000000",
+              },
+              referralDiscountBps: 500,
+            },
+            {
+              id: "2",
+              name: "Item B",
+              description: "Description of Item B",
+              prices: {
+                "0x0000000000000000000000000000000000000000": "20000000000000",
+                "0xusdc": "69363600000000000",
+              },
+            },
+            {
+              id: "100",
+              name: "Free Item X",
+              description: "Description of Free Item X",
+              freeAt: {
+                "0x0000000000000000000000000000000000000000": "100000000000000",
+                "0xusdc": "346818000000000000",
+              },
+            },
+          ],
+        },
+        {
+          id: "0x6D544390Eb535d61e196c87d6B9c80dCD8628Acd",
+          name: "Test Launchpad 2",
+          slug: "test-launchpad-2",
+          description: "Description of Test Launchpad 2",
+          image: "/images/game-icon-junglewars.webp",
+          items: [
+            {
+              id: "1",
+              name: "Item A",
+              description: "Description of Item A",
+              prices: {
+                "0x0000000000000000000000000000000000000000": "10000000000000",
+                "0xusdc": "34681800000000000",
+              },
+            },
+            {
+              id: "2",
+              name: "Item B",
+              description: "Description of Item B",
+              prices: {
+                "0x0000000000000000000000000000000000000000": "20000000000000",
+                "0xusdc": "69363600000000000",
+              },
+            },
+          ],
+        },
+      ];
+
+      // return response.data?.stats ?? null;
     },
   });
 }

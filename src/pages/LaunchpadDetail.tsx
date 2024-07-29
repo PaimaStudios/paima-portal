@@ -3,9 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import useGetLaunchpadsData from "@hooks/dex/useGetLaunchpadData";
 
 import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
-import Button from "@components/Button";
 
-export default function Launchpad() {
+export default function LaunchpadDetail() {
   const { launchpad } = useParams();
   const { data, isLoading } = useGetLaunchpadsData(launchpad);
 
@@ -25,10 +24,10 @@ export default function Launchpad() {
                 <SingleArrowLeftIcon />
               </div>
               <Link
-                to="/launchpad"
+                to={`/launchpad/${launchpad}`}
                 className="text-heading5 text-gray-200 hover:text-brand transition-colors duration-150 ease-in-out"
               >
-                Back to Launchpad overview
+                Back to game detail
               </Link>
             </div>
             <h2 className="text-heading3 tablet:text-displayXS font-formula font-bold">
@@ -39,14 +38,9 @@ export default function Launchpad() {
             </h1>
           </div>
           <div className="flex flex-col gap-16">
-            <div className="p-[1px] bg-brand rounded-2xl">
-              <div className="flex flex-col tablet:flex-row tablet:justify-between tablet:items-center achievement-background rounded-2xl p-6 laptop:p-10 gap-6">
-                <h3 className="text-displayXS text-gray-50 font-formula font-bold">
-                  Buy game items
-                </h3>
-                <Button href={`/launchpad/${launchpad}/buy`} text="Buy now!" />
-              </div>
-            </div>
+            <h3 className="text-displayXS text-gray-50 font-formula font-bold">
+              Buy game items
+            </h3>
           </div>
         </div>
       )}
