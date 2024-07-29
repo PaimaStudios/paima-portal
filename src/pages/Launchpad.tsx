@@ -1,14 +1,18 @@
-import useGetLaunchpadsData from "@hooks/dex/useGetLaunchpadData";
 import { useParams } from "react-router-dom";
 
+import useGetLaunchpadsData from "@hooks/dex/useGetLaunchpadData";
+
 export default function Launchpad() {
-  let { launchpad } = useParams();
+  const { launchpad } = useParams();
   const { data, isLoading } = useGetLaunchpadsData(launchpad);
+
   return (
     <div className="w-full py-6 container">
       {isLoading ? (
+        // TOOD: Handle loading state
         <div className="animate-pulse h-64 w-full bg-gray-900 rounded-xl" />
       ) : !data ? (
+        // TOOD: Handle error state
         <>Data failed to load</>
       ) : (
         <div className="flex flex-col gap-3">

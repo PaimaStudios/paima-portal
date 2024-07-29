@@ -1,5 +1,6 @@
 import { LaunchpadData } from "@hooks/dex/useGetAllLaunchpadsData";
-import { Link } from "react-router-dom";
+
+import Button from "@components/Button";
 
 type LaunchpadCardProps = Pick<
   LaunchpadData,
@@ -16,23 +17,18 @@ export default function LaunchpadCard({
     <div className="p-[1px] bg-gradient-to-b from-gray-850 to-gray-1000 rounded-2xl">
       <div className="flex flex-col achievement-background rounded-2xl p-6 laptop:p-10 gap-6">
         <div className="flex items-start justify-between">
-          <div className="w-28">
+          <div className="max-w-[80px] tablet:max-w-[110px] w-full">
             <img
               src={image ?? "/images/game-icon-placeholder.svg"}
               alt={name}
               className="object-fit"
             />
           </div>
-          {/* TODO: Extract to a Button component */}
-          <Link to={`/launchpad/${slug}`}>
-            <button
-              className={
-                "py-3 px-4 rounded-xl text-heading5 text-white border-brand border-2 font-semibold transition-colors duration-150 ease-in-out hover:bg-brand hover:cursor-pointer"
-              }
-            >
-              Go to game Launchpad
-            </button>
-          </Link>
+          <Button
+            href={`/launchpad/${slug}`}
+            text="Go to game Launchpad"
+            outlineVariant
+          />
         </div>
         <div className="flex flex-col gap-4">
           <h3 className="text-heading3 font-semibold text-gray-50">{name}</h3>
