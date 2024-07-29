@@ -4,4 +4,5 @@ export const QueryKeys = {
   SellOrders: "SellOrders",
   AssetHistoricalData: "AssetHistoricalData",
   LaunchpadData: "LaunchpadData",
+  LaunchpadUserItems: "LaunchpadUserItems",
 };
