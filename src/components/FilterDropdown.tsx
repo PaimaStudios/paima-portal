@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 
-import { GameCategory } from "@pages/Games";
 import {
   CheckmarkIcon,
   FilterIcon,
@@ -9,17 +8,17 @@ import {
 } from "./icons/GeneralIcons";
 import { useOutsideClick } from "@hooks/useOutsideClick";
 
-type GamesFilterDropdownProps = {
-  allCategories: GameCategory[];
-  currentCategories: GameCategory[];
-  onCategorySelected: (categories: GameCategory) => void;
+type FilterDropdownProps = {
+  allCategories: string[];
+  currentCategories: string[];
+  onCategorySelected: (category: string) => void;
 };
 
-const GamesFilterDropdown = ({
+const FilterDropdown = ({
   allCategories,
   currentCategories,
   onCategorySelected,
-}: GamesFilterDropdownProps) => {
+}: FilterDropdownProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const ref = useOutsideClick(() => {
@@ -87,4 +86,4 @@ const GamesFilterDropdown = ({
   );
 };
 
-export default GamesFilterDropdown;
+export default FilterDropdown;

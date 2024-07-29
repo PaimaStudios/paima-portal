@@ -2,10 +2,10 @@ import { useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
-import GamesFilterDropdown from "@components/GamesFilterDropdown";
-import GamesFilterTagList from "@components/GamesFilterTagList";
+import FilterDropdown from "@components/FilterDropdown";
 import FeaturedGameCard from "@components/FeaturedGameCard";
 import GameCard from "@components/GameCard";
+import FilterTagList from "@components/FilterTagList";
 
 export const gameCategories = [
   "action",
@@ -167,17 +167,19 @@ export default function Games() {
 
   return (
     <div className="w-full py-6 container">
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-6 tablet:gap-12">
         <h1 className="text-heading2 tablet:text-displayS font-formula font-bold">
           Games
         </h1>
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-6 tablet:gap-12">
           <div className="flex flex-col gap-6">
             <div className="max-w-[180px]">
-              <GamesFilterDropdown
+              <FilterDropdown
                 allCategories={gameCategories}
                 currentCategories={currentGameCategories}
-                onCategorySelected={handleCategorySelected}
+                onCategorySelected={(category) =>
+                  handleCategorySelected(category as GameCategory)
+                }
               />
             </div>
             {currentGameCategories.length > 0 && (
@@ -185,9 +187,11 @@ export default function Games() {
                 <p className="text-bodyM text-gray-200">
                   {games.length} games filtered by
                 </p>
-                <GamesFilterTagList
+                <FilterTagList
                   categories={currentGameCategories}
-                  onCategorySelected={handleCategoryRemoved}
+                  onCategorySelected={(category) =>
+                    handleCategoryRemoved(category as GameCategory)
+                  }
                 />
               </div>
             )}
