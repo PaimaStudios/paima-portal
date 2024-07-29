@@ -3,4 +3,5 @@ export const QueryKeys = {
   SellableAssets: "SellableAssets",
   SellOrders: "SellOrders",
   AssetHistoricalData: "AssetHistoricalData",
+  LaunchpadData: "LaunchpadData",
 };
