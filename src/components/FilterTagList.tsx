@@ -1,15 +1,14 @@
-import { GameCategory } from "@pages/Games";
 import { CloseIcon } from "./icons/GeneralIcons";
 
-type GamesFilterTagListProps = {
-  categories: GameCategory[];
-  onCategorySelected: (category: GameCategory) => void;
+type FilterTagListProps = {
+  categories: string[];
+  onCategorySelected: (category: string) => void;
 };
 
-const GamesFilterTagList = ({
+const FilterTagList = ({
   categories,
   onCategorySelected,
-}: GamesFilterTagListProps) => {
+}: FilterTagListProps) => {
   return (
     <div className="flex flex-wrap laptop:flex-nowrap gap-3">
       {categories.map((category, index) => {
@@ -32,4 +31,4 @@ const GamesFilterTagList = ({
   );
 };
 
-export default GamesFilterTagList;
+export default FilterTagList;
