@@ -10,6 +10,7 @@ import Sidebar from "@components/common/Sidebar";
 import Topbar from "@components/common/Topbar";
 import Achievement from "@pages/Achievement";
 import Games from "@pages/Games";
+import Launchpad from "@pages/Launchpad";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="dex/:game/:asset" element={<Dex />} />
           <Route path="achievement" element={<Achievement />} />
           <Route path="games" element={<Games />} />
+          <Route path="launchpad" element={<Launchpad />} />
 
           {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit

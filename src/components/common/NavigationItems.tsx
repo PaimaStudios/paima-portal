@@ -48,6 +48,11 @@ const items: NavigationItem[] = [
     icon: <NavigationIconTarochiDEX />,
   },
   {
+    label: "Launchpad",
+    href: "/launchpad",
+    icon: <></>,
+  },
+  {
     label: "Learn",
     href: "#",
     icon: <NavigationIconLearn />,
