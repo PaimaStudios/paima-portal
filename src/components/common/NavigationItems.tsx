@@ -10,6 +10,7 @@ import {
   NavigationIconGames,
   NavigationIconHelp,
   NavigationIconHome,
+  NavigationIconLaunchpad,
   NavigationIconLearn,
   NavigationIconTarochiDEX,
   NavigationIconTools,
@@ -50,7 +51,7 @@ const items: NavigationItem[] = [
   {
     label: "Launchpad",
     href: "/launchpad",
-    icon: <></>,
+    icon: <NavigationIconLaunchpad />,
   },
   {
     label: "Learn",
