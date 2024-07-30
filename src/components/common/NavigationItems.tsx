@@ -20,6 +20,8 @@ type NavigationItem = {
   label: string;
   href: string;
   icon: ReactElement;
+  // highlights the link if the location contains the href
+  groupMatch?: boolean;
 };
 
 const items: NavigationItem[] = [
@@ -51,6 +53,7 @@ const items: NavigationItem[] = [
   {
     label: "Launchpad",
     href: "/launchpad",
+    groupMatch: true,
     icon: <NavigationIconLaunchpad />,
   },
   {
@@ -81,7 +84,9 @@ export default function NavigationItems({ showWallet = false }: Props) {
     <Stack sx={{ width: "100%", gap: 1, overflowY: "auto" }}>
       {showWallet && <ConnectWallet />}
       {items.map((item) => {
-        const isActive = location.pathname === item.href;
+        const isActive = item.groupMatch
+          ? location.pathname.includes(item.href)
+          : location.pathname === item.href;
 
         return (
           <Link
