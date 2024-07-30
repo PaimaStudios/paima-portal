@@ -2,17 +2,17 @@ import { LaunchpadData } from "@hooks/dex/useGetAllLaunchpadsData";
 
 import Button from "@components/Button";
 
-type LaunchpadCardProps = Pick<
+type LaunchpadGameCardProps = Pick<
   LaunchpadData,
   "name" | "description" | "image" | "slug"
 >;
 
-export default function LaunchpadCard({
+export default function LaunchpadGameCard({
   name,
   description,
   image,
   slug,
-}: LaunchpadCardProps) {
+}: LaunchpadGameCardProps) {
   return (
     <div className="p-[1px] bg-gradient-to-b from-gray-850 to-gray-1000 rounded-2xl">
       <div className="flex flex-col achievement-background rounded-2xl p-6 laptop:p-10 gap-6">

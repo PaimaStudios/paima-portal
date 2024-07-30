@@ -1,6 +1,6 @@
 import useGetAllLaunchpadsData from "@hooks/dex/useGetAllLaunchpadsData";
 
-import LaunchpadCard from "@components/launchpad/LaunchpadCard";
+import LaunchpadGameCard from "@components/launchpad/LaunchpadGameCard";
 
 export default function Launchpads() {
   const { data, isLoading } = useGetAllLaunchpadsData();
@@ -20,7 +20,7 @@ export default function Launchpads() {
         ) : (
           <div className="flex flex-col gap-5">
             {data.map((launchpad) => (
-              <LaunchpadCard
+              <LaunchpadGameCard
                 key={launchpad.slug}
                 name={launchpad.name}
                 description={launchpad.description}
