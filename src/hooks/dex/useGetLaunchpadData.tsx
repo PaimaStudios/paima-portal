@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import useGetAllLaunchpadsData from "./useGetAllLaunchpadsData";
 
-export default function useGetLaunchpadsData(launchpad: string | undefined) {
+export default function useGetLaunchpadData(launchpad: string | undefined) {
   const { data, isLoading } = useGetAllLaunchpadsData();
 
   return {

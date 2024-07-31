@@ -1,13 +1,13 @@
 import { Link, useParams } from "react-router-dom";
 
-import useGetLaunchpadsData from "@hooks/dex/useGetLaunchpadData";
+import useGetLaunchpadData from "@hooks/dex/useGetLaunchpadData";
 
 import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
 import Button from "@components/Button";
 
 export default function Launchpad() {
   const { launchpad } = useParams();
-  const { data, isLoading } = useGetLaunchpadsData(launchpad);
+  const { data, isLoading } = useGetLaunchpadData(launchpad);
 
   return (
     <div className="w-full py-6 container">

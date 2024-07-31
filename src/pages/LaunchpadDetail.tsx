@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Link, useParams } from "react-router-dom";
 
-import useGetLaunchpadsData from "@hooks/dex/useGetLaunchpadData";
+import useGetLaunchpadData from "@hooks/dex/useGetLaunchpadData";
 
 import {
   PencilIcon,
@@ -47,7 +47,7 @@ const CurrencySelectorButton = ({
 
 export default function LaunchpadDetail() {
   const { launchpad } = useParams();
-  const { data, isLoading } = useGetLaunchpadsData(launchpad);
+  const { data, isLoading } = useGetLaunchpadData(launchpad);
 
   const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
   const [orderItems, setOrderItems] = useState<
