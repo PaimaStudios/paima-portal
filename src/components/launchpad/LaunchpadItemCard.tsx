@@ -1,6 +1,6 @@
-import Button from "@components/Button";
-import { Currency } from "@pages/LaunchpadDetail";
 import clsx from "clsx";
+
+import { Currency } from "@pages/LaunchpadDetail";
 
 type LaunchpadItemCardProps = {
   title: string;
@@ -12,6 +12,8 @@ type LaunchpadItemCardProps = {
   imageURL?: string;
   imageSize?: "small" | "large";
   onItemCardClick?: () => void;
+  isHighlighted?: boolean;
+  counter?: number;
 };
 
 export default function LaunchpadItemCard({
@@ -21,9 +23,23 @@ export default function LaunchpadItemCard({
   imageURL,
   imageSize = "large",
   onItemCardClick,
+  isHighlighted = false,
+  counter,
 }: LaunchpadItemCardProps) {
   return (
-    <div className="border border-gray-600 rounded-2xl flex flex-col gap-4 p-6">
+    <div
+      className={clsx(
+        "relative border rounded-2xl flex flex-col gap-4 p-6",
+        isHighlighted ? "border-brand" : "border-gray-600",
+        onItemCardClick ? "hover:cursor-pointer" : "",
+      )}
+      onClick={onItemCardClick}
+    >
+      {!!counter && (
+        <div className="absolute top-2 right-2 bg-brand text-gray-50 rounded-full w-8 h-8 p-1 flex items-center justify-center">
+          <p className="text-heading5 text-gray-50 font-bold">x{counter}</p>
+        </div>
+      )}
       {imageURL && (
         <div
           className={clsx(
