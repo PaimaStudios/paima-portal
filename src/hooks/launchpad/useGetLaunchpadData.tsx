@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import useGetAllLaunchpadsData from "./useGetAllLaunchpadsData";
+import useGetAllLaunchpadsData from "../dex/useGetAllLaunchpadsData";
 
 export default function useGetLaunchpadData(launchpadSlug: string | undefined) {
   const { data, isLoading } = useGetAllLaunchpadsData();

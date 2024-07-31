@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Link, useParams } from "react-router-dom";
 
-import useGetLaunchpadData from "@hooks/dex/useGetLaunchpadData";
+import useGetLaunchpadData from "@hooks/launchpad/useGetLaunchpadData";
 
 import {
   PencilIcon,
@@ -17,7 +17,7 @@ import { tokens } from "@config/tokens";
 import type { StandardItem } from "@hooks/dex/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { ZERO_ADDRESS } from "@utils/constants";
-import useGetLaunchpadUserData from "@hooks/dex/useGetLaunchpadUserData";
+import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
 import useConnectWallet from "@hooks/useConnectWallet";
 
 export enum Currency {

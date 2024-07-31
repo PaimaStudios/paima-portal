@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 
-import useGetLaunchpadData from "@hooks/dex/useGetLaunchpadData";
+import useGetLaunchpadData from "@hooks/launchpad/useGetLaunchpadData";
 
 import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
 import Button from "@components/Button";
