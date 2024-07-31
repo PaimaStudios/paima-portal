@@ -1,8 +1,10 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { NetworkType } from "@utils/types";
 import { useCallback } from "react";
+import { useAccount } from "wagmi";
 
 export default function useConnectWallet() {
+  const { address: addressEvm } = useAccount();
   const { openConnectModal: openConnectEvmModal } = useConnectModal();
 
   const connectWallet = useCallback(
@@ -22,5 +24,8 @@ export default function useConnectWallet() {
     [openConnectEvmModal],
   );
 
-  return connectWallet;
+  // todo: useMemo based on selected network
+  const address = addressEvm;
+
+  return { address, connectWallet };
 }

@@ -17,6 +17,8 @@ import { tokens } from "@config/tokens";
 import type { StandardItem } from "@hooks/dex/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { ZERO_ADDRESS } from "@utils/constants";
+import useGetLaunchpadUserData from "@hooks/dex/useGetLaunchpadUserData";
+import useConnectWallet from "@hooks/useConnectWallet";
 
 export enum Currency {
   USDC = "USDC",
@@ -46,19 +48,26 @@ const CurrencySelectorButton = ({
 };
 
 export default function LaunchpadDetail() {
-  const { launchpad } = useParams();
-  const { data, isLoading } = useGetLaunchpadData(launchpad);
+  let urlParams = useParams();
+  const launchpadSlug = urlParams.launchpad!;
+  const { address: walletAddress } = useConnectWallet();
+  const { data: launchpadData, isLoading: isLoadingLaunchpadData } =
+    useGetLaunchpadData(launchpadSlug);
+  const { data: userData } = useGetLaunchpadUserData(
+    launchpadSlug,
+    walletAddress,
+  );
+  console.log("userData", userData);
 
   const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
   const [orderItems, setOrderItems] = useState<
     {
       itemID: number;
-      price: number;
       quantity: number;
     }[]
   >([]);
 
-  const handleIncreaseItemQuantityInOrder = (itemID: number, price: number) => {
+  const handleIncreaseItemQuantityInOrder = (itemID: number) => {
     const existingItem = orderItems.find((item) => item.itemID === itemID);
 
     if (existingItem) {
@@ -70,7 +79,7 @@ export default function LaunchpadDetail() {
         ),
       );
     } else {
-      setOrderItems([...orderItems, { itemID, price, quantity: 1 }]);
+      setOrderItems([...orderItems, { itemID, quantity: 1 }]);
     }
   };
 
@@ -103,30 +112,40 @@ export default function LaunchpadDetail() {
   };
 
   const standardItems = useMemo(() => {
-    if (!data) return [];
-    const standardItems = data.items.filter(
+    if (!launchpadData) return [];
+    const standardItems = launchpadData.items.filter(
       (item): item is StandardItem => "prices" in item,
     );
     return standardItems;
-  }, [data]);
+  }, [launchpadData]);
 
   const currencies = useMemo(() => {
-    if (!data) return [];
+    if (!launchpadData) return [];
     const standardItem = standardItems[0];
     if (!standardItem) return [];
     return Object.keys(standardItem.prices);
-  }, [data, standardItems]);
+  }, [launchpadData, standardItems]);
 
   useEffect(() => {
     setActiveCurrency(currencies[0]);
   }, [currencies]);
 
+  useEffect(() => {
+    if (!userData || !userData.user) return;
+    const items = userData.items.map((item) => ({
+      itemID: item.itemid,
+      quantity: item.quantity,
+    }));
+    setOrderItems(items);
+    setActiveCurrency(userData.user.paymenttoken);
+  }, [userData]);
+
   return (
     <div className="w-full py-6 container">
-      {isLoading ? (
+      {isLoadingLaunchpadData ? (
         // TOOD: Handle loading state
         <div className="animate-pulse h-64 w-full bg-gray-900 rounded-xl" />
-      ) : !data ? (
+      ) : !launchpadData ? (
         // TOOD: Handle error state
         <>Data failed to load</>
       ) : (
@@ -137,7 +156,7 @@ export default function LaunchpadDetail() {
                 <SingleArrowLeftIcon />
               </div>
               <Link
-                to={`/launchpad/${launchpad}`}
+                to={`/launchpad/${launchpadSlug}`}
                 className="text-heading5 text-gray-200 hover:text-brand transition-colors duration-150 ease-in-out"
               >
                 Back to game detail
@@ -147,7 +166,7 @@ export default function LaunchpadDetail() {
               Launchpad
             </h2>
             <h1 className="text-heading2 tablet:text-displayS font-formula font-bold text-brand">
-              {data.name}
+              {launchpadData.name}
             </h1>
           </div>
           <div className="flex flex-col gap-16">
@@ -275,10 +294,7 @@ export default function LaunchpadDetail() {
                           : undefined
                       }
                       onItemCardClick={() => {
-                        handleIncreaseItemQuantityInOrder(
-                          Number(item.id),
-                          price,
-                        );
+                        handleIncreaseItemQuantityInOrder(Number(item.id));
                       }}
                       isHighlighted={getItemCountFromOrder(Number(item.id)) > 0}
                       counter={getItemCountFromOrder(Number(item.id))}
@@ -318,16 +334,26 @@ export default function LaunchpadDetail() {
                             price={
                               activeCurrency
                                 ? {
-                                    value: item.price,
+                                    value: Number(
+                                      formatUnits(
+                                        BigInt(
+                                          (
+                                            launchpadData.items.find(
+                                              (lpadItem) =>
+                                                Number(lpadItem.id) ===
+                                                item.itemID,
+                                            ) as StandardItem
+                                          ).prices[activeCurrency],
+                                        ),
+                                        tokens[activeCurrency]?.decimals,
+                                      ),
+                                    ),
                                     currency: tokens[activeCurrency]?.symbol,
                                   }
                                 : undefined
                             }
                             onIncreaseQuantityClicked={() => {
-                              handleIncreaseItemQuantityInOrder(
-                                item.itemID,
-                                item.price,
-                              );
+                              handleIncreaseItemQuantityInOrder(item.itemID);
                             }}
                             onDecreaseQuantityClicked={() => {
                               handleDecreaseItemQuantityInOrder(item.itemID);
