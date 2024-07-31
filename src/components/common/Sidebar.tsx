@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import NavigationItems from "./NavigationItems";
+import PaimaFootnotes from "@components/PaimaFootnotes";
 
 export default function Sidebar() {
   return (
@@ -12,11 +13,7 @@ export default function Sidebar() {
         <NavigationItems />
       </div>
       <div>
-        <p className="text-bodyM text-center">
-          © 2022-2024
-          <br />
-          Paima Studios LTD.
-        </p>
+        <PaimaFootnotes />
       </div>
     </div>
   );

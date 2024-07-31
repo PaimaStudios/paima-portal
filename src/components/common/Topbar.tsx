@@ -1,10 +1,34 @@
-import { AppBar, Skeleton, Stack, Toolbar, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+
 import ConnectWallet from "./ConnectWallet";
-import useDappStore from "src/store";
-import { Link } from "react-router-dom";
+import {
+  MobileMenuCloseIcon,
+  MobileMenuIcon,
+} from "@components/icons/GeneralIcons";
+import NavigationItems from "./NavigationItems";
+import PaimaFootnotes from "@components/PaimaFootnotes";
 
 export default function Topbar() {
-  const navbarTitle = useDappStore((state) => state.navbarTitle);
+  const location = useLocation();
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    // close mobile menu when location changes
+
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  useEffect(() => {
+    // lock body scroll when mobile menu is open
+
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isMobileMenuOpen]);
 
   return (
     <div className="h-[70px] flex items-center justify-between py-3 px-6">
@@ -13,24 +37,31 @@ export default function Topbar() {
           <img src="/paima-icon.svg" alt="Paima Logo" />
         </Link>
       </div>
-      <ConnectWallet />
+      <div className="flex gap-4 items-center">
+        <ConnectWallet />
+        <button
+          className="w-8 h-8 flex items-center justify-center p-1 tablet:hidden"
+          onClick={() => setIsMobileMenuOpen(true)}
+        >
+          <MobileMenuIcon />
+        </button>
+      </div>
+      {isMobileMenuOpen && (
+        <div className="tablet:hidden fixed w-full h-full top-0 left-0 bg-gray-1100 z-10 flex flex-col">
+          <div className="flex justify-end py-5 px-6">
+            <button
+              className="w-8 h-8 flex items-center justify-center p-1"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <MobileMenuCloseIcon />
+            </button>
+          </div>
+          <div className="flex flex-col justify-between flex-1 pb-10 px-6">
+            <NavigationItems />
+            <PaimaFootnotes />
+          </div>
+        </div>
+      )}
     </div>
-    // <AppBar
-    //   sx={(theme) => ({
-    //     bgcolor: theme.palette.background.default,
-    //     width: "100%",
-    //     display: { xs: "none", md: "block" },
-    //   })}
-    //   position="sticky"
-    // >
-    //   <Toolbar sx={{ gap: 2 }}>
-    //     <Typography variant="h5" component="h2">
-    //       {navbarTitle ? navbarTitle : <Skeleton width={200} />}
-    //     </Typography>
-    //     <div className="font-bold">123312</div>
-    //     <Stack sx={{ flexGrow: 1 }} />
-    //     <ConnectWallet />
-    //   </Toolbar>
-    // </AppBar>
   );
 }
