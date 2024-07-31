@@ -45,17 +45,17 @@ type ItemType = StandardItem | FreeRewardItem;
 
 export type LaunchpadData = {
   /**
-   * Launchpad ID, preferably its contract address
+   * URL-friendly slug of the name
    */
-  id: string;
+  slug: string;
+  /**
+   * Launchpad contract address
+   */
+  address: string;
   /**
    * Launchpad name to be displayed on the frontend
    */
   name: string;
-  /**
-   * URL-friendly slug of the name
-   */
-  slug: string;
   /**
    * Game description displayed in the launchpads list
    */
@@ -131,9 +131,9 @@ export default function useGetAllLaunchpadsData() {
       const MOCK_USDC = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
       return [
         {
-          id: "0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81",
-          name: "Test Launchpad 1",
           slug: "test-launchpad-1",
+          address: "0xd8058efe0198ae9dD7D563e1b4938Dcbc86A1F81",
+          name: "Test Launchpad 1",
           description: "Description of Test Launchpad 1",
           image: "/images/game-icon-towerdefense.webp",
           referralDiscountBps: 100,
@@ -202,9 +202,9 @@ export default function useGetAllLaunchpadsData() {
           ],
         },
         {
-          id: "0x6D544390Eb535d61e196c87d6B9c80dCD8628Acd",
-          name: "Test Launchpad 2",
           slug: "test-launchpad-2",
+          address: "0x6D544390Eb535d61e196c87d6B9c80dCD8628Acd",
+          name: "Test Launchpad 2",
           description: "Description of Test Launchpad 2",
           image: "/images/game-icon-junglewars.webp",
           items: [

@@ -4,7 +4,7 @@ import { QueryKeys } from "@utils/queryKeys";
 import axios from "axios";
 
 export type LaunchpadUserData = {
-  user: {
+  user?: {
     launchpad: string;
     participationvalid: boolean;
     paymenttoken: string;
@@ -19,18 +19,21 @@ export type LaunchpadUserData = {
 };
 
 type LaunchpadUserItemsResponse = {
-  stats: LaunchpadUserData;
+  stats: LaunchpadUserData | null;
 };
 
 export default function useGetLaunchpadUserData(
-  launchpad: string,
-  wallet: string,
+  launchpadSlug: string,
+  wallet?: string,
 ) {
   return useQuery<LaunchpadUserData | null>({
-    queryKey: [QueryKeys.LaunchpadData, launchpad, wallet],
+    queryKey: [QueryKeys.LaunchpadData, launchpadSlug, wallet],
     queryFn: async () => {
+      if (!wallet) return null;
       const response = await axios.get<LaunchpadUserItemsResponse>(
-        `${env.REACT_APP_LAUNCHPAD_BACKEND_URL}/userItems?wallet=${wallet}&launchpad=${launchpad}`,
+        `${
+          env.REACT_APP_LAUNCHPAD_BACKEND_URL
+        }/userData?wallet=${wallet.toLowerCase()}&launchpad=${launchpadSlug}`,
       );
       return response.data?.stats ?? null;
     },
