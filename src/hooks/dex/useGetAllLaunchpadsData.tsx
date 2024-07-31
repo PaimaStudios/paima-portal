@@ -69,9 +69,9 @@ export type LaunchpadData = {
    */
   items: ItemType[];
   /**
-   * UNIX timestamp of the start of the whitelist sale, in seconds
+   * Optional UNIX timestamp of the start of the whitelist sale, in seconds. Omit if there is no whitelist sale
    */
-  timestampStartWhitelistSale: number;
+  timestampStartWhitelistSale?: number;
   /**
    * UNIX timestamp of the start of the public sale, in seconds
    */
@@ -80,6 +80,10 @@ export type LaunchpadData = {
    * UNIX timestamp of the end of the sale, in seconds
    */
   timestampEndSale: number;
+  /**
+   * List of addresses that are whitelisted for the whitelist sale. Omit if there is no whitelist sale
+   */
+  whitelistedAddresses?: string[];
   /**
    * Default referral discount to the prices of items, expressed in basis points
    */
@@ -166,6 +170,7 @@ export default function useGetAllLaunchpadsData() {
           timestampStartWhitelistSale: 1724743540,
           timestampStartPublicSale: 1724829940,
           timestampEndSale: 1724916340,
+          whitelistedAddresses: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
           curatedPackages: [
             {
               name: "Package 1",
@@ -225,6 +230,7 @@ export default function useGetAllLaunchpadsData() {
           timestampStartWhitelistSale: 1724743540,
           timestampStartPublicSale: 1724829940,
           timestampEndSale: 1724916340,
+          whitelistedAddresses: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
         },
       ];
 
