@@ -35,11 +35,11 @@ function Layout() {
   return (
     <MuiSetup>
       <Providers>
-        <div className="flex flex-col tablet:flex-row h-screen">
-          <div className="flex-1 max-w-[180px] laptop:max-w-[268px] h-screen hidden tablet:block">
+        <div className="flex flex-col tablet:flex-row min-h-screen">
+          <div className="flex-1 max-w-[180px] laptop:max-w-[268px] min-h-screen hidden tablet:block">
             <Sidebar />
           </div>
-          <div className="flex-1 flex flex-col h-screen tablet:w-[calc(100vw-180px)] laptop:w-[calc(100vw-268px)]">
+          <div className="flex-1 flex flex-col min-h-screen tablet:w-[calc(100vw-180px)] laptop:w-[calc(100vw-268px)]">
             {/* <Navbar /> */}
             <Topbar />
             <div className="overflow-y-auto flex-1">
