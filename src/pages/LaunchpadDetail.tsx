@@ -62,53 +62,66 @@ export default function LaunchpadDetail() {
   const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
   const [orderItems, setOrderItems] = useState<
     {
-      itemID: number;
+      id: number;
       quantity: number;
     }[]
   >([]);
 
   const handleIncreaseItemQuantityInOrder = (itemID: number) => {
-    const existingItem = orderItems.find((item) => item.itemID === itemID);
+    const existingItem = orderItems.find((item) => item.id === itemID);
 
     if (existingItem) {
       setOrderItems(
         orderItems.map((item) =>
-          item.itemID === itemID
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
+          item.id === itemID ? { ...item, quantity: item.quantity + 1 } : item,
         ),
       );
     } else {
-      setOrderItems([...orderItems, { itemID, quantity: 1 }]);
+      setOrderItems([...orderItems, { id: itemID, quantity: 1 }]);
     }
   };
 
   const handleDecreaseItemQuantityInOrder = (itemID: number) => {
-    const existingItem = orderItems.find((item) => item.itemID === itemID);
+    const existingItem = orderItems.find((item) => item.id === itemID);
 
     if (existingItem) {
       if (existingItem.quantity > 1) {
         setOrderItems(
           orderItems.map((item) =>
-            item.itemID === itemID
+            item.id === itemID
               ? { ...item, quantity: item.quantity - 1 }
               : item,
           ),
         );
       } else {
-        setOrderItems(orderItems.filter((item) => item.itemID !== itemID));
+        setOrderItems(orderItems.filter((item) => item.id !== itemID));
       }
     }
   };
 
   const handleRemoveItemFromOrder = (itemID: number) => {
-    setOrderItems(orderItems.filter((item) => item.itemID !== itemID));
+    setOrderItems(orderItems.filter((item) => item.id !== itemID));
   };
 
   const getItemCountFromOrder = (itemID: number) => {
-    const existingItem = orderItems.find((item) => item.itemID === itemID);
+    const existingItem = orderItems.find((item) => item.id === itemID);
 
     return existingItem ? existingItem.quantity : 0;
+  };
+
+  const getTotalPriceOfItems = (items: typeof orderItems) => {
+    if (!launchpadData) return 0n;
+    return items.reduce(
+      (acc, item) =>
+        acc +
+        BigInt(
+          launchpadData.items.find(
+            (lpadItem): lpadItem is StandardItem => lpadItem.id === item.id,
+          )?.prices?.[activeCurrency] ?? 0,
+        ) *
+          BigInt(item.quantity),
+      0n,
+    );
   };
 
   const standardItems = useMemo(() => {
@@ -132,8 +145,8 @@ export default function LaunchpadDetail() {
 
   useEffect(() => {
     if (!userData || !userData.user) return;
-    const items = userData.items.map((item) => ({
-      itemID: item.itemid,
+    const items: typeof orderItems = userData.items.map((item) => ({
+      id: item.itemid,
       quantity: item.quantity,
     }));
     setOrderItems(items);
@@ -225,38 +238,31 @@ export default function LaunchpadDetail() {
                 </p>
               </div>
               <div className="grid grid-cols-2 laptop:grid-cols-4 gap-6">
-                <LaunchpadItemCard
-                  title="Package #1"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.0073233,
-                    currency: Currency.ETH,
-                  }}
-                />
-                <LaunchpadItemCard
-                  title="Package #2"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.0073233,
-                    currency: Currency.ETH,
-                  }}
-                />
-                <LaunchpadItemCard
-                  title="Package #3"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.0073233,
-                    currency: Currency.ETH,
-                  }}
-                />
-                <LaunchpadItemCard
-                  title="Package #4"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.0073233,
-                    currency: Currency.ETH,
-                  }}
-                />
+                {launchpadData.curatedPackages?.map((curatedPackage) => {
+                  const price = getTotalPriceOfItems(curatedPackage.items);
+                  return (
+                    <LaunchpadItemCard
+                      title={curatedPackage.name}
+                      description={
+                        curatedPackage.description ||
+                        `Combines ${curatedPackage.items
+                          .map(
+                            (item) =>
+                              `${launchpadData.items.find(
+                                (lpadItem) => lpadItem.id === item.id,
+                              )?.name} x${item.quantity}`,
+                          )
+                          .join(", ")}`
+                      }
+                      price={{
+                        value: Number(
+                          formatUnits(price, tokens[activeCurrency]?.decimals),
+                        ),
+                        currency: tokens[activeCurrency]?.symbol,
+                      }}
+                    />
+                  );
+                })}
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -328,8 +334,8 @@ export default function LaunchpadDetail() {
                         </p>
                         {orderItems.map((item) => (
                           <LaunchpadOrderItem
-                            key={item.itemID}
-                            title={`Item #${item.itemID}`}
+                            key={item.id}
+                            title={`Item #${item.id}`}
                             quantity={item.quantity}
                             price={
                               activeCurrency
@@ -340,8 +346,7 @@ export default function LaunchpadDetail() {
                                           (
                                             launchpadData.items.find(
                                               (lpadItem) =>
-                                                Number(lpadItem.id) ===
-                                                item.itemID,
+                                                Number(lpadItem.id) === item.id,
                                             ) as StandardItem
                                           ).prices[activeCurrency],
                                         ),
@@ -353,13 +358,13 @@ export default function LaunchpadDetail() {
                                 : undefined
                             }
                             onIncreaseQuantityClicked={() => {
-                              handleIncreaseItemQuantityInOrder(item.itemID);
+                              handleIncreaseItemQuantityInOrder(item.id);
                             }}
                             onDecreaseQuantityClicked={() => {
-                              handleDecreaseItemQuantityInOrder(item.itemID);
+                              handleDecreaseItemQuantityInOrder(item.id);
                             }}
                             onRemoveClicked={() => {
-                              handleRemoveItemFromOrder(item.itemID);
+                              handleRemoveItemFromOrder(item.id);
                             }}
                           />
                         ))}

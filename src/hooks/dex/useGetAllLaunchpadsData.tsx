@@ -8,7 +8,7 @@ type CommonItemProps = {
   /**
    * Item ID that will be also emitted in the events
    */
-  id: `${number}`;
+  id: number;
   /**
    * Item name to be displayed on the frontend
    */
@@ -107,7 +107,7 @@ export type LaunchpadData = {
       /**
        * Item ID corresponding to the `items` array
        */
-      id: `${number}`;
+      id: number;
       /**
        * Quantity of the item in the package
        */
@@ -139,7 +139,7 @@ export default function useGetAllLaunchpadsData() {
           referralDiscountBps: 100,
           items: [
             {
-              id: "1",
+              id: 1,
               name: "Item A",
               description: "Description of Item A",
               prices: {
@@ -149,7 +149,7 @@ export default function useGetAllLaunchpadsData() {
               referralDiscountBps: 500,
             },
             {
-              id: "2",
+              id: 2,
               name: "Item B",
               description: "Description of Item B",
               prices: {
@@ -158,7 +158,7 @@ export default function useGetAllLaunchpadsData() {
               },
             },
             {
-              id: "100",
+              id: 100,
               name: "Free Item X",
               description: "Description of Free Item X",
               freeAt: {
@@ -177,11 +177,11 @@ export default function useGetAllLaunchpadsData() {
               description: "Description of Package 1",
               items: [
                 {
-                  id: "1",
+                  id: 1,
                   quantity: 1,
                 },
                 {
-                  id: "2",
+                  id: 2,
                   quantity: 1,
                 },
               ],
@@ -190,11 +190,11 @@ export default function useGetAllLaunchpadsData() {
               name: "VIP Package",
               items: [
                 {
-                  id: "1",
+                  id: 1,
                   quantity: 10,
                 },
                 {
-                  id: "100",
+                  id: 100,
                   quantity: 1,
                 },
               ],
@@ -209,7 +209,7 @@ export default function useGetAllLaunchpadsData() {
           image: "/images/game-icon-junglewars.webp",
           items: [
             {
-              id: "1",
+              id: 1,
               name: "Item A",
               description: "Description of Item A",
               prices: {
@@ -218,7 +218,7 @@ export default function useGetAllLaunchpadsData() {
               },
             },
             {
-              id: "2",
+              id: 2,
               name: "Item B",
               description: "Description of Item B",
               prices: {
