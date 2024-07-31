@@ -3,14 +3,13 @@ import {
   OutlinedMinusIcon,
   OutlinedPlusIcon,
 } from "@components/icons/GeneralIcons";
-import { Currency } from "@pages/LaunchpadDetail";
 
 type LaunchpadOrderItemProps = {
   title: string;
   quantity: number;
   price?: {
     value: number;
-    currency: Currency;
+    currency: string;
   };
   onIncreaseQuantityClicked: () => void;
   onDecreaseQuantityClicked: () => void;

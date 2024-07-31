@@ -1,13 +1,11 @@
 import clsx from "clsx";
 
-import { Currency } from "@pages/LaunchpadDetail";
-
 type LaunchpadItemCardProps = {
   title: string;
   description: string;
   price?: {
     value: number;
-    currency: Currency;
+    currency: string;
   };
   imageURL?: string;
   imageSize?: "small" | "large";

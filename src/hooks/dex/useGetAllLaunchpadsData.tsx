@@ -23,7 +23,7 @@ type CommonItemProps = {
   image?: string;
 };
 
-type StandardItem = CommonItemProps & {
+export type StandardItem = CommonItemProps & {
   /**
    * Map of payment token identifier (address) to price of the item
    */
@@ -34,7 +34,7 @@ type StandardItem = CommonItemProps & {
   referralDiscountBps?: number;
 };
 
-type FreeRewardItem = CommonItemProps & {
+export type FreeRewardItem = CommonItemProps & {
   /**
    * Map of payment token identifier (address) to amount per which the item is able to be claimed for free
    */

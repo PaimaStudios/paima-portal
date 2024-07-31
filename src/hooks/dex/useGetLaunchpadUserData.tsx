@@ -30,7 +30,7 @@ export default function useGetLaunchpadUserData(
     queryKey: [QueryKeys.LaunchpadData, launchpad, wallet],
     queryFn: async () => {
       const response = await axios.get<LaunchpadUserItemsResponse>(
-        `${env.REACT_APP_LAUNCHPAD_BACKEND_URL}/launchpads`,
+        `${env.REACT_APP_LAUNCHPAD_BACKEND_URL}/userItems?wallet=${wallet}&launchpad=${launchpad}`,
       );
       return response.data?.stats ?? null;
     },

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Link, useParams } from "react-router-dom";
 
@@ -13,6 +13,10 @@ import LaunchpadRewardsSection from "@components/launchpad/LaunchpadRewardsSecti
 import LaunchpadOrderEmpty from "@components/launchpad/LaunchpadOrderEmpty";
 import LaunchpadOrderItem from "@components/launchpad/LaunchpadOrderItem";
 import Button from "@components/Button";
+import { tokens } from "@config/tokens";
+import type { StandardItem } from "@hooks/dex/useGetAllLaunchpadsData";
+import { formatUnits } from "viem";
+import { ZERO_ADDRESS } from "@utils/constants";
 
 export enum Currency {
   USDC = "USDC",
@@ -45,7 +49,7 @@ export default function LaunchpadDetail() {
   const { launchpad } = useParams();
   const { data, isLoading } = useGetLaunchpadsData(launchpad);
 
-  const [activeCurrency, setActiveCurrency] = useState<Currency>(Currency.USDC);
+  const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
   const [orderItems, setOrderItems] = useState<
     {
       itemID: number;
@@ -98,6 +102,25 @@ export default function LaunchpadDetail() {
     return existingItem ? existingItem.quantity : 0;
   };
 
+  const standardItems = useMemo(() => {
+    if (!data) return [];
+    const standardItems = data.items.filter(
+      (item): item is StandardItem => "prices" in item,
+    );
+    return standardItems;
+  }, [data]);
+
+  const currencies = useMemo(() => {
+    if (!data) return [];
+    const standardItem = standardItems[0];
+    if (!standardItem) return [];
+    return Object.keys(standardItem.prices);
+  }, [data, standardItems]);
+
+  useEffect(() => {
+    setActiveCurrency(currencies[0]);
+  }, [currencies]);
+
   return (
     <div className="w-full py-6 container">
       {isLoading ? (
@@ -144,20 +167,16 @@ export default function LaunchpadDetail() {
                 </p>
               </div>
               <div className="flex gap-4">
-                <CurrencySelectorButton
-                  text="USDC"
-                  isActive={activeCurrency === Currency.USDC}
-                  onButtonClicked={() => {
-                    setActiveCurrency(Currency.USDC);
-                  }}
-                />
-                <CurrencySelectorButton
-                  text="ETH"
-                  isActive={activeCurrency === Currency.ETH}
-                  onButtonClicked={() => {
-                    setActiveCurrency(Currency.ETH);
-                  }}
-                />
+                {currencies.map((currency) => (
+                  <CurrencySelectorButton
+                    key={currency}
+                    text={tokens[currency]?.symbol}
+                    isActive={activeCurrency === currency}
+                    onButtonClicked={() => {
+                      setActiveCurrency(currency);
+                    }}
+                  />
+                ))}
               </div>
             </div>
             <div className="flex flex-col gap-6">
@@ -234,118 +253,38 @@ export default function LaunchpadDetail() {
                 </p>
               </div>
               <div className="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 gap-6">
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #1"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.0073233,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(1, 0.0073233);
-                  }}
-                  isHighlighted={getItemCountFromOrder(1) > 0}
-                  counter={getItemCountFromOrder(1)}
-                />
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #2"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.34,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(2, 0.34);
-                  }}
-                  isHighlighted={getItemCountFromOrder(2) > 0}
-                  counter={getItemCountFromOrder(2)}
-                />
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #3"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.124293,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(3, 0.124293);
-                  }}
-                  isHighlighted={getItemCountFromOrder(3) > 0}
-                  counter={getItemCountFromOrder(3)}
-                />
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #4"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.000451,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(4, 0.000451);
-                  }}
-                  isHighlighted={getItemCountFromOrder(4) > 0}
-                  counter={getItemCountFromOrder(4)}
-                />
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #5"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.0978,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(5, 0.0978);
-                  }}
-                  isHighlighted={getItemCountFromOrder(5) > 0}
-                  counter={getItemCountFromOrder(5)}
-                />
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #6"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.1,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(6, 0.1);
-                  }}
-                  isHighlighted={getItemCountFromOrder(6) > 0}
-                  counter={getItemCountFromOrder(6)}
-                />
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #7"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.005,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(7, 0.005);
-                  }}
-                  isHighlighted={getItemCountFromOrder(7) > 0}
-                  counter={getItemCountFromOrder(7)}
-                />
-                <LaunchpadItemCard
-                  imageURL="/images/launchpad-item-placeholder.svg"
-                  title="Item #8"
-                  description="Combines Item #1, Item #2 and Item #3"
-                  price={{
-                    value: 0.00001,
-                    currency: Currency.ETH,
-                  }}
-                  onItemCardClick={() => {
-                    handleIncreaseItemQuantityInOrder(8, 0.00001);
-                  }}
-                  isHighlighted={getItemCountFromOrder(8) > 0}
-                  counter={getItemCountFromOrder(8)}
-                />
+                {standardItems.map((item) => {
+                  const price = Number(
+                    formatUnits(
+                      BigInt(item.prices[activeCurrency]),
+                      tokens[activeCurrency]?.decimals,
+                    ),
+                  );
+                  return (
+                    <LaunchpadItemCard
+                      key={item.id}
+                      imageURL={item.image}
+                      title={item.name}
+                      description={item.description}
+                      price={
+                        activeCurrency
+                          ? {
+                              value: price,
+                              currency: tokens[activeCurrency]?.symbol,
+                            }
+                          : undefined
+                      }
+                      onItemCardClick={() => {
+                        handleIncreaseItemQuantityInOrder(
+                          Number(item.id),
+                          price,
+                        );
+                      }}
+                      isHighlighted={getItemCountFromOrder(Number(item.id)) > 0}
+                      counter={getItemCountFromOrder(Number(item.id))}
+                    />
+                  );
+                })}
               </div>
             </div>
             <div className="flex flex-col gap-10">
@@ -376,10 +315,14 @@ export default function LaunchpadDetail() {
                             key={item.itemID}
                             title={`Item #${item.itemID}`}
                             quantity={item.quantity}
-                            price={{
-                              value: item.price,
-                              currency: activeCurrency,
-                            }}
+                            price={
+                              activeCurrency
+                                ? {
+                                    value: item.price,
+                                    currency: tokens[activeCurrency]?.symbol,
+                                  }
+                                : undefined
+                            }
                             onIncreaseQuantityClicked={() => {
                               handleIncreaseItemQuantityInOrder(
                                 item.itemID,
