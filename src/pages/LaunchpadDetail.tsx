@@ -33,19 +33,24 @@ export enum Currency {
 const CurrencySelectorButton = ({
   text,
   isActive = false,
+  disabled = false,
   onButtonClicked,
 }: {
   text: string;
   isActive?: boolean;
+  disabled?: boolean;
   onButtonClicked?: () => void;
 }) => {
   return (
     <button
       className={clsx(
-        "min-w-[120px] flex items-center justify-center uppercase font-medium text-white text-heading5 px-6 py-3 border-2 rounded-xl w-full hover:cursor-pointer transition-colors duration-150 ease-in-out",
-        isActive ? "border-brand" : "border-gray-800 hover:border-brand",
+        "min-w-[120px] flex items-center justify-center uppercase font-medium text-white text-heading5 px-6 py-3 border-2 rounded-xl w-full transition-colors duration-150 ease-in-out",
+        isActive ? "border-brand" : "border-gray-800 ",
+        disabled
+          ? "hover:cursor-not-allowed"
+          : "hover:cursor-pointer hover:border-brand",
       )}
-      onClick={onButtonClicked}
+      onClick={disabled ? undefined : onButtonClicked}
     >
       {text}
     </button>
@@ -210,7 +215,9 @@ export default function LaunchpadDetail() {
   }, [getTotalPriceOfItems, orderStandardItems, orderFreeRewards]);
 
   useEffect(() => {
-    setActiveCurrency(currencies[0]);
+    if (!userData) {
+      setActiveCurrency(currencies[0]);
+    }
   }, [currencies]);
 
   useEffect(() => {
@@ -296,6 +303,10 @@ export default function LaunchpadDetail() {
                     onButtonClicked={() => {
                       setActiveCurrency(currency);
                     }}
+                    disabled={
+                      userData?.user?.paymenttoken !== undefined &&
+                      currency !== activeCurrency
+                    }
                   />
                 ))}
               </div>
