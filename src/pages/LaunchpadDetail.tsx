@@ -242,7 +242,11 @@ export default function LaunchpadDetail() {
       ),
     );
 
-  const { submitLaunchpadPurchase } = useSubmitLaunchpadPurchase({
+  const {
+    submitLaunchpadPurchase,
+    isLoading: isLoadingSubmit,
+    isPending: isPendingSubmit,
+  } = useSubmitLaunchpadPurchase({
     currency: activeCurrency,
     launchpadSlug,
     orderItems,
@@ -594,6 +598,8 @@ export default function LaunchpadDetail() {
                       }
                       disabled={formHasError || noActionToDo}
                       onButtonClick={submitLaunchpadPurchase}
+                      isLoading={isLoadingSubmit}
+                      isPending={isPendingSubmit}
                     />
                   </div>
                 </div>
