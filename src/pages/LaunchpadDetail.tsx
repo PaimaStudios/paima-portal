@@ -224,6 +224,8 @@ export default function LaunchpadDetail() {
   }, [userData]);
 
   const formHasError = surplusForRewards < 0n;
+  const amountToPay =
+    getTotalPriceOfItems(orderItems) - BigInt(userData?.user?.totalamount ?? 0);
 
   return (
     <div className="w-full py-6 container">
@@ -530,7 +532,11 @@ export default function LaunchpadDetail() {
                         Already paid
                       </p>
                       <p className="text-heading5 font-bold text-brand">
-                        0.000 ETH
+                        {formatUnits(
+                          BigInt(userData?.user?.totalamount ?? 0),
+                          tokens[activeCurrency].decimals,
+                        )}{" "}
+                        {tokens[activeCurrency].symbol}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
@@ -538,10 +544,25 @@ export default function LaunchpadDetail() {
                         Balance to pay
                       </p>
                       <p className="text-heading5 font-bold text-brand">
-                        0.000 ETH
+                        {formatUnits(
+                          amountToPay,
+                          tokens[activeCurrency].decimals,
+                        )}{" "}
+                        {tokens[activeCurrency].symbol}
                       </p>
                     </div>
-                    <Button text="Confirm and pay" disabled={formHasError} />
+                    <Button
+                      text={
+                        formHasError
+                          ? "Invalid order"
+                          : amountToPay < 0n
+                          ? "Choose more items"
+                          : amountToPay === 0n
+                          ? "Nothing to do"
+                          : "Confirm and pay"
+                      }
+                      disabled={formHasError || amountToPay <= 0n}
+                    />
                   </div>
                 </div>
               </div>

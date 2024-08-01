@@ -8,6 +8,7 @@ export type LaunchpadUserData = {
     launchpad: string;
     participationvalid: boolean;
     paymenttoken: string;
+    totalamount: string;
     wallet: string;
   };
   items: {
