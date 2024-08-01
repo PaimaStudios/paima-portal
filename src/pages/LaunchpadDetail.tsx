@@ -14,7 +14,11 @@ import LaunchpadOrderEmpty from "@components/launchpad/LaunchpadOrderEmpty";
 import LaunchpadOrderItem from "@components/launchpad/LaunchpadOrderItem";
 import Button from "@components/Button";
 import { tokens } from "@config/tokens";
-import type { StandardItem } from "@hooks/dex/useGetAllLaunchpadsData";
+import type {
+  FreeRewardItem,
+  LaunchpadData,
+  StandardItem,
+} from "@hooks/dex/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { ZERO_ADDRESS } from "@utils/constants";
 import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
@@ -67,17 +71,25 @@ export default function LaunchpadDetail() {
     }[]
   >([]);
 
-  const handleIncreaseItemQuantityInOrder = (itemID: number) => {
+  const handleIncreaseItemQuantityInOrder = (
+    itemID: number,
+    increaseBy = 1,
+  ) => {
     const existingItem = orderItems.find((item) => item.id === itemID);
 
     if (existingItem) {
-      setOrderItems(
+      setOrderItems((orderItems) =>
         orderItems.map((item) =>
-          item.id === itemID ? { ...item, quantity: item.quantity + 1 } : item,
+          item.id === itemID
+            ? { ...item, quantity: item.quantity + increaseBy }
+            : item,
         ),
       );
     } else {
-      setOrderItems([...orderItems, { id: itemID, quantity: 1 }]);
+      setOrderItems((orderItems) => [
+        ...orderItems,
+        { id: itemID, quantity: increaseBy },
+      ]);
     }
   };
 
@@ -101,6 +113,14 @@ export default function LaunchpadDetail() {
 
   const handleRemoveItemFromOrder = (itemID: number) => {
     setOrderItems(orderItems.filter((item) => item.id !== itemID));
+  };
+
+  const handleAddCuratedPackageToOrder = (
+    curatedPackage: NonNullable<LaunchpadData["curatedPackages"]>[number],
+  ) => {
+    curatedPackage.items.forEach((item) => {
+      handleIncreaseItemQuantityInOrder(item.id, item.quantity);
+    });
   };
 
   const getItemCountFromOrder = (itemID: number) => {
@@ -131,6 +151,28 @@ export default function LaunchpadDetail() {
     );
     return standardItems;
   }, [launchpadData]);
+
+  const freeRewards = useMemo(() => {
+    if (!launchpadData) return [];
+    const standardItems = launchpadData.items.filter(
+      (item): item is FreeRewardItem => "freeAt" in item,
+    );
+    return standardItems;
+  }, [launchpadData]);
+
+  const orderStandardItems = useMemo(() => {
+    if (!launchpadData) return [];
+    return orderItems.filter((orderItem) =>
+      standardItems.find((standardItem) => standardItem.id === orderItem.id),
+    );
+  }, [orderItems, launchpadData, standardItems]);
+
+  const orderFreeRewards = useMemo(() => {
+    if (!launchpadData) return [];
+    return orderItems.filter((orderItem) =>
+      freeRewards.find((freeReward) => freeReward.id === orderItem.id),
+    );
+  }, [orderItems, launchpadData, freeRewards]);
 
   const currencies = useMemo(() => {
     if (!launchpadData) return [];
@@ -223,7 +265,10 @@ export default function LaunchpadDetail() {
                   bridging, and kickstart your legend for free!
                 </p>
               </div>
-              <LaunchpadRewardsSection />
+              <LaunchpadRewardsSection
+                activeCurrency={activeCurrency}
+                freeRewards={freeRewards}
+              />
             </div>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
@@ -259,6 +304,9 @@ export default function LaunchpadDetail() {
                           formatUnits(price, tokens[activeCurrency]?.decimals),
                         ),
                         currency: tokens[activeCurrency]?.symbol,
+                      }}
+                      onItemCardClick={() => {
+                        handleAddCuratedPackageToOrder(curatedPackage);
                       }}
                     />
                   );
@@ -332,7 +380,7 @@ export default function LaunchpadDetail() {
                         <p className="text-heading6 font-bold text-gray-50 uppercase">
                           Items
                         </p>
-                        {orderItems.map((item) => (
+                        {orderStandardItems.map((item) => (
                           <LaunchpadOrderItem
                             key={item.id}
                             title={`Item #${item.id}`}
@@ -343,12 +391,10 @@ export default function LaunchpadDetail() {
                                     value: Number(
                                       formatUnits(
                                         BigInt(
-                                          (
-                                            launchpadData.items.find(
-                                              (lpadItem) =>
-                                                Number(lpadItem.id) === item.id,
-                                            ) as StandardItem
-                                          ).prices[activeCurrency],
+                                          standardItems.find(
+                                            (standardItem) =>
+                                              standardItem.id === item.id,
+                                          )?.prices[activeCurrency] ?? 0,
                                         ),
                                         tokens[activeCurrency]?.decimals,
                                       ),
@@ -373,22 +419,30 @@ export default function LaunchpadDetail() {
                         <p className="text-heading6 font-bold text-gray-50 uppercase">
                           Rewards
                         </p>
-                        <LaunchpadOrderItem
-                          title="Reward #1"
-                          quantity={1}
-                          additionalText="Per 0.0001ETH"
-                          onDecreaseQuantityClicked={() => {}}
-                          onIncreaseQuantityClicked={() => {}}
-                          onRemoveClicked={() => {}}
-                        />
-                        <LaunchpadOrderItem
-                          title="Reward #2"
-                          quantity={1}
-                          additionalText="Per 0.001ETH"
-                          onDecreaseQuantityClicked={() => {}}
-                          onIncreaseQuantityClicked={() => {}}
-                          onRemoveClicked={() => {}}
-                        />
+                        {orderFreeRewards.map((item) => {
+                          const itemData = freeRewards.find(
+                            (freeReward) => freeReward.id === item.id,
+                          )!;
+                          return (
+                            <LaunchpadOrderItem
+                              title={itemData.name}
+                              quantity={item.quantity}
+                              additionalText={`Per ${formatUnits(
+                                BigInt(itemData.freeAt[activeCurrency]),
+                                tokens[activeCurrency].decimals,
+                              )} ${tokens[activeCurrency].symbol}`}
+                              onDecreaseQuantityClicked={() => {
+                                handleDecreaseItemQuantityInOrder(item.id);
+                              }}
+                              onIncreaseQuantityClicked={() => {
+                                handleIncreaseItemQuantityInOrder(item.id);
+                              }}
+                              onRemoveClicked={() => {
+                                handleRemoveItemFromOrder(item.id);
+                              }}
+                            />
+                          );
+                        })}
                       </div>
                     </div>
                   )}
