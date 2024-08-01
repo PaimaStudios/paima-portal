@@ -24,6 +24,7 @@ import { ZERO_ADDRESS } from "@utils/constants";
 import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
 import useConnectWallet from "@hooks/useConnectWallet";
 import useSubmitLaunchpadPurchase from "@hooks/launchpad/useSubmitLaunchpadPurchase";
+import ConnectWallet from "@components/common/ConnectWallet";
 
 export enum Currency {
   USDC = "USDC",
@@ -584,23 +585,29 @@ export default function LaunchpadDetail() {
                         {tokens[activeCurrency].symbol}
                       </p>
                     </div>
-                    <Button
-                      text={
-                        formHasError
-                          ? "Invalid order"
-                          : amountToPay < 0n
-                          ? "Choose more items"
-                          : amountToPay === 0n
-                          ? noActionToDo
-                            ? "Nothing to do"
-                            : "Confirm"
-                          : "Confirm and pay"
-                      }
-                      disabled={formHasError || noActionToDo}
-                      onButtonClick={submitLaunchpadPurchase}
-                      isLoading={isLoadingSubmit}
-                      isPending={isPendingSubmit}
-                    />
+                    {walletAddress ? (
+                      <Button
+                        text={
+                          formHasError
+                            ? "Invalid order"
+                            : amountToPay < 0n
+                            ? "Choose more items"
+                            : amountToPay === 0n
+                            ? noActionToDo
+                              ? "Nothing to do"
+                              : "Confirm"
+                            : "Confirm and pay"
+                        }
+                        disabled={formHasError || noActionToDo}
+                        onButtonClick={submitLaunchpadPurchase}
+                        isLoading={isLoadingSubmit}
+                        isPending={isPendingSubmit}
+                      />
+                    ) : (
+                      <div className="flex justify-center">
+                        <ConnectWallet />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
