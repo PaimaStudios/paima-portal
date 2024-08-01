@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Link, useParams } from "react-router-dom";
 
@@ -129,20 +129,30 @@ export default function LaunchpadDetail() {
     return existingItem ? existingItem.quantity : 0;
   };
 
-  const getTotalPriceOfItems = (items: typeof orderItems) => {
-    if (!launchpadData) return 0n;
-    return items.reduce(
-      (acc, item) =>
-        acc +
-        BigInt(
-          launchpadData.items.find(
-            (lpadItem): lpadItem is StandardItem => lpadItem.id === item.id,
-          )?.prices?.[activeCurrency] ?? 0,
-        ) *
-          BigInt(item.quantity),
-      0n,
-    );
-  };
+  const getTotalPriceOfItems = useCallback(
+    (items: typeof orderItems, includeFreeAt = false) => {
+      if (!launchpadData) return 0n;
+      return items.reduce((acc, item) => {
+        const lpadItem = launchpadData.items.find(
+          (lpadItem) => lpadItem.id === item.id,
+        );
+        if (!lpadItem) return acc;
+        if ("prices" in lpadItem) {
+          return (
+            acc +
+            BigInt(lpadItem.prices[activeCurrency] ?? 0) * BigInt(item.quantity)
+          );
+        } else if ("freeAt" in lpadItem && includeFreeAt) {
+          return (
+            acc +
+            BigInt(lpadItem.freeAt[activeCurrency] ?? 0) * BigInt(item.quantity)
+          );
+        }
+        return acc;
+      }, 0n);
+    },
+    [activeCurrency, launchpadData],
+  );
 
   const standardItems = useMemo(() => {
     if (!launchpadData) return [];
@@ -181,6 +191,24 @@ export default function LaunchpadDetail() {
     return Object.keys(standardItem.prices);
   }, [launchpadData, standardItems]);
 
+  const cheapestFreeReward = useMemo(() => {
+    if (!launchpadData) return 0n;
+    return freeRewards.reduce(
+      (acc, item) => {
+        const price = BigInt(item.freeAt[activeCurrency]);
+        return price < acc ? price : acc;
+      },
+      BigInt(freeRewards[0]?.freeAt[activeCurrency] ?? 0),
+    );
+  }, [activeCurrency, freeRewards, launchpadData]);
+
+  const surplusForRewards = useMemo(() => {
+    return (
+      getTotalPriceOfItems(orderStandardItems) -
+      getTotalPriceOfItems(orderFreeRewards, true)
+    );
+  }, [getTotalPriceOfItems, orderStandardItems, orderFreeRewards]);
+
   useEffect(() => {
     setActiveCurrency(currencies[0]);
   }, [currencies]);
@@ -194,6 +222,8 @@ export default function LaunchpadDetail() {
     setOrderItems(items);
     setActiveCurrency(userData.user.paymenttoken);
   }, [userData]);
+
+  const formHasError = surplusForRewards < 0n;
 
   return (
     <div className="w-full py-6 container">
@@ -451,13 +481,37 @@ export default function LaunchpadDetail() {
                     </div>
                   )}
                 </>
-                <div className="border border-brand rounded-2xl flex flex-col items-center justify-center laptop:w-1/3 divide-y divide-gray-600">
+                <div
+                  className={clsx(
+                    "border rounded-2xl flex flex-col items-center justify-center laptop:w-1/3 divide-y divide-gray-600",
+                    formHasError ? "border-error" : "border-brand",
+                  )}
+                >
                   <div className="p-6 flex flex-col gap-4 flex-1 w-full">
                     <p className="text-heading6 font-bold text-gray-50 uppercase">
                       Summary
                     </p>
                     <p className="text-bodyM text-gray-100">
-                      You can still claim rewards for 0.0000008 ETH.
+                      {surplusForRewards === 0n
+                        ? null
+                        : surplusForRewards < 0n
+                        ? `You need to purchase items for ${formatUnits(
+                            -surplusForRewards,
+                            tokens[activeCurrency].decimals,
+                          )} more ${
+                            tokens[activeCurrency].symbol
+                          } to be able to claim selected rewards`
+                        : surplusForRewards < cheapestFreeReward
+                        ? `You will be eligible for ${
+                            orderFreeRewards.length === 0 ? "a" : "an another"
+                          } free reward if you spend ${formatUnits(
+                            cheapestFreeReward - surplusForRewards,
+                            tokens[activeCurrency].decimals,
+                          )} more ${tokens[activeCurrency].symbol}.`
+                        : `You can still claim rewards for ${formatUnits(
+                            surplusForRewards,
+                            tokens[activeCurrency].decimals,
+                          )} ${tokens[activeCurrency].symbol}.`}
                     </p>
                     <div className="flex flex-col gap-2">
                       <p className="text-bodyM text-gray-50">Items total</p>
@@ -483,7 +537,7 @@ export default function LaunchpadDetail() {
                         0.000 ETH
                       </p>
                     </div>
-                    <Button text="Confirm and pay" />
+                    <Button text="Confirm and pay" disabled={formHasError} />
                   </div>
                 </div>
               </div>
