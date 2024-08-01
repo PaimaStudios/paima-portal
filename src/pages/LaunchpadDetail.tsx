@@ -223,12 +223,17 @@ export default function LaunchpadDetail() {
     setActiveCurrency(userData.user.paymenttoken);
   }, [userData]);
 
-  const formHasError = surplusForRewards < 0n;
   const amountToPay =
     getTotalPriceOfItems(orderItems) - BigInt(userData?.user?.totalamount ?? 0);
+  const formHasError = surplusForRewards < 0n || amountToPay < 0n;
   const noActionToDo =
-    amountToPay < 0n ||
-    (amountToPay === 0n && userData?.user?.participationvalid !== false);
+    userData?.items.length === orderItems.length &&
+    userData.items.every((item) =>
+      orderItems.some(
+        (orderItem) =>
+          orderItem.id === item.itemid && orderItem.quantity === item.quantity,
+      ),
+    );
 
   return (
     <div className="w-full py-6 container">
