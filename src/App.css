@@ -63,4 +63,8 @@ a {
   .container {
     @apply mx-auto px-4 max-w-[1024px];
   }
+
+  .launchpad-markdown a {
+    @apply text-brand underline hover:cursor-pointer;
+  }
 }

@@ -5,6 +5,7 @@ import useGetLaunchpadData from "@hooks/launchpad/useGetLaunchpadData";
 import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
 import Button from "@components/Button";
 import LaunchpadMintSection from "@components/launchpad/LaunchpadMintSection";
+import LaunchpadGameInformation from "@components/launchpad/LaunchpadGameInformation";
 
 export default function Launchpad() {
   const { launchpad } = useParams();
@@ -49,6 +50,7 @@ export default function Launchpad() {
                 <Button href={`/launchpad/${launchpad}/buy`} text="Buy now!" />
               </div>
             </div>
+            <LaunchpadGameInformation />
           </div>
         </div>
       )}
