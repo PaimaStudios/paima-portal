@@ -8,11 +8,18 @@ import { tokens } from "@config/tokens";
 type LaunchpadRewardsSectionProps = {
   activeCurrency: string;
   freeRewards: FreeRewardItem[];
+  handleIncreaseItemQuantityInOrder: (itemId: number) => void;
+  orderFreeRewards: {
+    id: number;
+    quantity: number;
+  }[];
 };
 
 const LaunchpadRewardsSection = ({
   activeCurrency,
   freeRewards,
+  handleIncreaseItemQuantityInOrder,
+  orderFreeRewards,
 }: LaunchpadRewardsSectionProps) => {
   const horizontalLineRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -27,6 +34,12 @@ const LaunchpadRewardsSection = ({
 
       horizontalLineRef.current.style.width = `${wrapperScrollWidth}px`;
     }
+  };
+
+  const getItemCountFromOrder = (itemID: number) => {
+    const existingItem = orderFreeRewards.find((item) => item.id === itemID);
+
+    return existingItem ? existingItem.quantity : 0;
   };
 
   useEffect(() => {
@@ -65,6 +78,11 @@ const LaunchpadRewardsSection = ({
               }
               title={reward.name}
               description={reward.description}
+              onItemCardClick={() => {
+                handleIncreaseItemQuantityInOrder(reward.id);
+              }}
+              counter={getItemCountFromOrder(reward.id)}
+              isHighlighted={getItemCountFromOrder(reward.id) > 0}
             />
           </div>
         ))}

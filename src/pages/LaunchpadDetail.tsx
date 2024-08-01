@@ -268,6 +268,10 @@ export default function LaunchpadDetail() {
               <LaunchpadRewardsSection
                 activeCurrency={activeCurrency}
                 freeRewards={freeRewards}
+                handleIncreaseItemQuantityInOrder={
+                  handleIncreaseItemQuantityInOrder
+                }
+                orderFreeRewards={orderFreeRewards}
               />
             </div>
             <div className="flex flex-col gap-6">
