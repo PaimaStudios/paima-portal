@@ -4,6 +4,7 @@ import useGetLaunchpadData from "@hooks/launchpad/useGetLaunchpadData";
 
 import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
 import Button from "@components/Button";
+import LaunchpadMintSection from "@components/launchpad/LaunchpadMintSection";
 
 export default function Launchpad() {
   const { launchpad } = useParams();
@@ -39,6 +40,7 @@ export default function Launchpad() {
             </h1>
           </div>
           <div className="flex flex-col gap-16">
+            <LaunchpadMintSection />
             <div className="p-[1px] bg-brand rounded-2xl">
               <div className="flex flex-col tablet:flex-row tablet:justify-between tablet:items-center achievement-background rounded-2xl p-6 laptop:p-10 gap-6">
                 <h3 className="text-displayXS text-gray-50 font-formula font-bold">
