@@ -516,7 +516,11 @@ export default function LaunchpadDetail() {
                     <div className="flex flex-col gap-2">
                       <p className="text-bodyM text-gray-50">Items total</p>
                       <p className="text-heading5 font-bold text-brand uppercase">
-                        0.000 ETH
+                        {formatUnits(
+                          getTotalPriceOfItems(orderItems),
+                          tokens[activeCurrency].decimals,
+                        )}{" "}
+                        {tokens[activeCurrency].symbol}
                       </p>
                     </div>
                   </div>
