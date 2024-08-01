@@ -1,4 +1,4 @@
-import { LaunchpadData } from "@hooks/dex/useGetAllLaunchpadsData";
+import { LaunchpadData } from "@hooks/launchpad/useGetAllLaunchpadsData";
 
 import Button from "@components/Button";
 

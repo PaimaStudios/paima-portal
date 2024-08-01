@@ -1,7 +1,7 @@
 import { GiftIcon } from "@components/icons/GeneralIcons";
 import LaunchpadItemCard from "./LaunchpadItemCard";
 import { useEffect, useRef } from "react";
-import { FreeRewardItem } from "@hooks/dex/useGetAllLaunchpadsData";
+import { FreeRewardItem } from "@hooks/launchpad/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { tokens } from "@config/tokens";
 

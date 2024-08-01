@@ -1,4 +1,4 @@
-import useGetAllLaunchpadsData from "@hooks/dex/useGetAllLaunchpadsData";
+import useGetAllLaunchpadsData from "@hooks/launchpad/useGetAllLaunchpadsData";
 
 import LaunchpadGameCard from "@components/launchpad/LaunchpadGameCard";
 

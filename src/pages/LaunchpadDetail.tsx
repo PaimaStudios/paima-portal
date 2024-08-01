@@ -18,7 +18,7 @@ import type {
   FreeRewardItem,
   LaunchpadData,
   StandardItem,
-} from "@hooks/dex/useGetAllLaunchpadsData";
+} from "@hooks/launchpad/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { ZERO_ADDRESS } from "@utils/constants";
 import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
