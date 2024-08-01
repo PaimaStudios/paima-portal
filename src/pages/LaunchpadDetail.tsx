@@ -252,6 +252,7 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     orderItems,
     value: amountToPay,
+    // todo: add referral
   });
 
   return (

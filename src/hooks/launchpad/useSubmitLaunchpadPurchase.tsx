@@ -97,12 +97,6 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
     const { currency, value, referrer = ZERO_ADDRESS, orderItems } = params;
     if (!launchpadData) return;
     if (currency === ZERO_ADDRESS) {
-      console.log("args", [
-        address as Address,
-        referrer as Address,
-        orderItems.map((item) => BigInt(item.id)),
-        orderItems.map((item) => BigInt(item.quantity)),
-      ]);
       writeBuyItemsNative({
         address: launchpadData.address as Address,
         args: [
