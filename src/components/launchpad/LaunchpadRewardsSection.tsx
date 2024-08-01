@@ -60,7 +60,7 @@ const LaunchpadRewardsSection = ({
           ref={horizontalLineRef}
         />
         {freeRewards.map((reward) => (
-          <div className="flex flex-col gap-3 flex-1 z-10 min-w-[210px]">
+          <div className="flex flex-col gap-3 flex-1 z-10 w-[210px]">
             <div className="w-12 h-12 p-3 flex items-center justify-center rounded-full border border-gray-600 text-brand bg-gray-1100">
               <GiftIcon />
             </div>
