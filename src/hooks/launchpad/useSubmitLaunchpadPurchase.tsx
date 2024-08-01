@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import useGetLaunchpadData from "./useGetLaunchpadData";
-import { writeContract } from "@wagmi/core";
+import { writeContract, readContract } from "@wagmi/core";
 import { config } from "@config/wagmi";
 import { paimaLaunchpadAbi } from "src/generated";
 import { ZERO_ADDRESS } from "@utils/constants";
 import useConnectWallet from "@hooks/useConnectWallet";
-import { Address } from "viem";
+import { Address, erc20Abi } from "viem";
 
 type Params = {
   launchpadSlug: string;
@@ -49,6 +49,21 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
         value,
       });
     } else {
+      const approvedAmount = await readContract(config, {
+        abi: erc20Abi,
+        address: currency as Address,
+        functionName: "allowance",
+        args: [address as Address, launchpadData.address as Address],
+      });
+      if (approvedAmount < value) {
+        result = await writeContract(config, {
+          abi: erc20Abi,
+          address: currency as Address,
+          functionName: "approve",
+          args: [launchpadData.address as Address, value],
+        });
+        console.log("approve result", result);
+      }
       result = await writeContract(config, {
         abi: paimaLaunchpadAbi,
         address: launchpadData.address as Address,
