@@ -226,6 +226,9 @@ export default function LaunchpadDetail() {
   const formHasError = surplusForRewards < 0n;
   const amountToPay =
     getTotalPriceOfItems(orderItems) - BigInt(userData?.user?.totalamount ?? 0);
+  const noActionToDo =
+    amountToPay < 0n ||
+    (amountToPay === 0n && userData?.user?.participationvalid !== false);
 
   return (
     <div className="w-full py-6 container">
@@ -561,10 +564,12 @@ export default function LaunchpadDetail() {
                           : amountToPay < 0n
                           ? "Choose more items"
                           : amountToPay === 0n
-                          ? "Nothing to do"
+                          ? noActionToDo
+                            ? "Nothing to do"
+                            : "Confirm"
                           : "Confirm and pay"
                       }
-                      disabled={formHasError || amountToPay <= 0n}
+                      disabled={formHasError || noActionToDo}
                     />
                   </div>
                 </div>
