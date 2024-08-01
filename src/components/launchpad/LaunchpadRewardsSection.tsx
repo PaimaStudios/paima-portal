@@ -64,7 +64,7 @@ const LaunchpadRewardsSection = ({
             <div className="w-12 h-12 p-3 flex items-center justify-center rounded-full border border-gray-600 text-brand bg-gray-1100">
               <GiftIcon />
             </div>
-            <h5 className="text-heading3 font-bold text-gray-50">
+            <h5 className="text-heading4 font-bold text-gray-50">
               Per{" "}
               {formatUnits(
                 BigInt(reward.freeAt[activeCurrency]),
