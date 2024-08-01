@@ -23,6 +23,7 @@ import { formatUnits } from "viem";
 import { ZERO_ADDRESS } from "@utils/constants";
 import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
 import useConnectWallet from "@hooks/useConnectWallet";
+import useSubmitLaunchpadPurchase from "@hooks/launchpad/useSubmitLaunchpadPurchase";
 
 export enum Currency {
   USDC = "USDC",
@@ -61,7 +62,6 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     walletAddress,
   );
-  console.log("userData", userData);
 
   const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
   const [orderItems, setOrderItems] = useState<
@@ -234,6 +234,13 @@ export default function LaunchpadDetail() {
           orderItem.id === item.itemid && orderItem.quantity === item.quantity,
       ),
     );
+
+  const { submitLaunchpadPurchase } = useSubmitLaunchpadPurchase({
+    currency: activeCurrency,
+    launchpadSlug,
+    orderItems,
+    value: amountToPay,
+  });
 
   return (
     <div className="w-full py-6 container">
@@ -575,6 +582,7 @@ export default function LaunchpadDetail() {
                           : "Confirm and pay"
                       }
                       disabled={formHasError || noActionToDo}
+                      onButtonClick={submitLaunchpadPurchase}
                     />
                   </div>
                 </div>
