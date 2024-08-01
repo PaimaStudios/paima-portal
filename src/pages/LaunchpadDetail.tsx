@@ -395,17 +395,20 @@ export default function LaunchpadDetail() {
             </div>
             <div className="flex flex-col gap-10">
               <h3 className="text-heading2 text-brand font-bold">Your order</h3>
-              <div className="flex gap-3">
-                <div className="w-10 h-10 flex items-center justify-center border border-gray-400 rounded-lg p-2 text-brand shrink-0">
-                  <PencilIcon />
+              {BigInt(userData?.user?.totalamount ?? 0) > 0n && (
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 flex items-center justify-center border border-gray-400 rounded-lg p-2 text-brand shrink-0">
+                    <PencilIcon />
+                  </div>
+                  <p className="text-bodyM text-gray-100">
+                    Great news! Since you've placed an order (or multiple
+                    orders) before, you can add even more items to your order.
+                    You can also swap some things out, but remember the total
+                    amount needs to be equal to or more than what you've already
+                    paid.
+                  </p>
                 </div>
-                <p className="text-bodyM text-gray-100">
-                  Great news! Since you've placed an order (or multiple orders)
-                  before, you can add even more items to your order. You can
-                  also swap some things out, but remember the total amount needs
-                  to be equal to or more than what you've already paid.
-                </p>
-              </div>
+              )}
               <div className="flex flex-col laptop:flex-row gap-10 laptop:items-start">
                 <>
                   {orderItems.length === 0 ? (
