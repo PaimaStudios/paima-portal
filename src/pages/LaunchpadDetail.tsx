@@ -457,40 +457,46 @@ export default function LaunchpadDetail() {
                           <p className="text-heading6 font-bold text-gray-50 uppercase">
                             Items
                           </p>
-                          {orderStandardItems.map((item) => (
-                            <LaunchpadOrderItem
-                              key={item.id}
-                              title={`Item #${item.id}`}
-                              quantity={item.quantity}
-                              price={
-                                activeCurrency
-                                  ? {
-                                      value: Number(
-                                        formatUnits(
-                                          BigInt(
-                                            standardItems.find(
-                                              (standardItem) =>
-                                                standardItem.id === item.id,
-                                            )?.prices[activeCurrency] ?? 0,
+                          {orderStandardItems.map((item) => {
+                            const itemData = standardItems.find(
+                              (standardItem) => standardItem.id === item.id,
+                            )!;
+                            return (
+                              <LaunchpadOrderItem
+                                key={item.id}
+                                title={itemData.name}
+                                quantity={item.quantity}
+                                price={
+                                  activeCurrency
+                                    ? {
+                                        value: Number(
+                                          formatUnits(
+                                            BigInt(
+                                              standardItems.find(
+                                                (standardItem) =>
+                                                  standardItem.id === item.id,
+                                              )?.prices[activeCurrency] ?? 0,
+                                            ),
+                                            tokens[activeCurrency]?.decimals,
                                           ),
-                                          tokens[activeCurrency]?.decimals,
                                         ),
-                                      ),
-                                      currency: tokens[activeCurrency]?.symbol,
-                                    }
-                                  : undefined
-                              }
-                              onIncreaseQuantityClicked={() => {
-                                handleIncreaseItemQuantityInOrder(item.id);
-                              }}
-                              onDecreaseQuantityClicked={() => {
-                                handleDecreaseItemQuantityInOrder(item.id);
-                              }}
-                              onRemoveClicked={() => {
-                                handleRemoveItemFromOrder(item.id);
-                              }}
-                            />
-                          ))}
+                                        currency:
+                                          tokens[activeCurrency]?.symbol,
+                                      }
+                                    : undefined
+                                }
+                                onIncreaseQuantityClicked={() => {
+                                  handleIncreaseItemQuantityInOrder(item.id);
+                                }}
+                                onDecreaseQuantityClicked={() => {
+                                  handleDecreaseItemQuantityInOrder(item.id);
+                                }}
+                                onRemoveClicked={() => {
+                                  handleRemoveItemFromOrder(item.id);
+                                }}
+                              />
+                            );
+                          })}
                         </div>
                         <div className="flex-1 flex flex-col gap-3">
                           <p className="text-heading6 font-bold text-gray-50 uppercase">
