@@ -91,6 +91,7 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
     if (isSuccessApproveErc20) {
       submitLaunchpadPurchase();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessApproveErc20]);
 
   const submitLaunchpadPurchase = useCallback(async () => {

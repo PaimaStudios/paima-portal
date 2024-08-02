@@ -219,6 +219,7 @@ export default function LaunchpadDetail() {
     if (!userData) {
       setActiveCurrency(currencies[0]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currencies]);
 
   useEffect(() => {
