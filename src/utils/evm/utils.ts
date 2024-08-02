@@ -48,3 +48,38 @@ export function formatUnitsWithoutStrippingTrailingZeros(
     fraction ? `.${fraction}` : ""
   }`;
 }
+
+export function formatUnitsWithStrippingTrailingZeros(
+  value: bigint,
+  decimals: number,
+  finalDecimals: number,
+) {
+  if (value === 0n) return "0";
+  let display = value.toString();
+
+  const negative = display.startsWith("-");
+  if (negative) display = display.slice(1);
+
+  display = display.padStart(decimals, "0");
+
+  let [integer, fraction] = [
+    display.slice(0, display.length - decimals),
+    display.slice(display.length - decimals),
+  ];
+  const formattedValue = `${negative ? "-" : ""}${integer || "0"}${
+    fraction ? `.${fraction}` : ""
+  }`;
+
+  return parseFloat(formattedValue).toFixed(finalDecimals);
+}
+
+export function rightPadAndFormatBigInt(value: bigint, finalDecimals: number) {
+  const formatted = formatEth(value);
+
+  if (formatted.includes(".")) {
+    const wholeNumberLength = formatted.split(".")[0].length;
+    return formatted.padEnd(wholeNumberLength + finalDecimals + 1, "0");
+  }
+
+  return formatted.padEnd(finalDecimals, "0");
+}

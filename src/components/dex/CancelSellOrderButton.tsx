@@ -51,6 +51,7 @@ export default function CancelSellOrderButton({ dexAddress, orderId }: Props) {
 
   return (
     <TransactionButton
+      additionalClasses="w-full"
       smallVariant
       outlineVariant
       onClick={() => {

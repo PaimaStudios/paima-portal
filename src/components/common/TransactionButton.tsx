@@ -6,7 +6,7 @@ export type TransactionButtonProps = {
   actionText: string;
   disabled?: boolean;
   onClick?: () => void;
-} & Pick<ButtonProps, "smallVariant" | "outlineVariant">;
+} & Pick<ButtonProps, "smallVariant" | "outlineVariant" | "additionalClasses">;
 
 export default function TransactionButton({
   onClick,
