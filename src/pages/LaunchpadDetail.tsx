@@ -238,6 +238,7 @@ export default function LaunchpadDetail() {
     getTotalPriceOfItems(orderItems) - BigInt(userData?.user?.totalamount ?? 0);
   const formHasError = surplusForRewards < 0n || amountToPay < 0n;
   const noActionToDo =
+    amountToPay === 0n &&
     userData?.items.length === orderItems.length &&
     userData.items.every((item) =>
       orderItems.some(
