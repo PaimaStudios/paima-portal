@@ -3,6 +3,7 @@ import { useState } from "react";
 import { GameProps } from "@pages/Games";
 import { DoubleArrowDownIcon } from "./icons/GeneralIcons";
 import clsx from "clsx";
+import Button from "./Button";
 
 type GameCardProps = Pick<
   GameProps,
@@ -40,22 +41,19 @@ const GameCard = ({
               className="object-fit"
             />
           </div>
-          {/* TODO: Extract to a Button component */}
-          <button
-            className={clsx(
-              "py-3 px-4 rounded-xl text-heading5 text-white bg-gray-800 font-semibold transition-colors duration-150 ease-in-out",
-              !isNotReleasedYet
-                ? "hover:bg-brand hover:cursor-pointer"
-                : "hover:cursor-not-allowed",
-            )}
-          >
-            <span className="hidden laptop:block">
-              {isNotReleasedYet
-                ? "Coming soon"
-                : playNowButtonText ?? "Play now"}
-            </span>
-            <span className="laptop:hidden">Play now</span>
-          </button>
+          <Button
+            text={
+              <>
+                <span className="hidden laptop:block">
+                  {isNotReleasedYet
+                    ? "Coming soon"
+                    : playNowButtonText ?? "Play now"}
+                </span>
+                <span className="laptop:hidden">Play now</span>
+              </>
+            }
+            outlineVariant
+          />
         </div>
         <div className="flex flex-col gap-4">
           <h3 className="text-heading3 font-semibold text-gray-50">{title}</h3>

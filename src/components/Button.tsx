@@ -1,24 +1,38 @@
 import clsx from "clsx";
+import { ReactElement } from "react";
+import { Link } from "react-router-dom";
 
 export type ButtonProps = {
-  text: string;
+  text: string | ReactElement;
+  href?: string;
   onButtonClick?: () => void;
   disabled?: boolean;
   smallVariant?: boolean;
   outlineVariant?: boolean;
+  additionalClasses?: string;
+  isLoading?: boolean;
+  isPending?: boolean;
 };
 
-const Button = ({
+const Button = <T extends React.ElementType = "button">({
   text,
   disabled = false,
   onButtonClick,
   smallVariant = false,
   outlineVariant = false,
-}: ButtonProps) => {
+  href,
+  additionalClasses,
+  isLoading,
+  isPending,
+}: ButtonProps & { as?: T }) => {
+  const Component = href ? Link : "button";
+  disabled = disabled || !!isPending || !!isLoading;
+
   return (
-    <button
+    <Component
+      to={href || ""}
       className={clsx(
-        "flex items-center justify-center uppercase font-medium text-white rounded-xl w-full transition-colors duration-150 ease-in-out",
+        "flex items-center justify-center font-medium text-white rounded-xl transition-colors duration-150 ease-in-out",
         smallVariant ? "text-heading6 px-3 py-2" : "text-heading5 px-4 py-3",
         disabled ? "hover:cursor-not-allowed" : "hover:cursor-pointer",
         disabled
@@ -28,11 +42,16 @@ const Button = ({
           : outlineVariant
           ? "border hover:bg-brand border-brand"
           : "bg-brand",
+        additionalClasses,
       )}
       onClick={disabled ? undefined : onButtonClick}
     >
-      {text}
-    </button>
+      {isPending
+        ? "Confirm transaction..."
+        : isLoading
+        ? "Transaction pending..."
+        : text}
+    </Component>
   );
 };
 
