@@ -81,6 +81,11 @@ export default function LaunchpadDetail() {
     }[]
   >([]);
 
+  const applyReferralDiscount =
+    isAddress(referralCode, { strict: false }) &&
+    referralCode !== ZERO_ADDRESS &&
+    referralCode.toLowerCase() !== walletAddress?.toLowerCase();
+
   const handleIncreaseItemQuantityInOrder = (
     itemID: number,
     increaseBy = 1,
@@ -139,6 +144,19 @@ export default function LaunchpadDetail() {
     return existingItem ? existingItem.quantity : 0;
   };
 
+  const getPriceOfItem = useCallback(
+    (item?: StandardItem) => {
+      if (!launchpadData || !item) return 0n;
+      let price = BigInt(item.prices[activeCurrency] ?? 0);
+      const itemReferralDiscountBps = !applyReferralDiscount
+        ? 0
+        : item.referralDiscountBps ?? launchpadData.referralDiscountBps ?? 0;
+      price -= (price * BigInt(itemReferralDiscountBps)) / 10000n;
+      return price;
+    },
+    [activeCurrency, applyReferralDiscount, launchpadData],
+  );
+
   const getTotalPriceOfItems = useCallback(
     (items: typeof orderItems, includeFreeAt = false) => {
       if (!launchpadData) return 0n;
@@ -148,10 +166,8 @@ export default function LaunchpadDetail() {
         );
         if (!lpadItem) return acc;
         if ("prices" in lpadItem) {
-          return (
-            acc +
-            BigInt(lpadItem.prices[activeCurrency] ?? 0) * BigInt(item.quantity)
-          );
+          const price = getPriceOfItem(lpadItem);
+          return acc + price * BigInt(item.quantity);
         } else if ("freeAt" in lpadItem && includeFreeAt) {
           return (
             acc +
@@ -161,7 +177,7 @@ export default function LaunchpadDetail() {
         return acc;
       }, 0n);
     },
-    [activeCurrency, launchpadData],
+    [activeCurrency, getPriceOfItem, launchpadData],
   );
 
   const standardItems = useMemo(() => {
@@ -234,6 +250,9 @@ export default function LaunchpadDetail() {
     }));
     setOrderItems(items);
     setActiveCurrency(userData.user.paymenttoken);
+    if (userData.user.lastreferrer !== ZERO_ADDRESS) {
+      setReferralCode(userData.user.lastreferrer);
+    }
   }, [userData]);
 
   const amountToPay =
@@ -258,7 +277,7 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     orderItems,
     value: amountToPay,
-    // todo: add referral
+    referrer: referralCode.length > 0 ? referralCode : undefined,
   });
 
   return (
@@ -404,7 +423,7 @@ export default function LaunchpadDetail() {
                 {standardItems.map((item) => {
                   const price = Number(
                     formatUnits(
-                      BigInt(item.prices[activeCurrency]),
+                      getPriceOfItem(item),
                       tokens[activeCurrency]?.decimals,
                     ),
                   );
@@ -473,11 +492,11 @@ export default function LaunchpadDetail() {
                                     ? {
                                         value: Number(
                                           formatUnits(
-                                            BigInt(
+                                            getPriceOfItem(
                                               standardItems.find(
                                                 (standardItem) =>
                                                   standardItem.id === item.id,
-                                              )?.prices[activeCurrency] ?? 0,
+                                              ),
                                             ),
                                             tokens[activeCurrency]?.decimals,
                                           ),
@@ -545,7 +564,8 @@ export default function LaunchpadDetail() {
                             validityFeedback={
                               referralCode.length === 0
                                 ? undefined
-                                : !isAddress(referralCode, { strict: false })
+                                : !isAddress(referralCode, { strict: false }) ||
+                                  referralCode === ZERO_ADDRESS
                                 ? "Invalid"
                                 : referralCode.toLowerCase() ===
                                   walletAddress?.toLowerCase()
@@ -557,10 +577,7 @@ export default function LaunchpadDetail() {
                               setReferralCode(value)
                             }
                             hasError={
-                              referralCode.length > 0 &&
-                              (!isAddress(referralCode, { strict: false }) ||
-                                referralCode.toLowerCase() ===
-                                  walletAddress?.toLowerCase())
+                              referralCode.length > 0 && !applyReferralDiscount
                             }
                           />
                         </div>

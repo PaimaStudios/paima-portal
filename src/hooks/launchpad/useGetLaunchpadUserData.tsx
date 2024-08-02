@@ -9,6 +9,7 @@ export type LaunchpadUserData = {
     participationvalid: boolean;
     paymenttoken: string;
     totalamount: string;
+    lastreferrer: string;
     wallet: string;
   };
   items: {
