@@ -356,6 +356,7 @@ export default function LaunchpadDetail() {
                   const price = getTotalPriceOfItems(curatedPackage.items);
                   return (
                     <LaunchpadItemCard
+                      key={curatedPackage.name}
                       title={curatedPackage.name}
                       description={
                         curatedPackage.description ||
@@ -497,6 +498,7 @@ export default function LaunchpadDetail() {
                           )!;
                           return (
                             <LaunchpadOrderItem
+                              key={item.id}
                               title={itemData.name}
                               quantity={item.quantity}
                               additionalText={`Per ${formatUnits(
