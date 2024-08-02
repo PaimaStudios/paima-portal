@@ -12,6 +12,7 @@ module.exports = {
       fontFamily: {
         inter: ["Inter", ...defaultTheme.fontFamily.sans],
         formula: ["PP Formula", ...defaultTheme.fontFamily.sans],
+        monospace: ["Roboto Mono", ...defaultTheme.fontFamily.sans],
       },
       fontSize: {
         displayL: ["57px", { lineHeight: "64px" }],

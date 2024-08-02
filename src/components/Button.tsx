@@ -32,8 +32,10 @@ const Button = <T extends React.ElementType = "button">({
     <Component
       to={href || ""}
       className={clsx(
-        "flex items-center justify-center font-medium text-white rounded-xl transition-colors duration-150 ease-in-out",
-        smallVariant ? "text-heading6 px-3 py-2" : "text-heading5 px-4 py-3",
+        "flex items-center justify-center font-medium text-white transition-colors duration-150 ease-in-out",
+        smallVariant
+          ? "text-heading6 px-3 py-1 rounded-lg"
+          : "text-heading5 px-4 py-3 rounded-xl",
         disabled ? "hover:cursor-not-allowed" : "hover:cursor-pointer",
         disabled
           ? outlineVariant
