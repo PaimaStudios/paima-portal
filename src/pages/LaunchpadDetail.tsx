@@ -502,6 +502,7 @@ export default function LaunchpadDetail() {
                             )!;
                             return (
                               <LaunchpadOrderItem
+                                key={item.id}
                                 title={itemData.name}
                                 quantity={item.quantity}
                                 additionalText={`Per ${formatUnits(
