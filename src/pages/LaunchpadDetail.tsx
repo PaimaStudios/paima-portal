@@ -19,7 +19,7 @@ import type {
   LaunchpadData,
   StandardItem,
 } from "@hooks/launchpad/useGetAllLaunchpadsData";
-import { formatUnits } from "viem";
+import { formatUnits, isAddress } from "viem";
 import { ZERO_ADDRESS } from "@utils/constants";
 import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
 import useConnectWallet from "@hooks/useConnectWallet";
@@ -543,7 +543,7 @@ export default function LaunchpadDetail() {
                             validityFeedback={
                               referralCode.length === 0
                                 ? undefined
-                                : !referralCode.startsWith("0x")
+                                : !isAddress(referralCode)
                                 ? "Invalid"
                                 : "Valid"
                             }
@@ -553,7 +553,7 @@ export default function LaunchpadDetail() {
                             }
                             hasError={
                               referralCode.length > 0 &&
-                              !referralCode.startsWith("0x")
+                              !isAddress(referralCode)
                             }
                           />
                         </div>
