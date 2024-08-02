@@ -541,8 +541,9 @@ export default function LaunchpadDetail() {
                           <ReferralCodeInput
                             placeholder="Wallet address as referral code"
                             validityFeedback={
-                              referralCode.length > 0 &&
-                              !referralCode.startsWith("0x")
+                              referralCode.length === 0
+                                ? undefined
+                                : !referralCode.startsWith("0x")
                                 ? "Invalid"
                                 : "Valid"
                             }
