@@ -1,7 +1,6 @@
 import TransactionButton from "@components/common/TransactionButton";
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
-import { ButtonProps } from "@mui/material";
 import { QueryKeys } from "@utils/queryKeys";
 import { SnackbarMessage } from "@utils/texts";
 import { useEffect } from "react";
@@ -17,7 +16,8 @@ type Props = {
   ethAmount: bigint;
   orderIds: bigint[];
   onSuccess: () => void;
-} & ButtonProps;
+  disabled?: boolean;
+};
 
 export default function FillOrderButton({
   dexAddress,
@@ -26,7 +26,7 @@ export default function FillOrderButton({
   ethAmount,
   orderIds,
   onSuccess,
-  ...props
+  disabled,
 }: Props) {
   const { data: assetMetadata } = useGetGameAssetMetadata();
   const {
@@ -92,7 +92,7 @@ export default function FillOrderButton({
       actionText={"Buy"}
       isLoading={isLoading}
       isPending={isPendingExactAsset || isPendingExactEth}
-      {...props}
+      disabled={disabled}
     />
   );
 }

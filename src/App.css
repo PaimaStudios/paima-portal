@@ -44,6 +44,14 @@ a {
   img {
     @apply w-full max-w-full h-auto;
   }
+
+  p a {
+    @apply text-brand underline;
+  }
+
+  input {
+    background: none;
+  }
 }
 
 @layer components {

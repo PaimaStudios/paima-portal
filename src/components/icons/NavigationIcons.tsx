@@ -124,6 +124,19 @@ const NavigationIconGames = () => {
   );
 };
 
+const NavigationIconTarochiDEX = () => {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M5 5.00033L6.66667 3.33366M6.66667 3.33366L5 1.66699M6.66667 3.33366H5C3.15905 3.33366 1.66667 4.82604 1.66667 6.66699M15 15.0003L13.3333 16.667M13.3333 16.667L15 18.3337M13.3333 16.667H15C16.841 16.667 18.3333 15.1746 18.3333 13.3337M11.181 11.1813C11.8329 11.4927 12.5627 11.667 13.3333 11.667C16.0948 11.667 18.3333 9.42842 18.3333 6.66699C18.3333 3.90557 16.0948 1.66699 13.3333 1.66699C10.5719 1.66699 8.33333 3.90557 8.33333 6.66699C8.33333 7.43759 8.50766 8.16747 8.81902 8.81935M11.6667 13.3337C11.6667 16.0951 9.42809 18.3337 6.66667 18.3337C3.90524 18.3337 1.66667 16.0951 1.66667 13.3337C1.66667 10.5722 3.90524 8.33366 6.66667 8.33366C9.42809 8.33366 11.6667 10.5722 11.6667 13.3337Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
 export {
   NavigationIconHome,
   NavigationIconDashboard,
@@ -132,4 +145,5 @@ export {
   NavigationIconTools,
   NavigationIconHelp,
   NavigationIconGames,
+  NavigationIconTarochiDEX,
 };

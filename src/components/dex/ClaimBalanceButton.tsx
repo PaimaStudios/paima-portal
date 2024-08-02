@@ -50,6 +50,8 @@ export default function ClaimBalanceButton() {
 
   return (
     <TransactionButton
+      outlineVariant
+      smallVariant
       onClick={() => {
         handleClaimBalanceClick();
       }}
