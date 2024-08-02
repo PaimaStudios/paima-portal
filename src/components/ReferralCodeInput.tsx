@@ -14,7 +14,7 @@ const ReferralCodeInput = ({
   value,
   placeholder,
   onInputValueChange,
-  showErrorsOnlyWhenTouched = true,
+  showErrorsOnlyWhenTouched = false,
   hasError = false,
   validityFeedback,
 }: ReferralCodeInputProps) => {
