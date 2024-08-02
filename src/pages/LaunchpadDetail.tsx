@@ -25,6 +25,7 @@ import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
 import useConnectWallet from "@hooks/useConnectWallet";
 import useSubmitLaunchpadPurchase from "@hooks/launchpad/useSubmitLaunchpadPurchase";
 import ConnectWallet from "@components/common/ConnectWallet";
+import ReferralCodeInput from "@components/ReferralCodeInput";
 
 export enum Currency {
   USDC = "USDC",
@@ -69,6 +70,7 @@ export default function LaunchpadDetail() {
     walletAddress,
   );
 
+  const [referralCode, setReferralCode] = useState("");
   const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
   const [orderItems, setOrderItems] = useState<
     {
@@ -448,75 +450,104 @@ export default function LaunchpadDetail() {
                   {orderItems.length === 0 ? (
                     <LaunchpadOrderEmpty />
                   ) : (
-                    <div className="flex-1 flex flex-col tablet:flex-row gap-10">
-                      <div className="flex-1 flex flex-col gap-3">
-                        <p className="text-heading6 font-bold text-gray-50 uppercase">
-                          Items
-                        </p>
-                        {orderStandardItems.map((item) => (
-                          <LaunchpadOrderItem
-                            key={item.id}
-                            title={`Item #${item.id}`}
-                            quantity={item.quantity}
-                            price={
-                              activeCurrency
-                                ? {
-                                    value: Number(
-                                      formatUnits(
-                                        BigInt(
-                                          standardItems.find(
-                                            (standardItem) =>
-                                              standardItem.id === item.id,
-                                          )?.prices[activeCurrency] ?? 0,
-                                        ),
-                                        tokens[activeCurrency]?.decimals,
-                                      ),
-                                    ),
-                                    currency: tokens[activeCurrency]?.symbol,
-                                  }
-                                : undefined
-                            }
-                            onIncreaseQuantityClicked={() => {
-                              handleIncreaseItemQuantityInOrder(item.id);
-                            }}
-                            onDecreaseQuantityClicked={() => {
-                              handleDecreaseItemQuantityInOrder(item.id);
-                            }}
-                            onRemoveClicked={() => {
-                              handleRemoveItemFromOrder(item.id);
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <div className="flex-1 flex flex-col gap-3">
-                        <p className="text-heading6 font-bold text-gray-50 uppercase">
-                          Rewards
-                        </p>
-                        {orderFreeRewards.map((item) => {
-                          const itemData = freeRewards.find(
-                            (freeReward) => freeReward.id === item.id,
-                          )!;
-                          return (
+                    <div className="flex-1  flex flex-col gap-10">
+                      <div className="flex flex-col tablet:flex-row gap-10">
+                        <div className="flex-1 flex flex-col gap-3">
+                          <p className="text-heading6 font-bold text-gray-50 uppercase">
+                            Items
+                          </p>
+                          {orderStandardItems.map((item) => (
                             <LaunchpadOrderItem
                               key={item.id}
-                              title={itemData.name}
+                              title={`Item #${item.id}`}
                               quantity={item.quantity}
-                              additionalText={`Per ${formatUnits(
-                                BigInt(itemData.freeAt[activeCurrency]),
-                                tokens[activeCurrency].decimals,
-                              )} ${tokens[activeCurrency].symbol}`}
-                              onDecreaseQuantityClicked={() => {
-                                handleDecreaseItemQuantityInOrder(item.id);
-                              }}
+                              price={
+                                activeCurrency
+                                  ? {
+                                      value: Number(
+                                        formatUnits(
+                                          BigInt(
+                                            standardItems.find(
+                                              (standardItem) =>
+                                                standardItem.id === item.id,
+                                            )?.prices[activeCurrency] ?? 0,
+                                          ),
+                                          tokens[activeCurrency]?.decimals,
+                                        ),
+                                      ),
+                                      currency: tokens[activeCurrency]?.symbol,
+                                    }
+                                  : undefined
+                              }
                               onIncreaseQuantityClicked={() => {
                                 handleIncreaseItemQuantityInOrder(item.id);
+                              }}
+                              onDecreaseQuantityClicked={() => {
+                                handleDecreaseItemQuantityInOrder(item.id);
                               }}
                               onRemoveClicked={() => {
                                 handleRemoveItemFromOrder(item.id);
                               }}
                             />
-                          );
-                        })}
+                          ))}
+                        </div>
+                        <div className="flex-1 flex flex-col gap-3">
+                          <p className="text-heading6 font-bold text-gray-50 uppercase">
+                            Rewards
+                          </p>
+                          {orderFreeRewards.map((item) => {
+                            const itemData = freeRewards.find(
+                              (freeReward) => freeReward.id === item.id,
+                            )!;
+                            return (
+                              <LaunchpadOrderItem
+                                title={itemData.name}
+                                quantity={item.quantity}
+                                additionalText={`Per ${formatUnits(
+                                  BigInt(itemData.freeAt[activeCurrency]),
+                                  tokens[activeCurrency].decimals,
+                                )} ${tokens[activeCurrency].symbol}`}
+                                onDecreaseQuantityClicked={() => {
+                                  handleDecreaseItemQuantityInOrder(item.id);
+                                }}
+                                onIncreaseQuantityClicked={() => {
+                                  handleIncreaseItemQuantityInOrder(item.id);
+                                }}
+                                onRemoveClicked={() => {
+                                  handleRemoveItemFromOrder(item.id);
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex-1 flex flex-col gap-3">
+                          <p className="text-heading6 font-bold text-gray-50 uppercase">
+                            Referral code
+                          </p>
+                          <p className="text-bodyM text-gray-100">
+                            Enter your referral code to get discount on your
+                            order items
+                          </p>
+                          <ReferralCodeInput
+                            placeholder="Wallet address as referral code"
+                            validityFeedback={
+                              referralCode.length > 0 &&
+                              !referralCode.startsWith("0x")
+                                ? "Invalid"
+                                : "Valid"
+                            }
+                            value={referralCode}
+                            onInputValueChange={(value) =>
+                              setReferralCode(value)
+                            }
+                            hasError={
+                              referralCode.length > 0 &&
+                              !referralCode.startsWith("0x")
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
