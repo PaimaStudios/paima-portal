@@ -61,7 +61,9 @@ const CurrencySelectorButton = ({
 
 export default function LaunchpadDetail() {
   let urlParams = useParams();
+  const queryParameters = new URLSearchParams(window.location.search);
   const launchpadSlug = urlParams.launchpad!;
+  const referrer = queryParameters.get("referral");
   const { address: walletAddress } = useConnectWallet();
   const { data: launchpadData, isLoading: isLoadingLaunchpadData } =
     useGetLaunchpadData(launchpadSlug);
@@ -70,7 +72,7 @@ export default function LaunchpadDetail() {
     walletAddress,
   );
 
-  const [referralCode, setReferralCode] = useState("");
+  const [referralCode, setReferralCode] = useState(referrer ?? "");
   const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
   const [orderItems, setOrderItems] = useState<
     {
