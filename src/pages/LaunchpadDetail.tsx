@@ -545,8 +545,11 @@ export default function LaunchpadDetail() {
                             validityFeedback={
                               referralCode.length === 0
                                 ? undefined
-                                : !isAddress(referralCode)
+                                : !isAddress(referralCode, { strict: false })
                                 ? "Invalid"
+                                : referralCode.toLowerCase() ===
+                                  walletAddress?.toLowerCase()
+                                ? `Your\u00A0own`
                                 : "Valid"
                             }
                             value={referralCode}
@@ -555,7 +558,9 @@ export default function LaunchpadDetail() {
                             }
                             hasError={
                               referralCode.length > 0 &&
-                              !isAddress(referralCode)
+                              (!isAddress(referralCode, { strict: false }) ||
+                                referralCode.toLowerCase() ===
+                                  walletAddress?.toLowerCase())
                             }
                           />
                         </div>
