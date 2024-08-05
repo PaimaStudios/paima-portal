@@ -221,6 +221,7 @@ export default function LaunchpadDetail() {
     if (!launchpadData) return 0n;
     return freeRewards.reduce(
       (acc, item) => {
+        if (!item.freeAt[activeCurrency]) return acc;
         const price = BigInt(item.freeAt[activeCurrency]);
         return price < acc ? price : acc;
       },
