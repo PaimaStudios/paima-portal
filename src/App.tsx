@@ -1,6 +1,8 @@
+import { Link, Outlet, Route, Routes } from "react-router-dom";
+
+import env from "@config/env";
 import { MuiSetup } from "./MuiSetup";
 import { Providers } from "./providers";
-import { Link, Outlet, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import { Container, Stack } from "@mui/material";
 import "./App.css";
@@ -22,13 +24,16 @@ export default function App() {
           <Route path="dex/:game/:asset" element={<Dex />} />
           <Route path="achievement" element={<Achievement />} />
           <Route path="games" element={<Games />} />
-          <Route path="launchpad" element={<Launchpads />} />
-          <Route path="launchpad/:launchpad" element={<Launchpad />} />
-          <Route
-            path="launchpad/:launchpad/buy"
-            element={<LaunchpadDetail />}
-          />
-
+          {env.REACT_APP_ENABLE_LAUNCHPAD && (
+            <>
+              <Route path="launchpad" element={<Launchpads />} />
+              <Route path="launchpad/:launchpad" element={<Launchpad />} />
+              <Route
+                path="launchpad/:launchpad/buy"
+                element={<LaunchpadDetail />}
+              />
+            </>
+          )}
           {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}
