@@ -13,6 +13,7 @@ import { Address, erc20Abi } from "viem";
 import { SnackbarMessage } from "@utils/texts";
 import useWaitForTransactionReceipt from "@hooks/dex/useWaitForTransactionReceipt";
 import { QueryKeys } from "@utils/queryKeys";
+import useDappStore from "src/store";
 
 type Params = {
   launchpadSlug: string;
@@ -28,6 +29,7 @@ type Params = {
 export default function useSubmitLaunchpadPurchase(params: Params) {
   const { data: launchpadData } = useGetLaunchpadData(params.launchpadSlug);
   const { address } = useConnectWallet();
+  const { connectedNetworkType } = useDappStore();
 
   const {
     data: buyItemsNativeHash,
@@ -91,10 +93,10 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
     if (isSuccessApproveErc20) {
       submitLaunchpadPurchase();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessApproveErc20]);
 
-  const submitLaunchpadPurchase = useCallback(async () => {
+  const sendLaunchpadTransactionEvm = useCallback(async () => {
     const { currency, value, referrer = ZERO_ADDRESS, orderItems } = params;
     if (!launchpadData) return;
     if (currency === ZERO_ADDRESS) {
@@ -142,6 +144,14 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
     writeBuyItemsErc20,
     writeBuyItemsNative,
   ]);
+
+  const submitLaunchpadPurchase = useCallback(async () => {
+    if (connectedNetworkType === "evm") {
+      sendLaunchpadTransactionEvm();
+    } else {
+      // todo: implement cardano
+    }
+  }, [connectedNetworkType, sendLaunchpadTransactionEvm]);
 
   return {
     submitLaunchpadPurchase,
