@@ -25,7 +25,7 @@ const MintTimelineItem = ({
   };
 
   return (
-    <div className="flex flex-col gap-3 flex-1 z-10 w-[210px] max-w-[210px]">
+    <div className="flex flex-col gap-3 flex-1 z-10 w-[210px] max-w-[210px] min-w-[210px]">
       <div
         className={clsx(
           "w-12 h-12 p-3 flex items-center justify-center rounded-full border border-gray-600 bg-gray-1100",
@@ -122,10 +122,24 @@ const LaunchpadMintSection = ({}: LaunchpadMintSectionProps) => {
           </h2>
           <p className="text-displayXS laptop:text-displayS font-formula">
             {zeroPadValue(days)}
-            <span className="text-brand">d</span>&nbsp;{zeroPadValue(hours)}
-            <span className="text-brand">h</span>&nbsp;{zeroPadValue(minutes)}
-            <span className="text-brand">m</span>&nbsp;{zeroPadValue(seconds)}
-            <span className="text-brand">s</span>
+            <span className="text-brand text-heading2 laptop:text-displayXS">
+              d
+            </span>
+            &nbsp;
+            {zeroPadValue(hours)}
+            <span className="text-brand text-heading2 laptop:text-displayXS">
+              h
+            </span>
+            &nbsp;
+            {zeroPadValue(minutes)}
+            <span className="text-brand text-heading2 laptop:text-displayXS">
+              m
+            </span>
+            &nbsp;
+            {zeroPadValue(seconds)}
+            <span className="text-brand text-heading2 laptop:text-displayXS">
+              s
+            </span>
           </p>
         </div>
         <Button outlineVariant text="Play game now!" />
