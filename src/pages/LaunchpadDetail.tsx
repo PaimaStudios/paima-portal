@@ -535,7 +535,7 @@ export default function LaunchpadDetail() {
                                 quantity={item.quantity}
                                 additionalText={`Per ${formatUnits(
                                   BigInt(itemData.freeAt[activeCurrency]),
-                                  tokens[activeCurrency].decimals,
+                                  tokens[activeCurrency]?.decimals,
                                 )} ${tokens[activeCurrency].symbol}`}
                                 onDecreaseQuantityClicked={() => {
                                   handleDecreaseItemQuantityInOrder(item.id);
@@ -602,7 +602,7 @@ export default function LaunchpadDetail() {
                         : surplusForRewards < 0n
                         ? `You need to purchase items for ${formatUnits(
                             -surplusForRewards,
-                            tokens[activeCurrency].decimals,
+                            tokens[activeCurrency]?.decimals,
                           )} more ${
                             tokens[activeCurrency].symbol
                           } to be able to claim selected rewards`
@@ -611,11 +611,11 @@ export default function LaunchpadDetail() {
                             orderFreeRewards.length === 0 ? "a" : "an another"
                           } free reward if you spend ${formatUnits(
                             cheapestFreeReward - surplusForRewards,
-                            tokens[activeCurrency].decimals,
+                            tokens[activeCurrency]?.decimals,
                           )} more ${tokens[activeCurrency].symbol}.`
                         : `You can still claim rewards for ${formatUnits(
                             surplusForRewards,
-                            tokens[activeCurrency].decimals,
+                            tokens[activeCurrency]?.decimals,
                           )} ${tokens[activeCurrency].symbol}.`}
                     </p>
                     <div className="flex flex-col gap-2">
@@ -623,7 +623,7 @@ export default function LaunchpadDetail() {
                       <p className="text-heading5 font-bold text-brand uppercase">
                         {formatUnits(
                           getTotalPriceOfItems(orderItems),
-                          tokens[activeCurrency].decimals,
+                          tokens[activeCurrency]?.decimals,
                         )}{" "}
                         {tokens[activeCurrency].symbol}
                       </p>
@@ -637,7 +637,7 @@ export default function LaunchpadDetail() {
                       <p className="text-heading5 font-bold text-brand">
                         {formatUnits(
                           BigInt(userData?.user?.totalamount ?? 0),
-                          tokens[activeCurrency].decimals,
+                          tokens[activeCurrency]?.decimals,
                         )}{" "}
                         {tokens[activeCurrency].symbol}
                       </p>
@@ -649,7 +649,7 @@ export default function LaunchpadDetail() {
                       <p className="text-heading5 font-bold text-brand">
                         {formatUnits(
                           amountToPay,
-                          tokens[activeCurrency].decimals,
+                          tokens[activeCurrency]?.decimals,
                         )}{" "}
                         {tokens[activeCurrency].symbol}
                       </p>

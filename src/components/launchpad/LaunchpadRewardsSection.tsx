@@ -71,7 +71,7 @@ const LaunchpadRewardsSection = ({
               Per{" "}
               {formatUnits(
                 BigInt(reward.freeAt[activeCurrency]),
-                tokens[activeCurrency].decimals,
+                tokens[activeCurrency]?.decimals,
               )}{" "}
               {tokens[activeCurrency].symbol}
             </h5>
