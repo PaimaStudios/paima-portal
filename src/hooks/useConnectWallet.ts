@@ -1,4 +1,8 @@
-import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import {
+  useAccountModal,
+  useChainModal,
+  useConnectModal,
+} from "@rainbow-me/rainbowkit";
 import { formatEVMAddress } from "@utils/evm/utils";
 import { NetworkType } from "@utils/types";
 import { useCallback, useEffect } from "react";
@@ -6,9 +10,10 @@ import useDappStore from "src/store";
 import { useAccount } from "wagmi";
 
 export default function useConnectWallet() {
-  const { address: addressEvm } = useAccount();
+  const { address: addressEvm, chain: chainEvm } = useAccount();
   const { openConnectModal: openConnectEvmModal } = useConnectModal();
   const { openAccountModal: openAccountEvmModal } = useAccountModal();
+  const { openChainModal: openChainEvmModal } = useChainModal();
   const { connectedNetworkType, setConnectedNetworkType } = useDappStore();
 
   const connectWallet = useCallback(
@@ -43,6 +48,21 @@ export default function useConnectWallet() {
     }
   }, [connectedNetworkType, openAccountEvmModal]);
 
+  const changeChain = useCallback(() => {
+    if (!connectedNetworkType) return;
+    switch (connectedNetworkType) {
+      case "evm":
+        if (openChainEvmModal) openChainEvmModal();
+        break;
+      case "cardano":
+        // todo
+        break;
+      default:
+        const exhaustiveCheck: never = connectedNetworkType;
+        throw new Error(`Unhandled networkType case: ${exhaustiveCheck}`);
+    }
+  }, [connectedNetworkType, openChainEvmModal]);
+
   useEffect(() => {
     if (addressEvm) {
       setConnectedNetworkType("evm");
@@ -55,5 +75,15 @@ export default function useConnectWallet() {
   // todo: useMemo based on selected network
   const addressShort = formatEVMAddress(addressEvm);
 
-  return { address, addressShort, connectWallet, disconnectWallet };
+  // todo: useMemo based on selected network
+  const chain = chainEvm;
+
+  return {
+    address,
+    addressShort,
+    chain,
+    changeChain,
+    connectWallet,
+    disconnectWallet,
+  };
 }

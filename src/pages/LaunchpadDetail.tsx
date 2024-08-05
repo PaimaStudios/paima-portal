@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Ref, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { Link, useParams } from "react-router-dom";
 
@@ -24,8 +24,10 @@ import { ZERO_ADDRESS } from "@utils/constants";
 import useGetLaunchpadUserData from "@hooks/launchpad/useGetLaunchpadUserData";
 import useConnectWallet from "@hooks/useConnectWallet";
 import useSubmitLaunchpadPurchase from "@hooks/launchpad/useSubmitLaunchpadPurchase";
-import ConnectWallet from "@components/common/ConnectWallet";
 import ReferralCodeInput from "@components/ReferralCodeInput";
+import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
+import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
+import { NetworkType } from "@utils/types";
 
 export enum Currency {
   USDC = "USDC",
@@ -71,6 +73,8 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     walletAddress,
   );
+  const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm", "cardano"]);
+  useSetPageNetworkTypes(pageNetworkTypes.current);
 
   const [referralCode, setReferralCode] = useState(referrer ?? "");
   const [activeCurrency, setActiveCurrency] = useState<string>(ZERO_ADDRESS);
@@ -654,7 +658,7 @@ export default function LaunchpadDetail() {
                         {tokens[activeCurrency].symbol}
                       </p>
                     </div>
-                    {walletAddress ? (
+                    <IsConnectedWrapper>
                       <Button
                         text={
                           formHasError
@@ -672,11 +676,7 @@ export default function LaunchpadDetail() {
                         isLoading={isLoadingSubmit}
                         isPending={isPendingSubmit}
                       />
-                    ) : (
-                      <div className="flex justify-center">
-                        <ConnectWallet />
-                      </div>
-                    )}
+                    </IsConnectedWrapper>
                   </div>
                 </div>
               </div>

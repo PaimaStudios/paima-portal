@@ -3,14 +3,17 @@ import { CloseIcon } from "@components/icons/GeneralIcons";
 import useConnectWallet from "@hooks/useConnectWallet";
 import { NetworkType } from "@utils/types";
 import { useRef } from "react";
+import useDappStore from "src/store";
 
 type Props = { networkTypes?: NetworkType[] };
 
 export default function ConnectWallet({ networkTypes }: Props) {
-  // todo: this line is only for debugging, remove it
-  networkTypes = ["evm", "cardano"];
-  const { addressShort, connectWallet, disconnectWallet } = useConnectWallet();
+  const { addressShort, chain, changeChain, connectWallet, disconnectWallet } =
+    useConnectWallet();
+  const { pageNetworkTypes } = useDappStore();
   const dialogRef = useRef<HTMLDialogElement>(null);
+
+  networkTypes = networkTypes ?? pageNetworkTypes;
 
   const handleConnectWalletClick = () => {
     if (networkTypes && networkTypes.length > 1) {
@@ -20,18 +23,26 @@ export default function ConnectWallet({ networkTypes }: Props) {
     }
   };
 
-  const handleDisconnectWalletClick = () => {
-    disconnectWallet();
-  };
-
   return (
     <>
       {addressShort ? (
-        <Button
-          text={addressShort}
-          outlineVariant
-          onButtonClick={handleDisconnectWalletClick}
-        />
+        chain ? (
+          <Button
+            text={addressShort}
+            outlineVariant
+            onButtonClick={() => {
+              disconnectWallet();
+            }}
+          />
+        ) : (
+          <Button
+            text="Unsupported Network"
+            additionalClasses="bg-error"
+            onButtonClick={() => {
+              changeChain();
+            }}
+          />
+        )
       ) : (
         <Button
           text="Connect Wallet"
