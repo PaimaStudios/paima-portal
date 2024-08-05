@@ -5,7 +5,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import { formatEVMAddress } from "@utils/evm/utils";
 import { NetworkType } from "@utils/types";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import useDappStore from "src/store";
 import { useAccount } from "wagmi";
 
@@ -14,7 +14,8 @@ export default function useConnectWallet() {
   const { openConnectModal: openConnectEvmModal } = useConnectModal();
   const { openAccountModal: openAccountEvmModal } = useAccountModal();
   const { openChainModal: openChainEvmModal } = useChainModal();
-  const { connectedNetworkType, setConnectedNetworkType } = useDappStore();
+  const { connectedNetworkType, setConnectedNetworkType, pageNetworkTypes } =
+    useDappStore();
 
   const connectWallet = useCallback(
     (networkType: NetworkType) => {
@@ -23,14 +24,15 @@ export default function useConnectWallet() {
           if (openConnectEvmModal) openConnectEvmModal();
           break;
         case "cardano":
-          // todo
+          // todo Actual implementation
+          setConnectedNetworkType("cardano");
           break;
         default:
           const exhaustiveCheck: never = networkType;
           throw new Error(`Unhandled networkType case: ${exhaustiveCheck}`);
       }
     },
-    [openConnectEvmModal],
+    [openConnectEvmModal, setConnectedNetworkType],
   );
 
   const disconnectWallet = useCallback(() => {
@@ -40,7 +42,7 @@ export default function useConnectWallet() {
         if (openAccountEvmModal) openAccountEvmModal();
         break;
       case "cardano":
-        // todo
+        // todo Actual implementation
         break;
       default:
         const exhaustiveCheck: never = connectedNetworkType;
@@ -55,7 +57,7 @@ export default function useConnectWallet() {
         if (openChainEvmModal) openChainEvmModal();
         break;
       case "cardano":
-        // todo
+        // todo Actual implementation
         break;
       default:
         const exhaustiveCheck: never = connectedNetworkType;
@@ -69,20 +71,62 @@ export default function useConnectWallet() {
     }
   }, [addressEvm, setConnectedNetworkType]);
 
-  // todo: useMemo based on selected network
-  const address = addressEvm;
+  const address = useMemo(() => {
+    switch (connectedNetworkType) {
+      case "evm":
+        return addressEvm;
+      case "cardano":
+        // todo Actual implementation
+        return "addr_1a2bb84451ac16ed8b4e9ad33dc4";
+      case undefined:
+        return undefined;
+      default:
+        const exhaustiveCheck: never = connectedNetworkType;
+        throw new Error(`Unhandled networkType case: ${exhaustiveCheck}`);
+    }
+  }, [addressEvm, connectedNetworkType]);
 
-  // todo: useMemo based on selected network
-  const addressShort = formatEVMAddress(addressEvm);
+  const addressShort = useMemo(() => {
+    switch (connectedNetworkType) {
+      case "evm":
+        return formatEVMAddress(address);
+      case "cardano":
+        // todo Actual implementation
+        return "addr_1a2b...3dc4";
+      case undefined:
+        return undefined;
+      default:
+        const exhaustiveCheck: never = connectedNetworkType;
+        throw new Error(`Unhandled networkType case: ${exhaustiveCheck}`);
+    }
+  }, [address, connectedNetworkType]);
 
-  // todo: useMemo based on selected network
-  const chain = chainEvm;
+  const chain = useMemo(() => {
+    switch (connectedNetworkType) {
+      case "evm":
+        return chainEvm;
+      case "cardano":
+        // todo Actual implementation
+        return { id: 1 };
+      case undefined:
+        return undefined;
+      default:
+        const exhaustiveCheck: never = connectedNetworkType;
+        throw new Error(`Unhandled networkType case: ${exhaustiveCheck}`);
+    }
+  }, [chainEvm, connectedNetworkType]);
+
+  const connectedToSupportedNetworkType = useMemo(() => {
+    if (!connectedNetworkType) return false;
+    return pageNetworkTypes?.includes(connectedNetworkType);
+  }, [connectedNetworkType, pageNetworkTypes]);
 
   return {
     address,
     addressShort,
     chain,
     changeChain,
+    connectedToSupportedNetworkType,
     connectWallet,
     disconnectWallet,
   };

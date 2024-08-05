@@ -8,9 +8,9 @@ type Props = PropsWithChildren & {
 };
 
 export default function IsConnectedWrapper({ children, hidden }: Props) {
-  const { chain } = useConnectWallet();
+  const { chain, connectedToSupportedNetworkType } = useConnectWallet();
 
-  if (!chain) {
+  if (!chain || !connectedToSupportedNetworkType) {
     return hidden ? null : (
       <Stack sx={{ my: 4, gap: 2, alignItems: "center" }}>
         <Typography>

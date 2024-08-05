@@ -8,18 +8,24 @@ import useDappStore from "src/store";
 type Props = { networkTypes?: NetworkType[] };
 
 export default function ConnectWallet({ networkTypes }: Props) {
-  const { addressShort, chain, changeChain, connectWallet, disconnectWallet } =
-    useConnectWallet();
+  const {
+    addressShort,
+    chain,
+    changeChain,
+    connectWallet,
+    connectedToSupportedNetworkType,
+    disconnectWallet,
+  } = useConnectWallet();
   const { pageNetworkTypes } = useDappStore();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  networkTypes = networkTypes ?? pageNetworkTypes;
+  networkTypes = networkTypes ?? pageNetworkTypes ?? ["evm"];
 
   const handleConnectWalletClick = () => {
-    if (networkTypes && networkTypes.length > 1) {
+    if (networkTypes.length > 1) {
       dialogRef.current?.showModal();
-    } else {
-      connectWallet(networkTypes?.[0] ?? "evm");
+    } else if (networkTypes.length === 1) {
+      connectWallet(networkTypes[0]);
     }
   };
 
@@ -27,13 +33,23 @@ export default function ConnectWallet({ networkTypes }: Props) {
     <>
       {addressShort ? (
         chain ? (
-          <Button
-            text={addressShort}
-            outlineVariant
-            onButtonClick={() => {
-              disconnectWallet();
-            }}
-          />
+          connectedToSupportedNetworkType ? (
+            <Button
+              text={addressShort}
+              outlineVariant
+              onButtonClick={() => {
+                disconnectWallet();
+              }}
+            />
+          ) : (
+            <Button
+              text="Unsupported Network"
+              additionalClasses="bg-error"
+              onButtonClick={() => {
+                handleConnectWalletClick();
+              }}
+            />
+          )
         ) : (
           <Button
             text="Unsupported Network"
@@ -75,7 +91,6 @@ export default function ConnectWallet({ networkTypes }: Props) {
                   connectWallet(networkType);
                   dialogRef.current?.close();
                 }}
-                disabled={networkType !== "evm"}
                 outlineVariant
                 additionalClasses="uppercase"
               />

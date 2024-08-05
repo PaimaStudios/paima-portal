@@ -6,10 +6,16 @@ import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
 import Button from "@components/Button";
 import LaunchpadMintSection from "@components/launchpad/LaunchpadMintSection";
 import LaunchpadGameInformation from "@components/launchpad/LaunchpadGameInformation";
+import { Ref, useRef } from "react";
+import { NetworkType } from "@utils/types";
+import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
 
 export default function Launchpad() {
   const { launchpad } = useParams();
   const { data, isLoading } = useGetLaunchpadData(launchpad);
+
+  const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm", "cardano"]);
+  useSetPageNetworkTypes(pageNetworkTypes.current);
 
   return (
     <div className="w-full py-6 container">
