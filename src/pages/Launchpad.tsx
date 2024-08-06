@@ -14,7 +14,7 @@ export default function Launchpad() {
   const { launchpad } = useParams();
   const { data, isLoading } = useGetLaunchpadData(launchpad);
 
-  const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm", "cardano"]);
+  const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
 
   return (

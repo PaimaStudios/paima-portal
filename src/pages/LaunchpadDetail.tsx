@@ -73,7 +73,7 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     walletAddress,
   );
-  const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm", "cardano"]);
+  const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
 
   const [referralCode, setReferralCode] = useState(referrer ?? "");
