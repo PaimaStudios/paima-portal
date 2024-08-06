@@ -73,9 +73,7 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
       query: {
         meta: {
           successMessage: SnackbarMessage.Launchpad.PurchaseSuccess,
-          invalidateQueries: [
-            [QueryKeys.LaunchpadData, params.launchpadSlug, address],
-          ],
+          invalidateQueries: [[QueryKeys.LaunchpadData, params.launchpadSlug]],
         },
       },
     });

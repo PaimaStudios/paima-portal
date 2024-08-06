@@ -70,10 +70,10 @@ const LaunchpadRewardsSection = ({
             <h5 className="text-heading4 font-bold text-gray-50">
               Per{" "}
               {formatUnits(
-                BigInt(reward.freeAt[activeCurrency]),
+                BigInt(reward.freeAt[activeCurrency] ?? 0),
                 tokens[activeCurrency]?.decimals,
               )}{" "}
-              {tokens[activeCurrency].symbol}
+              {tokens[activeCurrency]?.symbol}
             </h5>
             <LaunchpadItemCard
               imageURL={

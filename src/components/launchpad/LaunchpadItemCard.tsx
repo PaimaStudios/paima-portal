@@ -12,6 +12,8 @@ type LaunchpadItemCardProps = {
   onItemCardClick?: () => void;
   isHighlighted?: boolean;
   counter?: number;
+  supply?: number;
+  purchased?: number;
 };
 
 export default function LaunchpadItemCard({
@@ -23,6 +25,8 @@ export default function LaunchpadItemCard({
   onItemCardClick,
   isHighlighted = false,
   counter,
+  supply,
+  purchased,
 }: LaunchpadItemCardProps) {
   return (
     <div
@@ -63,6 +67,13 @@ export default function LaunchpadItemCard({
         <p className="text-heading4 text-gray-50 font-bold">{title}</p>
         <p className="text-bodyL text-gray-100">{description}</p>
       </div>
+      {supply !== undefined && (
+        <div className="flex-grow content-end text-end">
+          {`${
+            supply === purchased ? "None" : supply - (purchased ?? 0)
+          } left of ${supply}`}
+        </div>
+      )}
     </div>
   );
 }

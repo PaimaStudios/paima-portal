@@ -454,6 +454,8 @@ export default function LaunchpadDetail() {
                       }}
                       isHighlighted={getItemCountFromOrder(Number(item.id)) > 0}
                       counter={getItemCountFromOrder(Number(item.id))}
+                      purchased={item.purchased}
+                      supply={item.supply}
                     />
                   );
                 })}
@@ -554,7 +556,7 @@ export default function LaunchpadDetail() {
                                 additionalText={`Per ${formatUnits(
                                   BigInt(itemData.freeAt[activeCurrency]),
                                   tokens[activeCurrency]?.decimals,
-                                )} ${tokens[activeCurrency].symbol}`}
+                                )} ${tokens[activeCurrency]?.symbol}`}
                                 onDecreaseQuantityClicked={() => {
                                   handleDecreaseItemQuantityInOrder(item.id);
                                 }}
@@ -621,20 +623,19 @@ export default function LaunchpadDetail() {
                         ? `You need to purchase items for ${formatUnits(
                             -surplusForRewards,
                             tokens[activeCurrency]?.decimals,
-                          )} more ${
-                            tokens[activeCurrency].symbol
-                          } to be able to claim selected rewards`
+                          )} more ${tokens[activeCurrency]
+                            ?.symbol} to be able to claim selected rewards`
                         : surplusForRewards < cheapestFreeReward
                         ? `You will be eligible for ${
                             orderFreeRewards.length === 0 ? "a" : "an another"
                           } free reward if you spend ${formatUnits(
                             cheapestFreeReward - surplusForRewards,
                             tokens[activeCurrency]?.decimals,
-                          )} more ${tokens[activeCurrency].symbol}.`
+                          )} more ${tokens[activeCurrency]?.symbol}.`
                         : `You can still claim rewards for ${formatUnits(
                             surplusForRewards,
                             tokens[activeCurrency]?.decimals,
-                          )} ${tokens[activeCurrency].symbol}.`}
+                          )} ${tokens[activeCurrency]?.symbol}.`}
                     </p>
                     <div className="flex flex-col gap-2">
                       <p className="text-bodyM text-gray-50">Items total</p>
@@ -643,7 +644,7 @@ export default function LaunchpadDetail() {
                           getTotalPriceOfItems(orderItems),
                           tokens[activeCurrency]?.decimals,
                         )}{" "}
-                        {tokens[activeCurrency].symbol}
+                        {tokens[activeCurrency]?.symbol}
                       </p>
                     </div>
                   </div>
@@ -657,7 +658,7 @@ export default function LaunchpadDetail() {
                           BigInt(userData?.user?.totalamount ?? 0),
                           tokens[activeCurrency]?.decimals,
                         )}{" "}
-                        {tokens[activeCurrency].symbol}
+                        {tokens[activeCurrency]?.symbol}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
@@ -669,7 +670,7 @@ export default function LaunchpadDetail() {
                           amountToPay,
                           tokens[activeCurrency]?.decimals,
                         )}{" "}
-                        {tokens[activeCurrency].symbol}
+                        {tokens[activeCurrency]?.symbol}
                       </p>
                     </div>
                     <IsConnectedWrapper>
