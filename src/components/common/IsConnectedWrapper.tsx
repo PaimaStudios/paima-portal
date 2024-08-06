@@ -1,16 +1,16 @@
 import { Stack, Typography } from "@mui/material";
 import { PropsWithChildren } from "react";
-import { useAccount } from "wagmi";
 import ConnectWallet from "./ConnectWallet";
+import useConnectWallet from "@hooks/useConnectWallet";
 
 type Props = PropsWithChildren & {
   hidden?: boolean;
 };
 
 export default function IsConnectedWrapper({ children, hidden }: Props) {
-  const { chain } = useAccount();
+  const { chain, connectedToSupportedNetworkType } = useConnectWallet();
 
-  if (!chain) {
+  if (!chain || !connectedToSupportedNetworkType) {
     return hidden ? null : (
       <Stack sx={{ my: 4, gap: 2, alignItems: "center" }}>
         <Typography>

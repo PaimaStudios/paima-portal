@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Ref, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useGetGameAssetMetadata from "@hooks/dex/useGetGameAssetMetadata";
@@ -9,6 +9,8 @@ import DEXPriceChart from "@components/DEXPriceChart";
 import DEXAllSellOrdersTable from "@components/DEXAllSellOrdersTable";
 import DEXUserSellOrdersTable from "@components/DEXUserSellOrdersTable";
 import DEXTradingPanel from "@components/DEXTradingPanel";
+import { NetworkType } from "@utils/types";
+import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
 
 export default function Dex() {
   const navigate = useNavigate();
@@ -17,6 +19,8 @@ export default function Dex() {
   const { data: assetMetadata, isLoading: assetMetadataLoading } =
     useGetGameAssetMetadata();
   useSetNavbarTitle(assetMetadata ? `Trade ${assetMetadata.name}` : undefined);
+  const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
+  useSetPageNetworkTypes(pageNetworkTypes.current);
 
   useEffect(() => {
     if (!assetMetadataLoading && !assetMetadata) {

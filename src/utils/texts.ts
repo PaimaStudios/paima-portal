@@ -17,6 +17,10 @@ export const SnackbarMessage = {
     FillOrderSuccess: "Order filled successfully!",
     BalanceClaimSuccess: "Balance claimed successfully!",
   },
+  Launchpad: {
+    PurchaseSuccess: "Purchase successful!",
+    ApprovalErc20Success: "Approval successful, proceeding with purchase...",
+  },
 };
 
 export const InputErrorMessage = {

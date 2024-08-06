@@ -18,6 +18,7 @@ module.exports = {
         displayL: ["57px", { lineHeight: "64px" }],
         displayM: ["45px", { lineHeight: "52px" }],
         displayS: ["36px", { lineHeight: "44px" }],
+        displayXS: ["28px", { lineHeight: "36px" }],
         heading1: ["32px", { lineHeight: "40px" }],
         heading2: ["24px", { lineHeight: "32px" }],
         heading3: ["20px", { lineHeight: "28px" }],
@@ -60,6 +61,7 @@ module.exports = {
         500: "#12341C",
       },
       error: "#F52449",
+      transparent: "transparent",
     },
     screens: {
       mobile: "375px",

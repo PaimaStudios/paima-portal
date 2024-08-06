@@ -3,6 +3,8 @@ import { react } from "@wagmi/cli/plugins";
 import OrderbookDexAbi from "./src/abis/OrderbookDex.json";
 import InverseAppProjected1155Abi from "./src/abis/InverseAppProjected1155.json";
 import ERC1155ErrorsAbi from "./src/abis/ERC1155Errors.json";
+import PaimaLaunchpadAbi from "./src/abis/PaimaLaunchpad.json";
+import { erc20Abi } from "viem";
 
 export default defineConfig({
   out: "src/generated.ts",
@@ -16,6 +18,14 @@ export default defineConfig({
     {
       abi: InverseAppProjected1155Abi as any,
       name: "InverseAppProjected1155",
+    },
+    {
+      abi: PaimaLaunchpadAbi as any,
+      name: "PaimaLaunchpad",
+    },
+    {
+      abi: erc20Abi as any,
+      name: "Erc20",
     },
   ],
   plugins: [react()],

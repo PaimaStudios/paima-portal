@@ -1,7 +1,8 @@
-import { MuiSetup } from "./MuiSetup";
-import Navbar from "./components/common/Navbar";
-import { Providers } from "./providers";
 import { Link, Outlet, Route, Routes } from "react-router-dom";
+
+import env from "@config/env";
+import { MuiSetup } from "./MuiSetup";
+import { Providers } from "./providers";
 import HomePage from "./pages/HomePage";
 import { Container, Stack } from "@mui/material";
 import "./App.css";
@@ -10,6 +11,9 @@ import Sidebar from "@components/common/Sidebar";
 import Topbar from "@components/common/Topbar";
 import Achievement from "@pages/Achievement";
 import Games from "@pages/Games";
+import Launchpads from "@pages/Launchpads";
+import Launchpad from "@pages/Launchpad";
+import LaunchpadDetail from "@pages/LaunchpadDetail";
 
 export default function App() {
   return (
@@ -20,7 +24,16 @@ export default function App() {
           <Route path="dex/:game/:asset" element={<Dex />} />
           <Route path="achievement" element={<Achievement />} />
           <Route path="games" element={<Games />} />
-
+          {env.REACT_APP_ENABLE_LAUNCHPAD && (
+            <>
+              <Route path="launchpad" element={<Launchpads />} />
+              <Route path="launchpad/:launchpad" element={<Launchpad />} />
+              <Route
+                path="launchpad/:launchpad/buy"
+                element={<LaunchpadDetail />}
+              />
+            </>
+          )}
           {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}

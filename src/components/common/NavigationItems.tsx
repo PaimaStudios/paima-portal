@@ -2,7 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { ReactElement } from "react";
 import clsx from "clsx";
 
-import { Stack } from "@mui/material";
+import env from "@config/env";
+
 import ConnectWallet from "./ConnectWallet";
 import {
   NavigationIconAchievement,
@@ -10,6 +11,7 @@ import {
   NavigationIconGames,
   NavigationIconHelp,
   NavigationIconHome,
+  NavigationIconLaunchpad,
   NavigationIconLearn,
   NavigationIconTarochiDEX,
   NavigationIconTools,
@@ -19,6 +21,9 @@ type NavigationItem = {
   label: string;
   href: string;
   icon: ReactElement;
+  // highlights the link if the location contains the href
+  groupMatch?: boolean;
+  visible: boolean;
 };
 
 const items: NavigationItem[] = [
@@ -26,41 +31,56 @@ const items: NavigationItem[] = [
     label: "Home",
     href: "/",
     icon: <NavigationIconHome />,
+    visible: true,
   },
   {
     label: "Dashboard",
     href: "#",
     icon: <NavigationIconDashboard />,
+    visible: true,
   },
   {
     label: "Achievement",
     href: "/achievement",
     icon: <NavigationIconAchievement />,
+    visible: true,
   },
   {
     label: "Games",
     href: "/games",
     icon: <NavigationIconGames />,
+    visible: true,
   },
   {
     label: "Tarochi Gold DEX",
     href: "/dex/tarochi/tgold",
     icon: <NavigationIconTarochiDEX />,
+    visible: true,
+  },
+  {
+    label: "Launchpad",
+    href: "/launchpad",
+    groupMatch: true,
+    icon: <NavigationIconLaunchpad />,
+    visible: env.REACT_APP_ENABLE_LAUNCHPAD,
   },
   {
     label: "Learn",
     href: "#",
     icon: <NavigationIconLearn />,
+    visible: true,
   },
   {
     label: "Tools",
     href: "#",
     icon: <NavigationIconTools />,
+    visible: true,
   },
   {
     label: "Get Help",
     href: "#",
     icon: <NavigationIconHelp />,
+    visible: true,
   },
 ];
 
@@ -72,27 +92,31 @@ export default function NavigationItems({ showWallet = false }: Props) {
   const location = useLocation();
 
   return (
-    <Stack sx={{ width: "100%", gap: 1, overflowY: "auto" }}>
+    <div className="flex flex-col gap-3 overflow-y-auto">
       {showWallet && <ConnectWallet />}
-      {items.map((item) => {
-        const isActive = location.pathname === item.href;
+      {items
+        .filter((item) => item.visible)
+        .map((item) => {
+          const isActive = item.groupMatch
+            ? location.pathname.includes(item.href)
+            : location.pathname === item.href;
 
-        return (
-          <Link
-            to={item.href}
-            key={`${item.href}${item.label.toLowerCase()}`}
-            className={clsx(
-              "p-3 flex gap-2 text-heading5 font-medium rounded-lg hover:bg-gray-950",
-              isActive ? "text-green-200" : "text-gray-50",
-            )}
-          >
-            <div className="w-5 h-5 flex items-center justify-center">
-              {item.icon}
-            </div>
-            {item.label}
-          </Link>
-        );
-      })}
-    </Stack>
+          return (
+            <Link
+              to={item.href}
+              key={`${item.href}${item.label.toLowerCase()}`}
+              className={clsx(
+                "p-3 flex gap-2 text-heading5 font-medium rounded-lg hover:bg-gray-950",
+                isActive ? "text-green-200" : "text-gray-50",
+              )}
+            >
+              <div className="w-5 h-5 flex items-center justify-center">
+                {item.icon}
+              </div>
+              {item.label}
+            </Link>
+          );
+        })}
+    </div>
   );
 }
