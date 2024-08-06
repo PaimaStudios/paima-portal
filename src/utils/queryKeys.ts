@@ -5,4 +5,5 @@ export const QueryKeys = {
   AssetHistoricalData: "AssetHistoricalData",
   LaunchpadData: "LaunchpadData",
   LaunchpadUserItems: "LaunchpadUserItems",
+  Achievements: "Achievements",
 };
