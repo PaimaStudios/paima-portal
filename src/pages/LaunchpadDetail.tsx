@@ -575,8 +575,8 @@ export default function LaunchpadDetail() {
                             Referral code
                           </p>
                           <p className="text-bodyM text-gray-100">
-                            Enter your referral code to get discount on your
-                            order items
+                            Enter a referral code to get discount on your order
+                            items
                           </p>
                           <ReferralCodeInput
                             placeholder="Wallet address as referral code"
