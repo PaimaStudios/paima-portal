@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useAccount } from "wagmi";
 
 import FilterDropdown from "@components/FilterDropdown";
 import FilterTagList from "@components/FilterTagList";
 import { CheckmarkIcon } from "@components/icons/GeneralIcons";
 import useGetAchievements from "@hooks/useGetAchievements";
-import { useAccount } from "wagmi";
 import ConnectWallet from "@components/common/ConnectWallet";
 
 export type AchievementItemProps = {
@@ -323,6 +323,8 @@ export default function Achievement() {
     );
   };
 
+  const filteredAchievements = getFilteredAchievements();
+
   return (
     <div className="w-full py-6 container">
       <div className="flex flex-col gap-6 tablet:gap-12">
@@ -337,64 +339,78 @@ export default function Achievement() {
             <ConnectWallet />
           </div>
         )}
-        {achievementsData && address && (
-          <>
-            <div className="flex flex-col gap-6">
-              <div className="max-w-[180px]">
-                <FilterDropdown
-                  allCategories={achievementCategories}
-                  currentCategories={currentAchievementCategories}
-                  onCategorySelected={(category) =>
-                    handleCategorySelected(category)
-                  }
-                />
-              </div>
-              {currentAchievementCategories.length > 0 && (
-                <div className="flex flex-col laptop:flex-row gap-4 laptop:items-center">
-                  <p className="text-bodyM text-gray-200">
-                    {myAchievements.length} achievements filtered by
-                  </p>
-                  <FilterTagList
-                    categories={currentAchievementCategories}
+        {(!achievementsData || achievementsData?.myAchievements.length === 0) &&
+          address && (
+            <p className="text-bodyL text-gray-100">
+              You haven't completed any achievements yet.
+            </p>
+          )}
+        {achievementsData &&
+          achievementsData.myAchievements.length > 0 &&
+          address && (
+            <>
+              <div className="flex flex-col gap-6">
+                <div className="max-w-[180px]">
+                  <FilterDropdown
+                    allCategories={achievementCategories}
+                    currentCategories={currentAchievementCategories}
                     onCategorySelected={(category) =>
-                      handleCategoryRemoved(category)
+                      handleCategorySelected(category)
                     }
                   />
                 </div>
-              )}
-            </div>
-            <div className="flex flex-col gap-3">
-              <TotalAchievementItem
-                // TODO: Replace dummy data with real data
-                progressPercentage={47}
-                achievementCount={myAchievements.length}
-              />
-              {getFilteredAchievements().map((achievement, index) => (
-                <AchievementItem
-                  key={index}
+                {currentAchievementCategories.length > 0 && (
+                  <div className="flex flex-col laptop:flex-row gap-4 laptop:items-center">
+                    <p className="text-bodyM text-gray-200">
+                      {myAchievements.length} achievements filtered by
+                    </p>
+                    <FilterTagList
+                      categories={currentAchievementCategories}
+                      onCategorySelected={(category) =>
+                        handleCategoryRemoved(category)
+                      }
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-3">
+                <TotalAchievementItem
                   // TODO: Replace dummy data with real data
-                  imageURL="/images/achievement-placeholder-general.svg"
-                  // TODO: Replace dummy data with real data
-                  title="Achievement Title"
-                  // TODO: Replace dummy data with real data
-                  description="Achievement Description"
-                  // TODO: Replace dummy data with real data
-                  progressPercentage={15}
-                  // TODO: Replace dummy data with real data
-                  timestamp="2021-09-01T00:00:00Z"
-                  categories={
-                    achievement.fullData.objective_type
-                      ? [achievement.fullData.objective_type]
-                      : []
-                  }
-                  // TODO: Replace dummy data with real data
-                  score={25}
-                  isCompleted={achievement.completed}
+                  progressPercentage={47}
+                  achievementCount={myAchievements.length}
                 />
-              ))}
-            </div>
-          </>
-        )}
+                {filteredAchievements.length === 0 &&
+                  currentAchievementCategories.length > 0 && (
+                    <p className="text-bodyL text-gray-100 mt-6 laptop:mt-10">
+                      No achievements found for selected categories.
+                    </p>
+                  )}
+                {filteredAchievements.map((achievement, index) => (
+                  <AchievementItem
+                    key={index}
+                    // TODO: Replace dummy data with real data
+                    imageURL="/images/achievement-placeholder-general.svg"
+                    // TODO: Replace dummy data with real data
+                    title="Achievement Title"
+                    // TODO: Replace dummy data with real data
+                    description="Achievement Description"
+                    // TODO: Replace dummy data with real data
+                    progressPercentage={15}
+                    // TODO: Replace dummy data with real data
+                    timestamp="2021-09-01T00:00:00Z"
+                    categories={
+                      achievement.fullData.objective_type
+                        ? [achievement.fullData.objective_type]
+                        : []
+                    }
+                    // TODO: Replace dummy data with real data
+                    score={25}
+                    isCompleted={achievement.completed}
+                  />
+                ))}
+              </div>
+            </>
+          )}
       </div>
     </div>
   );
