@@ -25,6 +25,10 @@ a {
   @apply bg-brand border-brand;
 }
 
+html:has(dialog[open]) {
+  overflow: hidden
+}
+
 @layer base {
   @font-face {
     font-family: "PP Formula";

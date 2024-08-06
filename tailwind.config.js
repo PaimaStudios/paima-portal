@@ -61,6 +61,7 @@ module.exports = {
         500: "#12341C",
       },
       error: "#F52449",
+      transparent: "transparent",
     },
     screens: {
       mobile: "375px",
