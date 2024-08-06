@@ -28,6 +28,7 @@ import ReferralCodeInput from "@components/ReferralCodeInput";
 import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
 import { NetworkType } from "@utils/types";
+import LaunchpadPurchaseSuccessDialog from "@components/launchpad/LaunchpadPurchaseSuccessDialog";
 
 export enum Currency {
   USDC = "USDC",
@@ -277,6 +278,8 @@ export default function LaunchpadDetail() {
     submitLaunchpadPurchase,
     isLoading: isLoadingSubmit,
     isPending: isPendingSubmit,
+    isSuccess: isSuccessSubmit,
+    hash: hashSubmit,
   } = useSubmitLaunchpadPurchase({
     currency: activeCurrency,
     launchpadSlug,
@@ -694,6 +697,9 @@ export default function LaunchpadDetail() {
             </div>
           </div>
         </div>
+      )}
+      {isSuccessSubmit && (
+        <LaunchpadPurchaseSuccessDialog txHash={hashSubmit} />
       )}
     </div>
   );
