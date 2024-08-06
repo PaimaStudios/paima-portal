@@ -28,7 +28,7 @@ const LaunchpadOrderItem = ({
 }: LaunchpadOrderItemProps) => {
   return (
     <div className="flex flex-col gap-2 border border-gray-400 rounded-2xl py-3 px-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <p className="text-heading5 text-gray-50">{title}</p>
         <div className="flex gap-2">
           <button

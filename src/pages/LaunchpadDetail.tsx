@@ -483,6 +483,11 @@ export default function LaunchpadDetail() {
                           <p className="text-heading6 font-bold text-gray-50 uppercase">
                             Items
                           </p>
+                          {orderStandardItems.length === 0 && (
+                            <p className="text-bodyM text-gray-200">
+                              You haven't selected any items yet.
+                            </p>
+                          )}
                           {orderStandardItems.map((item) => {
                             const itemData = standardItems.find(
                               (standardItem) => standardItem.id === item.id,
@@ -528,6 +533,12 @@ export default function LaunchpadDetail() {
                           <p className="text-heading6 font-bold text-gray-50 uppercase">
                             Rewards
                           </p>
+                          {orderFreeRewards.length === 0 && (
+                            <p className="text-bodyM text-gray-200">
+                              You haven't selected any rewards yet or you don't
+                              have enough items to claim them.
+                            </p>
+                          )}
                           {orderFreeRewards.map((item) => {
                             const itemData = freeRewards.find(
                               (freeReward) => freeReward.id === item.id,
