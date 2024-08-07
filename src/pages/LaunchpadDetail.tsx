@@ -105,17 +105,20 @@ export default function LaunchpadDetail() {
 
     if (existingItem) {
       setOrderItems((orderItems) =>
-        orderItems.map((item) =>
-          item.id === itemID
-            ? { ...item, quantity: item.quantity + increaseBy }
-            : item,
-        ),
+        orderItems
+          .map((item) =>
+            item.id === itemID
+              ? { ...item, quantity: item.quantity + increaseBy }
+              : item,
+          )
+          .sort((item1, item2) => item1.id - item2.id),
       );
     } else {
-      setOrderItems((orderItems) => [
-        ...orderItems,
-        { id: itemID, quantity: increaseBy },
-      ]);
+      setOrderItems((orderItems) =>
+        [...orderItems, { id: itemID, quantity: increaseBy }].sort(
+          (item1, item2) => item1.id - item2.id,
+        ),
+      );
     }
   };
 
@@ -124,21 +127,29 @@ export default function LaunchpadDetail() {
 
     if (existingItem) {
       if (existingItem.quantity > 1) {
-        setOrderItems(
-          orderItems.map((item) =>
-            item.id === itemID
-              ? { ...item, quantity: item.quantity - 1 }
-              : item,
-          ),
+        setOrderItems((orderItems) =>
+          orderItems
+            .map((item) =>
+              item.id === itemID
+                ? { ...item, quantity: item.quantity - 1 }
+                : item,
+            )
+            .sort((item1, item2) => item1.id - item2.id),
         );
       } else {
-        setOrderItems(orderItems.filter((item) => item.id !== itemID));
+        setOrderItems((orderItems) =>
+          orderItems
+            .filter((item) => item.id !== itemID)
+            .sort((item1, item2) => item1.id - item2.id),
+        );
       }
     }
   };
 
   const handleRemoveItemFromOrder = (itemID: number) => {
-    setOrderItems(orderItems.filter((item) => item.id !== itemID));
+    setOrderItems((orderItems) =>
+      orderItems.filter((item) => item.id !== itemID),
+    );
   };
 
   const handleAddCuratedPackageToOrder = (
