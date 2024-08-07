@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { FreeRewardItem } from "@hooks/launchpad/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { tokens } from "@config/tokens";
+import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
 
 type LaunchpadRewardsSectionProps = {
   activeCurrency: string;
@@ -13,6 +14,7 @@ type LaunchpadRewardsSectionProps = {
     id: number;
     quantity: number;
   }[];
+  launchpadSlug: string;
 };
 
 const LaunchpadRewardsSection = ({
@@ -20,7 +22,12 @@ const LaunchpadRewardsSection = ({
   freeRewards,
   handleIncreaseItemQuantityInOrder,
   orderFreeRewards,
+  launchpadSlug,
 }: LaunchpadRewardsSectionProps) => {
+  const { getItemQuantityLeft } = useGetItemQuantityLeft(
+    launchpadSlug,
+    orderFreeRewards,
+  );
   const horizontalLineRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -86,6 +93,8 @@ const LaunchpadRewardsSection = ({
               }}
               counter={getItemCountFromOrder(reward.id)}
               isHighlighted={getItemCountFromOrder(reward.id) > 0}
+              supply={reward.supply}
+              quantityLeft={getItemQuantityLeft(reward.id)}
             />
           </div>
         ))}

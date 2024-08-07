@@ -29,6 +29,7 @@ import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
 import { NetworkType } from "@utils/types";
 import LaunchpadPurchaseSuccessDialog from "@components/launchpad/LaunchpadPurchaseSuccessDialog";
+import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
 
 export enum Currency {
   USDC = "USDC",
@@ -85,6 +86,11 @@ export default function LaunchpadDetail() {
       quantity: number;
     }[]
   >([]);
+
+  const { getItemQuantityLeft } = useGetItemQuantityLeft(
+    launchpadSlug,
+    orderItems,
+  );
 
   const applyReferralDiscount =
     isAddress(referralCode, { strict: false }) &&
@@ -183,6 +189,17 @@ export default function LaunchpadDetail() {
       }, 0n);
     },
     [activeCurrency, getPriceOfItem, launchpadData],
+  );
+
+  const getPackageQuantityLeft = useCallback(
+    (curatedPackage: NonNullable<LaunchpadData["curatedPackages"]>[number]) => {
+      const packageQuantityLeft = curatedPackage.items.reduce((acc, item) => {
+        const itemQuantityLeft = getItemQuantityLeft(item.id);
+        return Math.min(acc, itemQuantityLeft ?? Infinity);
+      }, Infinity);
+      return packageQuantityLeft === Infinity ? undefined : packageQuantityLeft;
+    },
+    [getItemQuantityLeft],
   );
 
   const standardItems = useMemo(() => {
@@ -369,6 +386,7 @@ export default function LaunchpadDetail() {
                   handleIncreaseItemQuantityInOrder
                 }
                 orderFreeRewards={orderFreeRewards}
+                launchpadSlug={launchpadSlug}
               />
             </div>
             <div className="flex flex-col gap-6">
@@ -410,6 +428,9 @@ export default function LaunchpadDetail() {
                       onItemCardClick={() => {
                         handleAddCuratedPackageToOrder(curatedPackage);
                       }}
+                      quantityLeft={getPackageQuantityLeft(curatedPackage)}
+                      showCounter={false}
+                      showQuantityLeft={false}
                     />
                   );
                 })}
@@ -450,11 +471,11 @@ export default function LaunchpadDetail() {
                           : undefined
                       }
                       onItemCardClick={() => {
-                        handleIncreaseItemQuantityInOrder(Number(item.id));
+                        handleIncreaseItemQuantityInOrder(item.id);
                       }}
-                      isHighlighted={getItemCountFromOrder(Number(item.id)) > 0}
-                      counter={getItemCountFromOrder(Number(item.id))}
-                      purchased={item.purchased}
+                      isHighlighted={getItemCountFromOrder(item.id) > 0}
+                      counter={getItemCountFromOrder(item.id)}
+                      quantityLeft={getItemQuantityLeft(item.id)}
                       supply={item.supply}
                     />
                   );
@@ -530,6 +551,7 @@ export default function LaunchpadDetail() {
                                 onRemoveClicked={() => {
                                   handleRemoveItemFromOrder(item.id);
                                 }}
+                                quantityLeft={getItemQuantityLeft(item.id)}
                               />
                             );
                           })}
@@ -566,6 +588,7 @@ export default function LaunchpadDetail() {
                                 onRemoveClicked={() => {
                                   handleRemoveItemFromOrder(item.id);
                                 }}
+                                quantityLeft={getItemQuantityLeft(item.id)}
                               />
                             );
                           })}

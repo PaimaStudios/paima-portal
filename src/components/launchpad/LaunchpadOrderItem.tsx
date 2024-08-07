@@ -15,6 +15,7 @@ type LaunchpadOrderItemProps = {
   onDecreaseQuantityClicked: () => void;
   onRemoveClicked: () => void;
   additionalText?: string;
+  quantityLeft?: number;
 };
 
 const LaunchpadOrderItem = ({
@@ -25,18 +26,21 @@ const LaunchpadOrderItem = ({
   onDecreaseQuantityClicked,
   onRemoveClicked,
   additionalText,
+  quantityLeft,
 }: LaunchpadOrderItemProps) => {
   return (
     <div className="flex flex-col gap-2 border border-gray-400 rounded-2xl py-3 px-4">
       <div className="flex items-start justify-between gap-4">
         <p className="text-heading5 text-gray-50">{title}</p>
         <div className="flex gap-2">
-          <button
-            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-50 hover:cursor-pointer transition-colors ease-in-out duration-150"
-            onClick={onIncreaseQuantityClicked}
-          >
-            <OutlinedPlusIcon />
-          </button>
+          {(quantityLeft === undefined || quantityLeft > 0) && (
+            <button
+              className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-50 hover:cursor-pointer transition-colors ease-in-out duration-150"
+              onClick={onIncreaseQuantityClicked}
+            >
+              <OutlinedPlusIcon />
+            </button>
+          )}
           <button
             className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-50 hover:cursor-pointer transition-colors ease-in-out duration-150"
             onClick={onDecreaseQuantityClicked}
