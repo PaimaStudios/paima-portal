@@ -270,11 +270,10 @@ export default function LaunchpadDetail() {
   }, [getTotalPriceOfItems, orderStandardItems, orderFreeRewards]);
 
   useEffect(() => {
-    if (!userData) {
+    if ((!userData || !userData.user) && currencies[0]) {
       setActiveCurrency(currencies[0]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currencies]);
+  }, [currencies, userData]);
 
   useEffect(() => {
     if (!userData || !userData.user) return;
