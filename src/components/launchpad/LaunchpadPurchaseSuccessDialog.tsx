@@ -1,31 +1,19 @@
-import Button from "@components/Button";
+import CopyButton from "@components/CopyButton";
 import { CloseIcon } from "@components/icons/GeneralIcons";
 import useConnectWallet from "@hooks/useConnectWallet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type Props = { txHash?: string };
 
 export default function LaunchpadPurchaseSuccessDialog({ txHash }: Props) {
   const { address } = useConnectWallet();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [copyReferralLinkButtonText, setCopyReferralLinkButtonText] =
-    useState("Copy link");
 
   useEffect(() => {
     if (!!txHash) {
       dialogRef.current?.showModal();
     }
   }, [txHash]);
-
-  const handleClickCopyReferralLinkButton = () => {
-    navigator.clipboard.writeText(
-      `${window.location.href}?referral=${address}`,
-    );
-    setCopyReferralLinkButtonText("Copied!");
-    setTimeout(() => {
-      setCopyReferralLinkButtonText("Copy link");
-    }, 2000);
-  };
 
   if (!txHash) return null;
 
@@ -62,10 +50,10 @@ export default function LaunchpadPurchaseSuccessDialog({ txHash }: Props) {
               Refer your friends to this launchpad! They'll get a discount and
               you'll get a portion of their purchase.
             </p>
-            <Button
-              onButtonClick={handleClickCopyReferralLinkButton}
-              additionalClasses="whitespace-nowrap"
-              text={copyReferralLinkButtonText}
+            <CopyButton
+              buttonProps={{ additionalClasses: "whitespace-nowrap" }}
+              text={"Copy link"}
+              valueToCopy={`${window.location.href}?referral=${address}`}
             />
           </div>
         </div>

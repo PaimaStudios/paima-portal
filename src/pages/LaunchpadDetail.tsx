@@ -30,6 +30,7 @@ import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
 import { NetworkType } from "@utils/types";
 import LaunchpadPurchaseSuccessDialog from "@components/launchpad/LaunchpadPurchaseSuccessDialog";
 import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
+import CopyButton from "@components/CopyButton";
 
 export enum Currency {
   USDC = "USDC",
@@ -606,13 +607,26 @@ export default function LaunchpadDetail() {
                       </div>
                       <div>
                         <div className="flex-1 flex flex-col gap-3">
-                          <p className="text-heading6 font-bold text-gray-50 uppercase">
-                            Referral code
-                          </p>
-                          <p className="text-bodyM text-gray-100">
-                            Enter a referral code to get discount on your order
-                            items
-                          </p>
+                          <div className="flex justify-between">
+                            <div className="flex-1 flex flex-col gap-3">
+                              <p className="text-heading6 font-bold text-gray-50 uppercase">
+                                Referral code
+                              </p>
+                              <p className="text-bodyM text-gray-100">
+                                Enter a referral code to get discount on your
+                                order items
+                              </p>
+                            </div>
+                            {walletAddress && (
+                              <CopyButton
+                                buttonProps={{
+                                  outlineVariant: true,
+                                }}
+                                text={"Copy your link"}
+                                valueToCopy={`${window.location.href}?referral=${walletAddress}`}
+                              />
+                            )}
+                          </div>
                           <ReferralCodeInput
                             placeholder="Wallet address as referral code"
                             validityFeedback={
