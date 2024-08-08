@@ -31,6 +31,7 @@ import { NetworkType } from "@utils/types";
 import LaunchpadPurchaseSuccessDialog from "@components/launchpad/LaunchpadPurchaseSuccessDialog";
 import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
 import CopyButton from "@components/CopyButton";
+import useGetSaleStatus from "@hooks/launchpad/useGetSaleStatus";
 
 export enum Currency {
   USDC = "USDC",
@@ -76,6 +77,7 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     walletAddress,
   );
+  const { isSaleLive } = useGetSaleStatus(launchpadSlug);
   const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
 
@@ -436,9 +438,13 @@ export default function LaunchpadDetail() {
                         ),
                         currency: tokens[activeCurrency]?.symbol,
                       }}
-                      onItemCardClick={() => {
-                        handleAddCuratedPackageToOrder(curatedPackage);
-                      }}
+                      onItemCardClick={
+                        isSaleLive
+                          ? () => {
+                              handleAddCuratedPackageToOrder(curatedPackage);
+                            }
+                          : undefined
+                      }
                       quantityLeft={getPackageQuantityLeft(curatedPackage)}
                       showCounter={false}
                       showQuantityLeft={false}
@@ -481,9 +487,13 @@ export default function LaunchpadDetail() {
                             }
                           : undefined
                       }
-                      onItemCardClick={() => {
-                        handleIncreaseItemQuantityInOrder(item.id);
-                      }}
+                      onItemCardClick={
+                        isSaleLive
+                          ? () => {
+                              handleIncreaseItemQuantityInOrder(item.id);
+                            }
+                          : undefined
+                      }
                       isHighlighted={getItemCountFromOrder(item.id) > 0}
                       counter={getItemCountFromOrder(item.id)}
                       quantityLeft={getItemQuantityLeft(item.id)}
@@ -563,6 +573,7 @@ export default function LaunchpadDetail() {
                                   handleRemoveItemFromOrder(item.id);
                                 }}
                                 quantityLeft={getItemQuantityLeft(item.id)}
+                                canChangeQuantity={isSaleLive}
                               />
                             );
                           })}
@@ -629,6 +640,7 @@ export default function LaunchpadDetail() {
                                   handleRemoveItemFromOrder(item.id);
                                 }}
                                 quantityLeft={getItemQuantityLeft(item.id)}
+                                canChangeQuantity={isSaleLive}
                               />
                             );
                           })}
@@ -732,7 +744,9 @@ export default function LaunchpadDetail() {
                     <IsConnectedWrapper>
                       <Button
                         text={
-                          formHasError
+                          !isSaleLive
+                            ? "Sale not live"
+                            : formHasError
                             ? "Invalid order"
                             : amountToPay < 0n
                             ? "Choose more items"
@@ -742,7 +756,7 @@ export default function LaunchpadDetail() {
                               : "Confirm"
                             : "Confirm and pay"
                         }
-                        disabled={formHasError || noActionToDo}
+                        disabled={formHasError || noActionToDo || !isSaleLive}
                         onButtonClick={submitLaunchpadPurchase}
                         isLoading={isLoadingSubmit}
                         isPending={isPendingSubmit}

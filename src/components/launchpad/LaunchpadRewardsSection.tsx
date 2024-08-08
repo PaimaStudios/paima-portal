@@ -5,6 +5,7 @@ import { FreeRewardItem } from "@hooks/launchpad/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { tokens } from "@config/tokens";
 import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
+import useGetSaleStatus from "@hooks/launchpad/useGetSaleStatus";
 
 type LaunchpadRewardsSectionProps = {
   activeCurrency: string;
@@ -28,6 +29,7 @@ const LaunchpadRewardsSection = ({
     launchpadSlug,
     orderFreeRewards,
   );
+  const { isSaleLive } = useGetSaleStatus(launchpadSlug);
   const horizontalLineRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -88,9 +90,13 @@ const LaunchpadRewardsSection = ({
               }
               title={reward.name}
               description={reward.description}
-              onItemCardClick={() => {
-                handleIncreaseItemQuantityInOrder(reward.id);
-              }}
+              onItemCardClick={
+                isSaleLive
+                  ? () => {
+                      handleIncreaseItemQuantityInOrder(reward.id);
+                    }
+                  : undefined
+              }
               counter={getItemCountFromOrder(reward.id)}
               isHighlighted={getItemCountFromOrder(reward.id) > 0}
               supply={reward.supply}
