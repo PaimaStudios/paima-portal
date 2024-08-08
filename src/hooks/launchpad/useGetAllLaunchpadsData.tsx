@@ -97,6 +97,10 @@ export type LaunchpadData = {
    */
   referralDiscountBps?: number;
   /**
+   * Referrer reward (stored in the smart contract), expressed in basis points
+   */
+  referrerRewardBps: number;
+  /**
    * List of curated packages of items (basically just a shortcut to add multiple items to the cart)
    */
   curatedPackages?: {

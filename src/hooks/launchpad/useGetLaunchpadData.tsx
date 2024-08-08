@@ -25,6 +25,7 @@ export default function useGetLaunchpadData(launchpadSlug: string | undefined) {
       //   description: "Description of Test Launchpad 1",
       //   image: "/images/game-icon-towerdefense.webp",
       //   referralDiscountBps: 100,
+      //   referrerRewardBps: 500,
       //   items: [
       //     {
       //       id: 1,
@@ -146,9 +147,9 @@ export default function useGetLaunchpadData(launchpadSlug: string | undefined) {
       //       },
       //     },
       //   ],
-      //   timestampStartWhitelistSale: 10,
-      //   timestampStartPublicSale: 1724829940,
-      //   timestampEndSale: 1724916340,
+      //   timestampStartWhitelistSale: 1723124577,
+      //   timestampStartPublicSale: 1723125577,
+      //   timestampEndSale: 1723126577,
       //   whitelistedAddresses: [
       //     "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
       //     "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
