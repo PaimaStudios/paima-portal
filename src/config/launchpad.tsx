@@ -39,6 +39,17 @@ export type LaunchpadInformationDataType = {
   )[][];
 }[];
 
+export type LaunchpadInformationDetailType = {
+  buyItemsTitle?: string;
+  buyItemsText?: string;
+  freeRewardsTitle?: string;
+  freeRewardsText?: string;
+  curatedPackagesTitle?: string;
+  curatedPackagesText?: string;
+  itemsForSaleTitle?: string;
+  itemsForSaleText?: string;
+};
+
 export type LaunchpadFaqDataType = {
   question: string;
   answer: string;
@@ -48,6 +59,7 @@ type LaunchpadDataType = {
   header?: LaunchpadInformationDataType;
   body: LaunchpadInformationDataType;
   faq?: LaunchpadFaqDataType;
+  detail?: LaunchpadInformationDetailType;
 };
 
 export const launchpadsInformationData: Record<string, LaunchpadDataType> = {

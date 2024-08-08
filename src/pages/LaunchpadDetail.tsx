@@ -32,6 +32,7 @@ import LaunchpadPurchaseSuccessDialog from "@components/launchpad/LaunchpadPurch
 import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
 import CopyButton from "@components/CopyButton";
 import useGetSaleStatus from "@hooks/launchpad/useGetSaleStatus";
+import { launchpadsInformationData } from "@config/launchpad";
 
 export enum Currency {
   USDC = "USDC",
@@ -99,6 +100,10 @@ export default function LaunchpadDetail() {
     isAddress(referralCode, { strict: false }) &&
     referralCode !== ZERO_ADDRESS &&
     referralCode.toLowerCase() !== walletAddress?.toLowerCase();
+
+  const launchpadInformationData = launchpadSlug
+    ? launchpadsInformationData[launchpadSlug]
+    : null;
 
   const handleIncreaseItemQuantityInOrder = (
     itemID: number,
@@ -354,13 +359,12 @@ export default function LaunchpadDetail() {
             <div className="flex flex-col-reverse laptop:flex-row gap-10 laptop:gap-20 laptop:items-start">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading2 text-gray-50 font-bold">
-                  Buy game items
+                  {launchpadInformationData?.detail?.buyItemsTitle ??
+                    `Buy game items`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.buyItemsText ??
+                    `Purchase in-game items for the game ${launchpadData.name}. Items will be delivered after the sale ends.`}
                 </p>
               </div>
               <div className="flex gap-4">
@@ -383,13 +387,12 @@ export default function LaunchpadDetail() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading3 text-gray-50 font-bold">
-                  Spend and get free rewards
+                  {launchpadInformationData?.detail?.freeRewardsTitle ??
+                    `Spend and get free rewards`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.freeRewardsText ??
+                    `The more you spend, the more you get! Spend a certain amount to get free rewards.`}
                 </p>
               </div>
               <LaunchpadRewardsSection
@@ -405,13 +408,12 @@ export default function LaunchpadDetail() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading3 text-gray-50 font-bold">
-                  Curated packages
+                  {launchpadInformationData?.detail?.curatedPackagesTitle ??
+                    `Curated packages`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.curatedPackagesText ??
+                    `Choose one or more of our curated packages to get started with your journey.`}
                 </p>
               </div>
               <div className="grid grid-cols-2 laptop:grid-cols-4 gap-6">
@@ -456,13 +458,12 @@ export default function LaunchpadDetail() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading3 text-gray-50 font-bold">
-                  Items for sale
+                  {launchpadInformationData?.detail?.itemsForSaleTitle ??
+                    `Items for sale`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.itemsForSaleText ??
+                    `Pick and choose from a variety of items available for sale. Get your journey started exactly the way you want!`}
                 </p>
               </div>
               <div className="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 gap-6">
