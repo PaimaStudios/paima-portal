@@ -571,11 +571,40 @@ export default function LaunchpadDetail() {
                           <p className="text-heading6 font-bold text-gray-50 uppercase">
                             Rewards
                           </p>
-                          {orderFreeRewards.length === 0 && (
-                            <p className="text-bodyM text-gray-200">
-                              You haven't selected any rewards yet or you don't
-                              have enough items to claim them.
-                            </p>
+                          {surplusForRewards !== 0n && (
+                            <div
+                              className={clsx(
+                                "border rounded-2xl p-6 gap-4 flex flex-col items-center justify-center divide-y divide-gray-600",
+                                surplusForRewards < 0n
+                                  ? "border-error"
+                                  : "border-brand",
+                              )}
+                            >
+                              {surplusForRewards !== 0n && (
+                                <p className="text-bodyL font-semibold text-gray-50">
+                                  {surplusForRewards < 0n
+                                    ? `You need to purchase items for ${formatUnits(
+                                        -surplusForRewards,
+                                        tokens[activeCurrency]?.decimals,
+                                      )} more ${tokens[activeCurrency]
+                                        ?.symbol} to be able to claim selected rewards`
+                                    : surplusForRewards < cheapestFreeReward
+                                    ? `You will be eligible for ${
+                                        orderFreeRewards.length === 0
+                                          ? "a"
+                                          : "an another"
+                                      } free reward if you spend ${formatUnits(
+                                        cheapestFreeReward - surplusForRewards,
+                                        tokens[activeCurrency]?.decimals,
+                                      )} more ${tokens[activeCurrency]
+                                        ?.symbol}.`
+                                    : `You can still claim rewards for ${formatUnits(
+                                        surplusForRewards,
+                                        tokens[activeCurrency]?.decimals,
+                                      )} ${tokens[activeCurrency]?.symbol}.`}
+                                </p>
+                              )}
+                            </div>
                           )}
                           {orderFreeRewards.map((item) => {
                             const itemData = freeRewards.find(
@@ -663,27 +692,7 @@ export default function LaunchpadDetail() {
                     <p className="text-heading6 font-bold text-gray-50 uppercase">
                       Summary
                     </p>
-                    <p className="text-bodyM text-gray-100">
-                      {surplusForRewards === 0n
-                        ? null
-                        : surplusForRewards < 0n
-                        ? `You need to purchase items for ${formatUnits(
-                            -surplusForRewards,
-                            tokens[activeCurrency]?.decimals,
-                          )} more ${tokens[activeCurrency]
-                            ?.symbol} to be able to claim selected rewards`
-                        : surplusForRewards < cheapestFreeReward
-                        ? `You will be eligible for ${
-                            orderFreeRewards.length === 0 ? "a" : "an another"
-                          } free reward if you spend ${formatUnits(
-                            cheapestFreeReward - surplusForRewards,
-                            tokens[activeCurrency]?.decimals,
-                          )} more ${tokens[activeCurrency]?.symbol}.`
-                        : `You can still claim rewards for ${formatUnits(
-                            surplusForRewards,
-                            tokens[activeCurrency]?.decimals,
-                          )} ${tokens[activeCurrency]?.symbol}.`}
-                    </p>
+
                     <div className="flex flex-col gap-2">
                       <p className="text-bodyM text-gray-50">Items total</p>
                       <p className="text-heading5 font-bold text-brand uppercase">
