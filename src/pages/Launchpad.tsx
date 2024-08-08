@@ -9,6 +9,8 @@ import LaunchpadGameInformation from "@components/launchpad/LaunchpadGameInforma
 import { Ref, useRef } from "react";
 import { NetworkType } from "@utils/types";
 import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
+import { launchpadData } from "@config/launchpad";
+import LaunchpadGameInformationFAQPanel from "@components/launchpad/LaunchpadGameInformationFAQPanel";
 
 export default function Launchpad() {
   const { launchpad } = useParams();
@@ -16,6 +18,8 @@ export default function Launchpad() {
 
   const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
+
+  const launchpadInformationData = launchpad ? launchpadData[launchpad] : null;
 
   return (
     <div className="w-full py-6 container">
@@ -26,7 +30,7 @@ export default function Launchpad() {
         // TOOD: Handle error state
         <>Data failed to load</>
       ) : (
-        <div className="flex flex-col gap-20">
+        <div className="flex flex-col gap-12">
           <div className="flex flex-col gap-3">
             <div className="flex gap-1 pb-3">
               <div className="w-5 h-5 flex items-center justify-center text-brand">
@@ -47,6 +51,9 @@ export default function Launchpad() {
             </h1>
           </div>
           <div className="flex flex-col gap-16">
+            <LaunchpadGameInformation
+              data={launchpadInformationData?.header ?? []}
+            />
             <LaunchpadMintSection />
             <div className="p-[1px] bg-brand rounded-2xl">
               <div className="flex flex-col tablet:flex-row tablet:justify-between tablet:items-center achievement-background rounded-2xl p-6 laptop:p-10 gap-6">
@@ -56,7 +63,10 @@ export default function Launchpad() {
                 <Button href={`/launchpad/${launchpad}/buy`} text="Buy now!" />
               </div>
             </div>
-            <LaunchpadGameInformation />
+            <LaunchpadGameInformation
+              data={launchpadInformationData?.body ?? []}
+            />
+            <LaunchpadGameInformationFAQPanel />
           </div>
         </div>
       )}
