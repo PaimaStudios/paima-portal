@@ -6,7 +6,7 @@ import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
 import Button from "@components/Button";
 import LaunchpadMintSection from "@components/launchpad/LaunchpadMintSection";
 import LaunchpadGameInformation from "@components/launchpad/LaunchpadGameInformation";
-import { Ref, useRef } from "react";
+import { Ref, useEffect, useRef, useState } from "react";
 import { NetworkType } from "@utils/types";
 import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
 import { launchpadsInformationData } from "@config/launchpad";
@@ -15,6 +15,7 @@ import LaunchpadGameInformationFAQPanel from "@components/launchpad/LaunchpadGam
 export default function Launchpad() {
   const { launchpad } = useParams();
   const { data, isLoading } = useGetLaunchpadData(launchpad);
+  const [isSaleLive, setIsSaleLive] = useState(false);
 
   const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
@@ -22,6 +23,26 @@ export default function Launchpad() {
   const launchpadInformationData = launchpad
     ? launchpadsInformationData[launchpad]
     : null;
+
+  useEffect(() => {
+    const refreshSaleStatus = () => {
+      setIsSaleLive(
+        data
+          ? new Date().getTime() >
+              (data.timestampStartWhitelistSale ||
+                data.timestampStartPublicSale) *
+                1000 && new Date().getTime() < data.timestampEndSale * 1000
+          : false,
+      );
+    };
+    const interval = setInterval(() => {
+      refreshSaleStatus();
+    }, 1000);
+
+    refreshSaleStatus();
+
+    return () => clearInterval(interval);
+  }, [data]);
 
   return (
     <div className="w-full py-6 container">
@@ -56,13 +77,24 @@ export default function Launchpad() {
             <LaunchpadGameInformation
               data={launchpadInformationData?.header ?? []}
             />
-            <LaunchpadMintSection />
+            <LaunchpadMintSection
+              timestampStartWhitelistSale={
+                data.timestampStartWhitelistSale
+                  ? data.timestampStartWhitelistSale * 1000
+                  : undefined
+              }
+              timestampStartPublicSale={data.timestampStartPublicSale * 1000}
+              timestampEndSale={data.timestampEndSale * 1000}
+            />
             <div className="p-[1px] bg-brand rounded-2xl">
               <div className="flex flex-col tablet:flex-row tablet:justify-between tablet:items-center achievement-background rounded-2xl p-6 laptop:p-10 gap-6">
                 <h3 className="text-displayXS text-gray-50 font-formula font-bold">
-                  Buy game items
+                  {isSaleLive ? "Buy game items" : "View game items"}
                 </h3>
-                <Button href={`/launchpad/${launchpad}/buy`} text="Buy now!" />
+                <Button
+                  href={`/launchpad/${launchpad}/buy`}
+                  text={isSaleLive ? "Buy now!" : "View items"}
+                />
               </div>
             </div>
             <LaunchpadGameInformation
