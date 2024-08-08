@@ -9,7 +9,7 @@ import LaunchpadGameInformation from "@components/launchpad/LaunchpadGameInforma
 import { Ref, useRef } from "react";
 import { NetworkType } from "@utils/types";
 import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
-import { launchpadData } from "@config/launchpad";
+import { launchpadsInformationData } from "@config/launchpad";
 import LaunchpadGameInformationFAQPanel from "@components/launchpad/LaunchpadGameInformationFAQPanel";
 
 export default function Launchpad() {
@@ -19,7 +19,9 @@ export default function Launchpad() {
   const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
 
-  const launchpadInformationData = launchpad ? launchpadData[launchpad] : null;
+  const launchpadInformationData = launchpad
+    ? launchpadsInformationData[launchpad]
+    : null;
 
   return (
     <div className="w-full py-6 container">

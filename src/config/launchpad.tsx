@@ -50,7 +50,7 @@ type LaunchpadDataType = {
   faq?: LaunchpadFaqDataType;
 };
 
-export const launchpadData: Record<string, LaunchpadDataType> = {
+export const launchpadsInformationData: Record<string, LaunchpadDataType> = {
   "test-launchpad-1": {
     header: [
       {
