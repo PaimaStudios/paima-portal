@@ -785,7 +785,10 @@ export default function LaunchpadDetail() {
         </div>
       )}
       {isSuccessSubmit && (
-        <LaunchpadPurchaseSuccessDialog txHash={hashSubmit} />
+        <LaunchpadPurchaseSuccessDialog
+          txHash={hashSubmit}
+          hasReferralRewardSharing={(launchpadData?.referrerRewardBps ?? 0) > 0}
+        />
       )}
     </div>
   );
