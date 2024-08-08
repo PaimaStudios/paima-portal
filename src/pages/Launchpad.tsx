@@ -66,7 +66,9 @@ export default function Launchpad() {
             <LaunchpadGameInformation
               data={launchpadInformationData?.body ?? []}
             />
-            <LaunchpadGameInformationFAQPanel />
+            <LaunchpadGameInformationFAQPanel
+              data={launchpadInformationData?.faq ?? []}
+            />
           </div>
         </div>
       )}
