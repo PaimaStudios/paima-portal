@@ -10,6 +10,7 @@ export enum LaunchpadInformationContentType {
   TEXT = "text",
   LIST = "list",
   GALLERY = "gallery",
+  VIDEO = "video",
 }
 
 export type LaunchpadInformationDataType = {
@@ -31,6 +32,10 @@ export type LaunchpadInformationDataType = {
         type: LaunchpadInformationContentType.GALLERY;
         imageURLs: string[];
       }
+    | {
+        type: LaunchpadInformationContentType.VIDEO;
+        url: string;
+      }
   )[][];
 }[];
 
@@ -47,6 +52,18 @@ type LaunchpadDataType = {
 
 export const launchpadData: Record<string, LaunchpadDataType> = {
   "test-launchpad-1": {
+    header: [
+      {
+        body: [
+          [
+            {
+              type: LaunchpadInformationContentType.VIDEO,
+              url: "https://www.youtube.com/embed/7w3TWW_uOIM",
+            },
+          ],
+        ],
+      },
+    ],
     body: [
       {
         sideImageURL: "/images/tarochi-launchpad-overview.jpg",

@@ -68,10 +68,10 @@ const LaunchpadGameInformation = ({
             key={index}
           >
             <div className="flex flex-col-reverse laptop:flex-row laptop:justify-between laptop:items-start achievement-background rounded-2xl p-6 laptop:p-10 gap-8 laptop:gap-16">
-              <div className="flex flex-col gap-8 laptop:gap-16">
+              <div className="flex flex-col gap-8 laptop:gap-16 w-full">
                 {panel.body.map((section, index) => {
                   return (
-                    <div key={index} className="flex flex-col gap-4">
+                    <div key={index} className="flex flex-col gap-4 w-full">
                       {section.map((item, index) => {
                         // render paragraph
                         if (
@@ -125,6 +125,20 @@ const LaunchpadGameInformation = ({
                                 </li>
                               ))}
                             </ul>
+                          );
+                        }
+
+                        // render video
+                        if (
+                          item.type === LaunchpadInformationContentType.VIDEO
+                        ) {
+                          return (
+                            <iframe
+                              className="w-full aspect-video"
+                              src={item.url}
+                              title="YouTube video player"
+                              allowFullScreen={true}
+                            ></iframe>
                           );
                         }
 
