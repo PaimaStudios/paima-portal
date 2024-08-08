@@ -78,7 +78,7 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     walletAddress,
   );
-  const { isSaleLive } = useGetSaleStatus(launchpadSlug);
+  const { isSaleLive, isSaleInWhitelist } = useGetSaleStatus(launchpadSlug);
   const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
 
@@ -220,6 +220,13 @@ export default function LaunchpadDetail() {
     },
     [getItemQuantityLeft],
   );
+
+  const isWalletWhitelisted = useMemo(() => {
+    if (!launchpadData || !walletAddress) return false;
+    return launchpadData.whitelistedAddresses
+      ?.map((addr) => addr.toLowerCase())
+      .includes(walletAddress.toLowerCase());
+  }, [launchpadData, walletAddress]);
 
   const standardItems = useMemo(() => {
     if (!launchpadData) return [];
@@ -747,6 +754,8 @@ export default function LaunchpadDetail() {
                         text={
                           !isSaleLive
                             ? "Sale not live"
+                            : isSaleInWhitelist && !isWalletWhitelisted
+                            ? "Not whitelisted"
                             : formHasError
                             ? "Invalid order"
                             : amountToPay < 0n
@@ -757,7 +766,12 @@ export default function LaunchpadDetail() {
                               : "Confirm"
                             : "Confirm and pay"
                         }
-                        disabled={formHasError || noActionToDo || !isSaleLive}
+                        disabled={
+                          formHasError ||
+                          noActionToDo ||
+                          !isSaleLive ||
+                          (isSaleInWhitelist && !isWalletWhitelisted)
+                        }
                         onButtonClick={submitLaunchpadPurchase}
                         isLoading={isLoadingSubmit}
                         isPending={isPendingSubmit}

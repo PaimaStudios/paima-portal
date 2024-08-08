@@ -19,8 +19,7 @@ export default function useGetSaleStatus(launchpadSlug: string) {
       setIsSaleInWhitelist(
         saleLive &&
           launchpadData.timestampStartWhitelistSale !== undefined &&
-          new Date().getTime() <
-            launchpadData.timestampStartWhitelistSale * 1000,
+          new Date().getTime() < launchpadData.timestampStartPublicSale * 1000,
       );
     };
     const interval = setInterval(() => {
