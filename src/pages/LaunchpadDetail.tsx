@@ -457,6 +457,7 @@ export default function LaunchpadDetail() {
                       quantityLeft={getPackageQuantityLeft(curatedPackage)}
                       showCounter={false}
                       showQuantityLeft={false}
+                      showAdded={true}
                     />
                   );
                 })}
