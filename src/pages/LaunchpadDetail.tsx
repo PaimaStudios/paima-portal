@@ -34,10 +34,32 @@ import CopyButton from "@components/CopyButton";
 import useGetSaleStatus from "@hooks/launchpad/useGetSaleStatus";
 import { launchpadsInformationData } from "@config/launchpad";
 
-export enum Currency {
-  USDC = "USDC",
-  ETH = "ETH",
+enum ShopMode {
+  Simple = "simple",
+  Custom = "custom",
 }
+
+const ShopModeSelectorButton = ({
+  text,
+  isActive = false,
+  onButtonClicked,
+}: {
+  text: string;
+  isActive?: boolean;
+  onButtonClicked: () => void;
+}) => {
+  return (
+    <button
+      className={clsx(
+        "min-w-[120px] flex items-center justify-center font-medium text-white text-heading5 px-6 py-3 border-2 rounded-xl w-full transition-colors duration-150 ease-in-out hover:cursor-pointer hover:border-brand",
+        isActive ? "border-brand" : "border-gray-800 ",
+      )}
+      onClick={onButtonClicked}
+    >
+      {text}
+    </button>
+  );
+};
 
 const CurrencySelectorButton = ({
   text,
@@ -90,6 +112,7 @@ export default function LaunchpadDetail() {
       quantity: number;
     }[]
   >([]);
+  const [shopMode, setShopMode] = useState<ShopMode>(ShopMode.Simple);
 
   const { getItemQuantityLeft } = useGetItemQuantityLeft(
     launchpadSlug,
@@ -391,127 +414,160 @@ export default function LaunchpadDetail() {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col-reverse laptop:flex-row gap-10 laptop:gap-20 laptop:items-start">
               <div className="flex flex-col gap-4">
-                <h4 className="text-heading3 text-gray-50 font-bold">
-                  {launchpadInformationData?.detail?.freeRewardsTitle ??
-                    `Spend and get free rewards`}
+                <h4 className="text-heading2 text-gray-50 font-bold">
+                  Shopping mode
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  {launchpadInformationData?.detail?.freeRewardsText ??
-                    `The more you spend, the more you get! Spend a certain amount to get free rewards.`}
+                  Simple mode lets you easily pick from our curated packages.
+                  Custom mode lets you pick and choose individual items as you
+                  please.
                 </p>
               </div>
-              <LaunchpadRewardsSection
-                activeCurrency={activeCurrency}
-                freeRewards={freeRewards}
-                handleIncreaseItemQuantityInOrder={
-                  handleIncreaseItemQuantityInOrder
-                }
-                orderFreeRewards={orderFreeRewards}
-                launchpadSlug={launchpadSlug}
-              />
-            </div>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-4">
-                <h4 className="text-heading3 text-gray-50 font-bold">
-                  {launchpadInformationData?.detail?.curatedPackagesTitle ??
-                    `Curated packages`}
-                </h4>
-                <p className="text-bodyL text-gray-100">
-                  {launchpadInformationData?.detail?.curatedPackagesText ??
-                    `Choose one or more of our curated packages to get started with your journey.`}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 laptop:grid-cols-4 gap-6">
-                {launchpadData.curatedPackages?.map((curatedPackage) => {
-                  const price = getTotalPriceOfItems(curatedPackage.items);
-                  return (
-                    <LaunchpadItemCard
-                      key={curatedPackage.name}
-                      title={curatedPackage.name}
-                      description={
-                        curatedPackage.description ||
-                        `Combines ${curatedPackage.items
-                          .map(
-                            (item) =>
-                              `${launchpadData.items.find(
-                                (lpadItem) => lpadItem.id === item.id,
-                              )?.name} x${item.quantity}`,
-                          )
-                          .join(", ")}`
-                      }
-                      price={{
-                        value: Number(
-                          formatUnits(price, tokens[activeCurrency]?.decimals),
-                        ),
-                        currency: tokens[activeCurrency]?.symbol,
-                      }}
-                      onItemCardClick={
-                        isSaleLive
-                          ? () => {
-                              handleAddCuratedPackageToOrder(curatedPackage);
-                            }
-                          : undefined
-                      }
-                      quantityLeft={getPackageQuantityLeft(curatedPackage)}
-                      showCounter={false}
-                      showQuantityLeft={false}
-                      showAdded={true}
-                    />
-                  );
-                })}
+              <div className="flex gap-4">
+                <ShopModeSelectorButton
+                  text="Simple"
+                  isActive={shopMode === ShopMode.Simple}
+                  onButtonClicked={() => setShopMode(ShopMode.Simple)}
+                />
+                <ShopModeSelectorButton
+                  text="Custom"
+                  isActive={shopMode === ShopMode.Custom}
+                  onButtonClicked={() => setShopMode(ShopMode.Custom)}
+                />
               </div>
             </div>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-4">
-                <h4 className="text-heading3 text-gray-50 font-bold">
-                  {launchpadInformationData?.detail?.itemsForSaleTitle ??
-                    `Items for sale`}
-                </h4>
-                <p className="text-bodyL text-gray-100">
-                  {launchpadInformationData?.detail?.itemsForSaleText ??
-                    `Pick and choose from a variety of items available for sale. Get your journey started exactly the way you want!`}
-                </p>
+            {shopMode === ShopMode.Custom && (
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  <h4 className="text-heading3 text-gray-50 font-bold">
+                    {launchpadInformationData?.detail?.freeRewardsTitle ??
+                      `Spend and get free rewards`}
+                  </h4>
+                  <p className="text-bodyL text-gray-100">
+                    {launchpadInformationData?.detail?.freeRewardsText ??
+                      `The more you spend, the more you get! Spend a certain amount to get free rewards.`}
+                  </p>
+                </div>
+                <LaunchpadRewardsSection
+                  activeCurrency={activeCurrency}
+                  freeRewards={freeRewards}
+                  handleIncreaseItemQuantityInOrder={
+                    handleIncreaseItemQuantityInOrder
+                  }
+                  orderFreeRewards={orderFreeRewards}
+                  launchpadSlug={launchpadSlug}
+                />
               </div>
-              <div className="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 gap-6">
-                {standardItems.map((item) => {
-                  const price = Number(
-                    formatUnits(
-                      getPriceOfItem(item),
-                      tokens[activeCurrency]?.decimals,
-                    ),
-                  );
-                  return (
-                    <LaunchpadItemCard
-                      key={item.id}
-                      imageURL={item.image}
-                      title={item.name}
-                      description={item.description}
-                      price={
-                        activeCurrency
-                          ? {
-                              value: price,
-                              currency: tokens[activeCurrency]?.symbol,
-                            }
-                          : undefined
-                      }
-                      onItemCardClick={
-                        isSaleLive
-                          ? () => {
-                              handleIncreaseItemQuantityInOrder(item.id);
-                            }
-                          : undefined
-                      }
-                      isHighlighted={getItemCountFromOrder(item.id) > 0}
-                      counter={getItemCountFromOrder(item.id)}
-                      quantityLeft={getItemQuantityLeft(item.id)}
-                      supply={item.supply}
-                    />
-                  );
-                })}
+            )}
+            {shopMode === ShopMode.Simple && (
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  <h4 className="text-heading3 text-gray-50 font-bold">
+                    {launchpadInformationData?.detail?.curatedPackagesTitle ??
+                      `Curated packages`}
+                  </h4>
+                  <p className="text-bodyL text-gray-100">
+                    {launchpadInformationData?.detail?.curatedPackagesText ??
+                      `Choose one or more of our curated packages to get started with your journey.`}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 laptop:grid-cols-4 gap-6">
+                  {launchpadData.curatedPackages?.map((curatedPackage) => {
+                    const price = getTotalPriceOfItems(curatedPackage.items);
+                    return (
+                      <LaunchpadItemCard
+                        key={curatedPackage.name}
+                        title={curatedPackage.name}
+                        description={
+                          curatedPackage.description ||
+                          `Combines ${curatedPackage.items
+                            .map(
+                              (item) =>
+                                `${launchpadData.items.find(
+                                  (lpadItem) => lpadItem.id === item.id,
+                                )?.name} x${item.quantity}`,
+                            )
+                            .join(", ")}`
+                        }
+                        price={{
+                          value: Number(
+                            formatUnits(
+                              price,
+                              tokens[activeCurrency]?.decimals,
+                            ),
+                          ),
+                          currency: tokens[activeCurrency]?.symbol,
+                        }}
+                        onItemCardClick={
+                          isSaleLive
+                            ? () => {
+                                handleAddCuratedPackageToOrder(curatedPackage);
+                              }
+                            : undefined
+                        }
+                        quantityLeft={getPackageQuantityLeft(curatedPackage)}
+                        showCounter={false}
+                        showQuantityLeft={false}
+                        showAdded={true}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
+            {shopMode === ShopMode.Custom && (
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  <h4 className="text-heading3 text-gray-50 font-bold">
+                    {launchpadInformationData?.detail?.itemsForSaleTitle ??
+                      `Items for sale`}
+                  </h4>
+                  <p className="text-bodyL text-gray-100">
+                    {launchpadInformationData?.detail?.itemsForSaleText ??
+                      `Pick and choose from a variety of items available for sale. Get your journey started exactly the way you want!`}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 gap-6">
+                  {standardItems.map((item) => {
+                    const price = Number(
+                      formatUnits(
+                        getPriceOfItem(item),
+                        tokens[activeCurrency]?.decimals,
+                      ),
+                    );
+                    return (
+                      <LaunchpadItemCard
+                        key={item.id}
+                        imageURL={item.image}
+                        title={item.name}
+                        description={item.description}
+                        price={
+                          activeCurrency
+                            ? {
+                                value: price,
+                                currency: tokens[activeCurrency]?.symbol,
+                              }
+                            : undefined
+                        }
+                        onItemCardClick={
+                          isSaleLive
+                            ? () => {
+                                handleIncreaseItemQuantityInOrder(item.id);
+                              }
+                            : undefined
+                        }
+                        isHighlighted={getItemCountFromOrder(item.id) > 0}
+                        counter={getItemCountFromOrder(item.id)}
+                        quantityLeft={getItemQuantityLeft(item.id)}
+                        supply={item.supply}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <div className="flex flex-col gap-10">
               <h3 className="text-heading2 text-brand font-bold">Your order</h3>
               {BigInt(userData?.user?.totalamount ?? 0) > 0n && (
