@@ -6,16 +6,43 @@ import { SingleArrowLeftIcon } from "@components/icons/GeneralIcons";
 import Button from "@components/Button";
 import LaunchpadMintSection from "@components/launchpad/LaunchpadMintSection";
 import LaunchpadGameInformation from "@components/launchpad/LaunchpadGameInformation";
-import { Ref, useRef } from "react";
+import { Ref, useEffect, useRef, useState } from "react";
 import { NetworkType } from "@utils/types";
 import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
+import { launchpadsInformationData } from "@config/launchpad";
+import LaunchpadGameInformationFAQPanel from "@components/launchpad/LaunchpadGameInformationFAQPanel";
 
 export default function Launchpad() {
   const { launchpad } = useParams();
   const { data, isLoading } = useGetLaunchpadData(launchpad);
+  const [isSaleLive, setIsSaleLive] = useState(false);
 
   const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
+
+  const launchpadInformationData = launchpad
+    ? launchpadsInformationData[launchpad]
+    : null;
+
+  useEffect(() => {
+    const refreshSaleStatus = () => {
+      setIsSaleLive(
+        data
+          ? new Date().getTime() >
+              (data.timestampStartWhitelistSale ||
+                data.timestampStartPublicSale) *
+                1000 && new Date().getTime() < data.timestampEndSale * 1000
+          : false,
+      );
+    };
+    const interval = setInterval(() => {
+      refreshSaleStatus();
+    }, 1000);
+
+    refreshSaleStatus();
+
+    return () => clearInterval(interval);
+  }, [data]);
 
   return (
     <div className="w-full py-6 container">
@@ -26,7 +53,7 @@ export default function Launchpad() {
         // TOOD: Handle error state
         <>Data failed to load</>
       ) : (
-        <div className="flex flex-col gap-20">
+        <div className="flex flex-col gap-12">
           <div className="flex flex-col gap-3">
             <div className="flex gap-1 pb-3">
               <div className="w-5 h-5 flex items-center justify-center text-brand">
@@ -47,16 +74,35 @@ export default function Launchpad() {
             </h1>
           </div>
           <div className="flex flex-col gap-16">
-            <LaunchpadMintSection />
+            <LaunchpadGameInformation
+              data={launchpadInformationData?.header ?? []}
+            />
+            <LaunchpadMintSection
+              timestampStartWhitelistSale={
+                data.timestampStartWhitelistSale
+                  ? data.timestampStartWhitelistSale * 1000
+                  : undefined
+              }
+              timestampStartPublicSale={data.timestampStartPublicSale * 1000}
+              timestampEndSale={data.timestampEndSale * 1000}
+            />
             <div className="p-[1px] bg-brand rounded-2xl">
               <div className="flex flex-col tablet:flex-row tablet:justify-between tablet:items-center achievement-background rounded-2xl p-6 laptop:p-10 gap-6">
                 <h3 className="text-displayXS text-gray-50 font-formula font-bold">
-                  Buy game items
+                  {isSaleLive ? "Buy game items" : "View game items"}
                 </h3>
-                <Button href={`/launchpad/${launchpad}/buy`} text="Buy now!" />
+                <Button
+                  href={`/launchpad/${launchpad}/buy`}
+                  text={isSaleLive ? "Buy now!" : "View items"}
+                />
               </div>
             </div>
-            <LaunchpadGameInformation />
+            <LaunchpadGameInformation
+              data={launchpadInformationData?.body ?? []}
+            />
+            <LaunchpadGameInformationFAQPanel
+              data={launchpadInformationData?.faq ?? []}
+            />
           </div>
         </div>
       )}

@@ -28,6 +28,11 @@ import ReferralCodeInput from "@components/ReferralCodeInput";
 import IsConnectedWrapper from "@components/common/IsConnectedWrapper";
 import useSetPageNetworkTypes from "@hooks/useSetPageNetworkTypes";
 import { NetworkType } from "@utils/types";
+import LaunchpadPurchaseSuccessDialog from "@components/launchpad/LaunchpadPurchaseSuccessDialog";
+import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
+import CopyButton from "@components/CopyButton";
+import useGetSaleStatus from "@hooks/launchpad/useGetSaleStatus";
+import { launchpadsInformationData } from "@config/launchpad";
 
 export enum Currency {
   USDC = "USDC",
@@ -73,6 +78,7 @@ export default function LaunchpadDetail() {
     launchpadSlug,
     walletAddress,
   );
+  const { isSaleLive, isSaleInWhitelist } = useGetSaleStatus(launchpadSlug);
   const pageNetworkTypes: Ref<NetworkType[]> = useRef(["evm"]);
   useSetPageNetworkTypes(pageNetworkTypes.current);
 
@@ -85,10 +91,19 @@ export default function LaunchpadDetail() {
     }[]
   >([]);
 
+  const { getItemQuantityLeft } = useGetItemQuantityLeft(
+    launchpadSlug,
+    orderItems,
+  );
+
   const applyReferralDiscount =
     isAddress(referralCode, { strict: false }) &&
     referralCode !== ZERO_ADDRESS &&
     referralCode.toLowerCase() !== walletAddress?.toLowerCase();
+
+  const launchpadInformationData = launchpadSlug
+    ? launchpadsInformationData[launchpadSlug]
+    : null;
 
   const handleIncreaseItemQuantityInOrder = (
     itemID: number,
@@ -98,17 +113,20 @@ export default function LaunchpadDetail() {
 
     if (existingItem) {
       setOrderItems((orderItems) =>
-        orderItems.map((item) =>
-          item.id === itemID
-            ? { ...item, quantity: item.quantity + increaseBy }
-            : item,
-        ),
+        orderItems
+          .map((item) =>
+            item.id === itemID
+              ? { ...item, quantity: item.quantity + increaseBy }
+              : item,
+          )
+          .sort((item1, item2) => item1.id - item2.id),
       );
     } else {
-      setOrderItems((orderItems) => [
-        ...orderItems,
-        { id: itemID, quantity: increaseBy },
-      ]);
+      setOrderItems((orderItems) =>
+        [...orderItems, { id: itemID, quantity: increaseBy }].sort(
+          (item1, item2) => item1.id - item2.id,
+        ),
+      );
     }
   };
 
@@ -117,21 +135,29 @@ export default function LaunchpadDetail() {
 
     if (existingItem) {
       if (existingItem.quantity > 1) {
-        setOrderItems(
-          orderItems.map((item) =>
-            item.id === itemID
-              ? { ...item, quantity: item.quantity - 1 }
-              : item,
-          ),
+        setOrderItems((orderItems) =>
+          orderItems
+            .map((item) =>
+              item.id === itemID
+                ? { ...item, quantity: item.quantity - 1 }
+                : item,
+            )
+            .sort((item1, item2) => item1.id - item2.id),
         );
       } else {
-        setOrderItems(orderItems.filter((item) => item.id !== itemID));
+        setOrderItems((orderItems) =>
+          orderItems
+            .filter((item) => item.id !== itemID)
+            .sort((item1, item2) => item1.id - item2.id),
+        );
       }
     }
   };
 
   const handleRemoveItemFromOrder = (itemID: number) => {
-    setOrderItems(orderItems.filter((item) => item.id !== itemID));
+    setOrderItems((orderItems) =>
+      orderItems.filter((item) => item.id !== itemID),
+    );
   };
 
   const handleAddCuratedPackageToOrder = (
@@ -183,6 +209,24 @@ export default function LaunchpadDetail() {
     },
     [activeCurrency, getPriceOfItem, launchpadData],
   );
+
+  const getPackageQuantityLeft = useCallback(
+    (curatedPackage: NonNullable<LaunchpadData["curatedPackages"]>[number]) => {
+      const packageQuantityLeft = curatedPackage.items.reduce((acc, item) => {
+        const itemQuantityLeft = getItemQuantityLeft(item.id);
+        return Math.min(acc, itemQuantityLeft ?? Infinity);
+      }, Infinity);
+      return packageQuantityLeft === Infinity ? undefined : packageQuantityLeft;
+    },
+    [getItemQuantityLeft],
+  );
+
+  const isWalletWhitelisted = useMemo(() => {
+    if (!launchpadData || !walletAddress) return false;
+    return launchpadData.whitelistedAddresses
+      ?.map((addr) => addr.toLowerCase())
+      .includes(walletAddress.toLowerCase());
+  }, [launchpadData, walletAddress]);
 
   const standardItems = useMemo(() => {
     if (!launchpadData) return [];
@@ -241,11 +285,10 @@ export default function LaunchpadDetail() {
   }, [getTotalPriceOfItems, orderStandardItems, orderFreeRewards]);
 
   useEffect(() => {
-    if (!userData) {
+    if ((!userData || !userData.user) && currencies[0]) {
       setActiveCurrency(currencies[0]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currencies]);
+  }, [currencies, userData]);
 
   useEffect(() => {
     if (!userData || !userData.user) return;
@@ -277,6 +320,8 @@ export default function LaunchpadDetail() {
     submitLaunchpadPurchase,
     isLoading: isLoadingSubmit,
     isPending: isPendingSubmit,
+    isSuccess: isSuccessSubmit,
+    hash: hashSubmit,
   } = useSubmitLaunchpadPurchase({
     currency: activeCurrency,
     launchpadSlug,
@@ -321,13 +366,12 @@ export default function LaunchpadDetail() {
             <div className="flex flex-col-reverse laptop:flex-row gap-10 laptop:gap-20 laptop:items-start">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading2 text-gray-50 font-bold">
-                  Buy game items
+                  {launchpadInformationData?.detail?.buyItemsTitle ??
+                    `Buy game items`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.buyItemsText ??
+                    `Purchase in-game items for the game ${launchpadData.name}. Items will be delivered after the sale ends.`}
                 </p>
               </div>
               <div className="flex gap-4">
@@ -350,13 +394,12 @@ export default function LaunchpadDetail() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading3 text-gray-50 font-bold">
-                  Spend and get free rewards
+                  {launchpadInformationData?.detail?.freeRewardsTitle ??
+                    `Spend and get free rewards`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.freeRewardsText ??
+                    `The more you spend, the more you get! Spend a certain amount to get free rewards.`}
                 </p>
               </div>
               <LaunchpadRewardsSection
@@ -366,18 +409,18 @@ export default function LaunchpadDetail() {
                   handleIncreaseItemQuantityInOrder
                 }
                 orderFreeRewards={orderFreeRewards}
+                launchpadSlug={launchpadSlug}
               />
             </div>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading3 text-gray-50 font-bold">
-                  Curated packages
+                  {launchpadInformationData?.detail?.curatedPackagesTitle ??
+                    `Curated packages`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.curatedPackagesText ??
+                    `Choose one or more of our curated packages to get started with your journey.`}
                 </p>
               </div>
               <div className="grid grid-cols-2 laptop:grid-cols-4 gap-6">
@@ -404,9 +447,17 @@ export default function LaunchpadDetail() {
                         ),
                         currency: tokens[activeCurrency]?.symbol,
                       }}
-                      onItemCardClick={() => {
-                        handleAddCuratedPackageToOrder(curatedPackage);
-                      }}
+                      onItemCardClick={
+                        isSaleLive
+                          ? () => {
+                              handleAddCuratedPackageToOrder(curatedPackage);
+                            }
+                          : undefined
+                      }
+                      quantityLeft={getPackageQuantityLeft(curatedPackage)}
+                      showCounter={false}
+                      showQuantityLeft={false}
+                      showAdded={true}
                     />
                   );
                 })}
@@ -415,13 +466,12 @@ export default function LaunchpadDetail() {
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-4">
                 <h4 className="text-heading3 text-gray-50 font-bold">
-                  Items for sale
+                  {launchpadInformationData?.detail?.itemsForSaleTitle ??
+                    `Items for sale`}
                 </h4>
                 <p className="text-bodyL text-gray-100">
-                  Dive into this revolutionary experience on the Xai network,
-                  made seamless by Arbitrum Orbit and the powerful Paima Engine.
-                  Best of all? Embark on this adventure without the hassle of
-                  bridging, and kickstart your legend for free!
+                  {launchpadInformationData?.detail?.itemsForSaleText ??
+                    `Pick and choose from a variety of items available for sale. Get your journey started exactly the way you want!`}
                 </p>
               </div>
               <div className="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 gap-6">
@@ -446,11 +496,17 @@ export default function LaunchpadDetail() {
                             }
                           : undefined
                       }
-                      onItemCardClick={() => {
-                        handleIncreaseItemQuantityInOrder(Number(item.id));
-                      }}
-                      isHighlighted={getItemCountFromOrder(Number(item.id)) > 0}
-                      counter={getItemCountFromOrder(Number(item.id))}
+                      onItemCardClick={
+                        isSaleLive
+                          ? () => {
+                              handleIncreaseItemQuantityInOrder(item.id);
+                            }
+                          : undefined
+                      }
+                      isHighlighted={getItemCountFromOrder(item.id) > 0}
+                      counter={getItemCountFromOrder(item.id)}
+                      quantityLeft={getItemQuantityLeft(item.id)}
+                      supply={item.supply}
                     />
                   );
                 })}
@@ -525,6 +581,8 @@ export default function LaunchpadDetail() {
                                 onRemoveClicked={() => {
                                   handleRemoveItemFromOrder(item.id);
                                 }}
+                                quantityLeft={getItemQuantityLeft(item.id)}
+                                canChangeQuantity={isSaleLive}
                               />
                             );
                           })}
@@ -533,11 +591,40 @@ export default function LaunchpadDetail() {
                           <p className="text-heading6 font-bold text-gray-50 uppercase">
                             Rewards
                           </p>
-                          {orderFreeRewards.length === 0 && (
-                            <p className="text-bodyM text-gray-200">
-                              You haven't selected any rewards yet or you don't
-                              have enough items to claim them.
-                            </p>
+                          {surplusForRewards !== 0n && (
+                            <div
+                              className={clsx(
+                                "border rounded-2xl p-6 gap-4 flex flex-col items-center justify-center divide-y divide-gray-600",
+                                surplusForRewards < 0n
+                                  ? "border-error"
+                                  : "border-brand",
+                              )}
+                            >
+                              {surplusForRewards !== 0n && (
+                                <p className="text-bodyL font-semibold text-gray-50">
+                                  {surplusForRewards < 0n
+                                    ? `You need to purchase items for ${formatUnits(
+                                        -surplusForRewards,
+                                        tokens[activeCurrency]?.decimals,
+                                      )} more ${tokens[activeCurrency]
+                                        ?.symbol} to be able to claim selected rewards`
+                                    : surplusForRewards < cheapestFreeReward
+                                    ? `You will be eligible for ${
+                                        orderFreeRewards.length === 0
+                                          ? "a"
+                                          : "an another"
+                                      } free reward if you spend ${formatUnits(
+                                        cheapestFreeReward - surplusForRewards,
+                                        tokens[activeCurrency]?.decimals,
+                                      )} more ${tokens[activeCurrency]
+                                        ?.symbol}.`
+                                    : `You can still claim rewards for ${formatUnits(
+                                        surplusForRewards,
+                                        tokens[activeCurrency]?.decimals,
+                                      )} ${tokens[activeCurrency]?.symbol}.`}
+                                </p>
+                              )}
+                            </div>
                           )}
                           {orderFreeRewards.map((item) => {
                             const itemData = freeRewards.find(
@@ -551,7 +638,7 @@ export default function LaunchpadDetail() {
                                 additionalText={`Per ${formatUnits(
                                   BigInt(itemData.freeAt[activeCurrency]),
                                   tokens[activeCurrency]?.decimals,
-                                )} ${tokens[activeCurrency].symbol}`}
+                                )} ${tokens[activeCurrency]?.symbol}`}
                                 onDecreaseQuantityClicked={() => {
                                   handleDecreaseItemQuantityInOrder(item.id);
                                 }}
@@ -561,6 +648,8 @@ export default function LaunchpadDetail() {
                                 onRemoveClicked={() => {
                                   handleRemoveItemFromOrder(item.id);
                                 }}
+                                quantityLeft={getItemQuantityLeft(item.id)}
+                                canChangeQuantity={isSaleLive}
                               />
                             );
                           })}
@@ -568,13 +657,26 @@ export default function LaunchpadDetail() {
                       </div>
                       <div>
                         <div className="flex-1 flex flex-col gap-3">
-                          <p className="text-heading6 font-bold text-gray-50 uppercase">
-                            Referral code
-                          </p>
-                          <p className="text-bodyM text-gray-100">
-                            Enter your referral code to get discount on your
-                            order items
-                          </p>
+                          <div className="flex justify-between">
+                            <div className="flex-1 flex flex-col gap-3">
+                              <p className="text-heading6 font-bold text-gray-50 uppercase">
+                                Referral code
+                              </p>
+                              <p className="text-bodyM text-gray-100">
+                                Enter a referral code to get discount on your
+                                order items
+                              </p>
+                            </div>
+                            {walletAddress && (
+                              <CopyButton
+                                buttonProps={{
+                                  outlineVariant: true,
+                                }}
+                                text={"Copy your link"}
+                                valueToCopy={`${window.location.href}?referral=${walletAddress}`}
+                              />
+                            )}
+                          </div>
                           <ReferralCodeInput
                             placeholder="Wallet address as referral code"
                             validityFeedback={
@@ -611,28 +713,7 @@ export default function LaunchpadDetail() {
                     <p className="text-heading6 font-bold text-gray-50 uppercase">
                       Summary
                     </p>
-                    <p className="text-bodyM text-gray-100">
-                      {surplusForRewards === 0n
-                        ? null
-                        : surplusForRewards < 0n
-                        ? `You need to purchase items for ${formatUnits(
-                            -surplusForRewards,
-                            tokens[activeCurrency]?.decimals,
-                          )} more ${
-                            tokens[activeCurrency].symbol
-                          } to be able to claim selected rewards`
-                        : surplusForRewards < cheapestFreeReward
-                        ? `You will be eligible for ${
-                            orderFreeRewards.length === 0 ? "a" : "an another"
-                          } free reward if you spend ${formatUnits(
-                            cheapestFreeReward - surplusForRewards,
-                            tokens[activeCurrency]?.decimals,
-                          )} more ${tokens[activeCurrency].symbol}.`
-                        : `You can still claim rewards for ${formatUnits(
-                            surplusForRewards,
-                            tokens[activeCurrency]?.decimals,
-                          )} ${tokens[activeCurrency].symbol}.`}
-                    </p>
+
                     <div className="flex flex-col gap-2">
                       <p className="text-bodyM text-gray-50">Items total</p>
                       <p className="text-heading5 font-bold text-brand uppercase">
@@ -640,7 +721,7 @@ export default function LaunchpadDetail() {
                           getTotalPriceOfItems(orderItems),
                           tokens[activeCurrency]?.decimals,
                         )}{" "}
-                        {tokens[activeCurrency].symbol}
+                        {tokens[activeCurrency]?.symbol}
                       </p>
                     </div>
                   </div>
@@ -654,7 +735,7 @@ export default function LaunchpadDetail() {
                           BigInt(userData?.user?.totalamount ?? 0),
                           tokens[activeCurrency]?.decimals,
                         )}{" "}
-                        {tokens[activeCurrency].symbol}
+                        {tokens[activeCurrency]?.symbol}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
@@ -666,13 +747,17 @@ export default function LaunchpadDetail() {
                           amountToPay,
                           tokens[activeCurrency]?.decimals,
                         )}{" "}
-                        {tokens[activeCurrency].symbol}
+                        {tokens[activeCurrency]?.symbol}
                       </p>
                     </div>
                     <IsConnectedWrapper>
                       <Button
                         text={
-                          formHasError
+                          !isSaleLive
+                            ? "Sale not live"
+                            : isSaleInWhitelist && !isWalletWhitelisted
+                            ? "Not whitelisted"
+                            : formHasError
                             ? "Invalid order"
                             : amountToPay < 0n
                             ? "Choose more items"
@@ -682,7 +767,12 @@ export default function LaunchpadDetail() {
                               : "Confirm"
                             : "Confirm and pay"
                         }
-                        disabled={formHasError || noActionToDo}
+                        disabled={
+                          formHasError ||
+                          noActionToDo ||
+                          !isSaleLive ||
+                          (isSaleInWhitelist && !isWalletWhitelisted)
+                        }
                         onButtonClick={submitLaunchpadPurchase}
                         isLoading={isLoadingSubmit}
                         isPending={isPendingSubmit}
@@ -694,6 +784,12 @@ export default function LaunchpadDetail() {
             </div>
           </div>
         </div>
+      )}
+      {isSuccessSubmit && (
+        <LaunchpadPurchaseSuccessDialog
+          txHash={hashSubmit}
+          hasReferralRewardSharing={(launchpadData?.referrerRewardBps ?? 0) > 0}
+        />
       )}
     </div>
   );

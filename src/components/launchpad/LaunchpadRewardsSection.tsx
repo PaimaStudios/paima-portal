@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { FreeRewardItem } from "@hooks/launchpad/useGetAllLaunchpadsData";
 import { formatUnits } from "viem";
 import { tokens } from "@config/tokens";
+import useGetItemQuantityLeft from "@hooks/launchpad/useGetItemQuantityLeft";
+import useGetSaleStatus from "@hooks/launchpad/useGetSaleStatus";
 
 type LaunchpadRewardsSectionProps = {
   activeCurrency: string;
@@ -13,6 +15,7 @@ type LaunchpadRewardsSectionProps = {
     id: number;
     quantity: number;
   }[];
+  launchpadSlug: string;
 };
 
 const LaunchpadRewardsSection = ({
@@ -20,7 +23,13 @@ const LaunchpadRewardsSection = ({
   freeRewards,
   handleIncreaseItemQuantityInOrder,
   orderFreeRewards,
+  launchpadSlug,
 }: LaunchpadRewardsSectionProps) => {
+  const { getItemQuantityLeft } = useGetItemQuantityLeft(
+    launchpadSlug,
+    orderFreeRewards,
+  );
+  const { isSaleLive } = useGetSaleStatus(launchpadSlug);
   const horizontalLineRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -70,10 +79,10 @@ const LaunchpadRewardsSection = ({
             <h5 className="text-heading4 font-bold text-gray-50">
               Per{" "}
               {formatUnits(
-                BigInt(reward.freeAt[activeCurrency]),
+                BigInt(reward.freeAt[activeCurrency] ?? 0),
                 tokens[activeCurrency]?.decimals,
               )}{" "}
-              {tokens[activeCurrency].symbol}
+              {tokens[activeCurrency]?.symbol}
             </h5>
             <LaunchpadItemCard
               imageURL={
@@ -81,11 +90,17 @@ const LaunchpadRewardsSection = ({
               }
               title={reward.name}
               description={reward.description}
-              onItemCardClick={() => {
-                handleIncreaseItemQuantityInOrder(reward.id);
-              }}
+              onItemCardClick={
+                isSaleLive
+                  ? () => {
+                      handleIncreaseItemQuantityInOrder(reward.id);
+                    }
+                  : undefined
+              }
               counter={getItemCountFromOrder(reward.id)}
               isHighlighted={getItemCountFromOrder(reward.id) > 0}
+              supply={reward.supply}
+              quantityLeft={getItemQuantityLeft(reward.id)}
             />
           </div>
         ))}

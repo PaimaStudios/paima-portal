@@ -67,17 +67,16 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
     },
   });
 
-  const { isLoading: isLoadingBuyItems } = useWaitForTransactionReceipt({
-    hash: buyItemsNativeHash || buyItemsErc20Hash,
-    query: {
-      meta: {
-        successMessage: SnackbarMessage.Launchpad.PurchaseSuccess,
-        invalidateQueries: [
-          [QueryKeys.LaunchpadData, params.launchpadSlug, address],
-        ],
+  const { isLoading: isLoadingBuyItems, isSuccess } =
+    useWaitForTransactionReceipt({
+      hash: buyItemsNativeHash || buyItemsErc20Hash,
+      query: {
+        meta: {
+          successMessage: SnackbarMessage.Launchpad.PurchaseSuccess,
+          invalidateQueries: [[QueryKeys.LaunchpadData, params.launchpadSlug]],
+        },
       },
-    },
-  });
+    });
 
   const { isLoading: isLoadingApproveErc20, isSuccess: isSuccessApproveErc20 } =
     useWaitForTransactionReceipt({
@@ -160,5 +159,7 @@ export default function useSubmitLaunchpadPurchase(params: Params) {
       isPendingWriteBuyItemsNative ||
       isPendingWriteBuyItemsErc20 ||
       isPendingWriteApproveErc20,
+    isSuccess,
+    hash: buyItemsNativeHash || buyItemsErc20Hash,
   };
 }
