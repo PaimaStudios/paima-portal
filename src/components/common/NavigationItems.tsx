@@ -28,28 +28,29 @@ type NavigationItem = {
 
 const items: NavigationItem[] = [
   {
+    label: "Games",
+    href: "/games",
+    // icon: <NavigationIconHome />,
+    icon: <NavigationIconGames />,
+    visible: true,
+  },
+  {
     label: "Home",
     href: "/",
     icon: <NavigationIconHome />,
-    visible: true,
+    visible: false,
   },
   {
     label: "Dashboard",
     href: "#",
     icon: <NavigationIconDashboard />,
-    visible: true,
+    visible: false,
   },
   {
     label: "Achievement",
     href: "/achievement",
     icon: <NavigationIconAchievement />,
-    visible: true,
-  },
-  {
-    label: "Games",
-    href: "/games",
-    icon: <NavigationIconGames />,
-    visible: true,
+    visible: false,
   },
   {
     label: "Tarochi Gold DEX",
@@ -66,19 +67,19 @@ const items: NavigationItem[] = [
   },
   {
     label: "Learn",
-    href: "#",
+    href: "https://docs.paimastudios.com/",
     icon: <NavigationIconLearn />,
     visible: true,
   },
   {
     label: "Tools",
-    href: "#",
+    href: "https://github.com/PaimaStudios/",
     icon: <NavigationIconTools />,
     visible: true,
   },
   {
     label: "Get Help",
-    href: "#",
+    href: "https://discord.gg/paima-studios-1014476893568892998",
     icon: <NavigationIconHelp />,
     visible: true,
   },

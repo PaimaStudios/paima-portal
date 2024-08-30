@@ -116,7 +116,7 @@ export default function Games() {
               <h2 className="text-heading2 text-gray-50 font-semibold">
                 Featured games
               </h2>
-              <div className="relative w-full tablet:w-[calc(100%+16px)] laptop:w-[calc(100%+24px)]">
+              {/* <div className="relative w-full tablet:w-[calc(100%+16px)] laptop:w-[calc(100%+24px)]">
                 <Carousel
                   responsive={responsive}
                   arrows={false}
@@ -135,7 +135,7 @@ export default function Games() {
                     />
                   ))}
                 </Carousel>
-              </div>
+              </div> */}
             </div>
             <div className="flex flex-col gap-6">
               {getFileteredGames().map((game, index) => (

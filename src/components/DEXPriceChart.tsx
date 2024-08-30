@@ -68,6 +68,7 @@ export default function DEXPriceChart() {
       },
       localization: {
         priceFormatter: (priceValue: BarPrice) => {
+          if (!isFinite(priceValue)) return "";
           return `${formatNumberWithSubscriptZeros(
             formatUnitsWithoutStrippingTrailingZeros(
               BigInt(priceValue.toFixed(0)),

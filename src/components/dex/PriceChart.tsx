@@ -66,6 +66,7 @@ export default function PriceChart() {
       },
       localization: {
         priceFormatter: (priceValue: BarPrice) => {
+          if (!isFinite(priceValue)) return "";
           return `${formatNumberWithSubscriptZeros(
             formatUnitsWithoutStrippingTrailingZeros(
               BigInt(priceValue.toFixed(0)),
