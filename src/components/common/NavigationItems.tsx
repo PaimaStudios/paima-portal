@@ -29,7 +29,7 @@ type NavigationItem = {
 const items: NavigationItem[] = [
   {
     label: "Home",
-    href: "/games",
+    href: "/",
     icon: <NavigationIconHome />,
     visible: true,
   },
@@ -37,7 +37,7 @@ const items: NavigationItem[] = [
     label: "Dashboard",
     href: "#",
     icon: <NavigationIconDashboard />,
-    visible: !env.REACT_APP_TESTNET,
+    visible: env.REACT_APP_TESTNET,
   },
   {
     label: "Achievement",
@@ -68,19 +68,19 @@ const items: NavigationItem[] = [
     label: "Learn",
     href: "#",
     icon: <NavigationIconLearn />,
-    visible: !env.REACT_APP_TESTNET,
+    visible: env.REACT_APP_TESTNET,
   },
   {
     label: "Tools",
     href: "#",
     icon: <NavigationIconTools />,
-    visible: !env.REACT_APP_TESTNET,
+    visible: env.REACT_APP_TESTNET,
   },
   {
     label: "Get Help",
     href: "#",
     icon: <NavigationIconHelp />,
-    visible: !env.REACT_APP_TESTNET,
+    visible: env.REACT_APP_TESTNET,
   },
 ];
 
