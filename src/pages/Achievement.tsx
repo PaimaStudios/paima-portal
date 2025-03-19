@@ -12,7 +12,8 @@ export type AchievementItemProps = {
   title: string;
   description: string;
   categories?: string[];
-  progressPercentage?: number;
+  progressCurrent?: number;
+  progressTotal?: number;
   timestamp?: string;
   isCompleted?: boolean;
   score?: number;
@@ -36,6 +37,7 @@ const dummyAchievements: AchievementItemProps[] = [
     categories: ["capture"],
     timestamp: "2021-09-01T00:00:00Z",
     score: 45,
+    progressTotal: 50,
   },
   {
     imageURL: "/images/achievement-image2.jpg",
@@ -43,7 +45,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Complete a series of 50 interconnected events without breaking the chain in any simul...",
     categories: ["landmark"],
-    progressPercentage: 23,
+    progressCurrent: 23,
+    progressTotal: 50,
   },
   {
     imageURL: "/images/achievement-image3.jpg",
@@ -51,7 +54,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["capture"],
-    progressPercentage: 89,
+    progressCurrent: 89,
+    progressTotal: 100,
   },
   {
     imageURL: "/images/achievement-image4.jpg",
@@ -59,7 +63,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["landmark"],
-    progressPercentage: 11,
+    progressCurrent: 11,
+    progressTotal: 100,
     timestamp: "2021-09-01T00:00:00Z",
   },
   {
@@ -68,7 +73,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["landmark"],
-    progressPercentage: 54,
+    progressCurrent: 54,
+    progressTotal: 100,
   },
   {
     imageURL: "/images/achievement-image6.jpg",
@@ -76,7 +82,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["pve"],
-    progressPercentage: 9,
+    progressCurrent: 9,
+    progressTotal: 100,
   },
   {
     imageURL: "/images/achievement-image2.jpg",
@@ -84,7 +91,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Complete a series of 50 interconnected events without breaking the chain in any simul...",
     categories: ["landmark"],
-    progressPercentage: 23,
+    progressCurrent: 23,
+    progressTotal: 50,
     timestamp: "2021-09-01T00:00:00Z",
   },
   {
@@ -93,7 +101,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["landmark"],
-    progressPercentage: 89,
+    progressCurrent: 89,
+    progressTotal: 100,
   },
   {
     imageURL: "/images/achievement-image4.jpg",
@@ -101,7 +110,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["landmark"],
-    progressPercentage: 11,
+    progressCurrent: 11,
+    progressTotal: 100,
   },
   {
     imageURL: "/images/achievement-image5.jpg",
@@ -109,7 +119,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["landmark"],
-    progressPercentage: 54,
+    progressCurrent: 54,
+    progressTotal: 100,
   },
   {
     imageURL: "/images/achievement-image6.jpg",
@@ -117,7 +128,8 @@ const dummyAchievements: AchievementItemProps[] = [
     description:
       "Successfully decrypt 100 encrypted blocks using the Paima Engine’s built-in chain in any",
     categories: ["landmark"],
-    progressPercentage: 9,
+    progressCurrent: 9,
+    progressTotal: 100,
   },
 ];
 
@@ -125,7 +137,8 @@ const AchievementItem: React.FC<AchievementItemProps> = ({
   imageURL,
   title,
   description,
-  progressPercentage,
+  progressCurrent,
+  progressTotal,
   timestamp,
   categories,
   isCompleted,
@@ -189,18 +202,18 @@ const AchievementItem: React.FC<AchievementItemProps> = ({
           <div className="mt-1 hidden tablet:block">
             <p className="text-bodyM text-gray-200">{description}</p>
           </div>
-          {progressPercentage !== undefined && (
+          {progressCurrent !== undefined && progressTotal !== undefined && (
             <div className="w-full rounded-xl py-2 flex flex-col gap-1">
               <div className="flex items-center justify-between">
                 <h3 className="text-bodyM text-gray-50">Progress</h3>
                 <h3 className="text-bodyM text-gray-50">
-                  <span className="text-brand">{progressPercentage}</span>/100
+                  <span className="text-brand">{progressCurrent}</span>/{progressTotal}
                 </h3>
               </div>
               <div className="h-2 bg-gray-700 rounded-lg relative w-full">
                 <div
                   className="absolute left-0 top-0 bottom-0 bg-brand rounded-lg"
-                  style={{ width: `${progressPercentage}%` }}
+                  style={{ width: `${100 * progressCurrent / progressTotal}%` }}
                 ></div>
               </div>
             </div>
@@ -227,9 +240,9 @@ const AchievementItem: React.FC<AchievementItemProps> = ({
 };
 
 const TotalAchievementItem: React.FC<{
-  achievementCount: number;
-  progressPercentage: number;
-}> = ({ achievementCount, progressPercentage }) => {
+  ownAchievementCount: number;
+  allGameAchievementCount: number;
+}> = ({ ownAchievementCount, allGameAchievementCount }) => {
   return (
     <div className="border border-gray-800 rounded-2xl">
       <div className="p-4 rounded-2xl">
@@ -237,20 +250,20 @@ const TotalAchievementItem: React.FC<{
           <div className="flex flex-col gap-1">
             <h2 className="text-heading3 font-semibold text-gray-400">
               Total Achievements:&nbsp;
-              <span className="text-gray-50">{achievementCount}</span>
+              <span className="text-gray-50">{ownAchievementCount}</span>
             </h2>
           </div>
           <div className="w-full py-2 flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <h3 className="text-bodyM text-gray-50">Achievement progress:</h3>
               <h3 className="text-bodyM text-gray-50">
-                <span className="text-brand">{progressPercentage}</span>/100
+                <span className="text-brand">{ownAchievementCount}</span>/{allGameAchievementCount}
               </h3>
             </div>
             <div className="h-2 bg-gray-700 rounded-lg relative w-full">
               <div
                 className="absolute left-0 top-0 bottom-0 bg-brand rounded-lg"
-                style={{ width: `${progressPercentage}%` }}
+                style={{ width: `${100 * ownAchievementCount / allGameAchievementCount}%` }}
               ></div>
             </div>
           </div>
@@ -267,23 +280,21 @@ export default function Achievement() {
   const achievementCategories = achievementsData
     ? [
         ...new Set(
-          achievementsData.achievements.map((item) => item.objective_type),
+          Object.values(achievementsData).flatMap((game) => Object.values(game.metadata).map((item) => item.category).filter(item => item != null)),
         ),
       ]
     : [];
 
   const myAchievements = achievementsData
-    ? achievementsData.myAchievements.map((achievement) => {
+    ? Object.entries(achievementsData).flatMap(([gameId, game]) => game.user.achievements.map((achievement) => {
         return {
+          gameId,
           ...achievement,
-          fullData: {
-            ...achievementsData.achievements.find(
-              (item) => item.id === achievement.achievement_id,
-            ),
-          },
         };
-      })
+      }))
     : [];
+
+  const totalAchievements = achievementsData == null ? 0 : Object.values(achievementsData).reduce((acc, curr) => acc + Object.keys(curr.metadata).length, 0);
 
   const [currentAchievementCategories, setCurrentAchievementCategories] =
     useState<string[]>([]);
@@ -317,9 +328,7 @@ export default function Achievement() {
     }
 
     return myAchievements.filter((achievement) =>
-      currentAchievementCategories.includes(
-        achievement.fullData.objective_type ?? "",
-      ),
+      currentAchievementCategories.includes(achievementsData[achievement.gameId].metadata[String(achievement.name)].category ?? "")
     );
   };
 
@@ -339,14 +348,14 @@ export default function Achievement() {
             <ConnectWallet />
           </div>
         )}
-        {(!achievementsData || achievementsData?.myAchievements.length === 0) &&
+        {(!achievementsData || totalAchievements === 0) &&
           address && (
             <p className="text-bodyL text-gray-100">
               You haven't completed any achievements yet.
             </p>
           )}
         {achievementsData &&
-          achievementsData.myAchievements.length > 0 &&
+          totalAchievements > 0 &&
           address && (
             <>
               <div className="flex flex-col gap-6">
@@ -375,9 +384,8 @@ export default function Achievement() {
               </div>
               <div className="flex flex-col gap-3">
                 <TotalAchievementItem
-                  // TODO: Replace dummy data with real data
-                  progressPercentage={47}
-                  achievementCount={myAchievements.length}
+                  ownAchievementCount={Object.values(achievementsData).reduce((acc, curr) => acc + curr.user.completed, 0)}
+                  allGameAchievementCount={Object.values(achievementsData).reduce((acc, curr) => acc + Object.keys(curr.metadata).length, 0)}
                 />
                 {filteredAchievements.length === 0 &&
                   currentAchievementCategories.length > 0 && (
@@ -385,29 +393,23 @@ export default function Achievement() {
                       No achievements found for selected categories.
                     </p>
                   )}
-                {filteredAchievements.map((achievement, index) => (
-                  <AchievementItem
-                    key={index}
-                    // TODO: Replace dummy data with real data
-                    imageURL="/images/achievement-placeholder-general.svg"
-                    // TODO: Replace dummy data with real data
-                    title="Achievement Title"
-                    // TODO: Replace dummy data with real data
-                    description="Achievement Description"
-                    // TODO: Replace dummy data with real data
-                    progressPercentage={15}
-                    // TODO: Replace dummy data with real data
-                    timestamp="2021-09-01T00:00:00Z"
-                    categories={
-                      achievement.fullData.objective_type
-                        ? [achievement.fullData.objective_type]
-                        : []
-                    }
-                    // TODO: Replace dummy data with real data
-                    score={25}
-                    isCompleted={achievement.completed}
-                  />
-                ))}
+                {filteredAchievements.map((achievement, index) => {
+                  const achievementData = achievementsData[achievement.gameId].metadata[String(achievement.name)];
+                  return (
+                    <AchievementItem
+                      key={index}
+                      imageURL={achievementData.iconURI ?? "/images/achievement-placeholder-general.svg"}
+                      title={achievementData.displayName}
+                      description={achievementData.description}
+                      progressCurrent={achievement.completedRate?.progress}
+                      progressTotal={achievement.completedRate?.total}
+                      timestamp={achievement.completedDate}
+                      categories={achievementData.category == null ? undefined : [achievementData.category]}
+                      score={achievementData?.score}
+                      isCompleted={achievement.completed}
+                    />
+                  );
+                })}
               </div>
             </>
           )}
