@@ -66,9 +66,7 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "format": "prettier . --write",
-    "generate": "wagmi generate && prettier ./src/generated.ts --write",
-    "pages:dev": "wrangler pages dev --compatibility-date=2023-10-03 --port 3000 -- npm start",
-    "pages:deploy": "npm run build && wrangler pages deploy ./build"
+    "generate": "wagmi generate && prettier ./src/generated.ts --write"
   },
   "eslintConfig": {
     "extends": [

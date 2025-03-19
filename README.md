@@ -11,6 +11,8 @@
 
 - Whitelist the production domain in the Alchemy and Blockfrost services for the keys you will be using, and turn on whitelist-only mode so that the keys cannot be abused outside our dApp.
 
+Manually copy the files to the right machine using `rsync`
+
 ### Generating contracts ABI (EVM)
 
 Wagmi hooks are generated straight from the contracts source code at `../evm/` (this is configured in `wagmi.config.ts`).
