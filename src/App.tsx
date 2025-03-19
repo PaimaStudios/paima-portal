@@ -20,7 +20,7 @@ export default function App() {
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
+          <Route index element={<Games />} />
           <Route path="dex/:game/:asset" element={<Dex />} />
           <Route path="achievement" element={<Achievement />} />
           <Route path="games" element={<Games />} />
